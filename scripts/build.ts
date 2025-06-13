@@ -15,10 +15,10 @@ async function main() {
     commit: commitId,
     icons: icons,
   };
-  writeFile(resolve(outDir, "index.json"), JSON.stringify(index, null, 2), "utf-8");
+  await writeFile(resolve(outDir, "index.json"), JSON.stringify(index, null, 2), "utf-8");
 
   const lightIndex = await getLightIndex(icons, commitId);
-  writeFile(resolve(outDir, "light-index.json"), JSON.stringify(lightIndex, null, 2));
+  await writeFile(resolve(outDir, "light-index.json"), JSON.stringify(lightIndex, null, 2));
 }
 
 async function fetchRepoAssets(): Promise<string> {

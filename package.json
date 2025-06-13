@@ -5,9 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "setup": "npm run build:assets",
+    "setup": "tsx scripts/build.ts",
     "build": "tsc && vite build",
-    "build:assets": "tsx scripts/build.ts",
     "preview": "vite preview"
   },
   "devDependencies": {
