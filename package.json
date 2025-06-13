@@ -1,0 +1,16 @@
+{
+  "name": "vibe-icon",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsx src/build.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^24.0.1",
+    "tsx": "^4.20.3"
+  }
+}
