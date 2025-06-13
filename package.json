@@ -1,16 +1,22 @@
 {
   "name": "vibe-icon",
-  "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "build": "tsx src/build.ts"
+    "dev": "vite",
+    "setup": "npm run build:assets",
+    "build": "tsc && vite build",
+    "build:assets": "tsx scripts/build.ts",
+    "preview": "vite preview"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
+  "devDependencies": {
     "@types/node": "^24.0.1",
-    "tsx": "^4.20.3"
+    "tsx": "^4.20.3",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.2"
   }
 }

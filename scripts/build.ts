@@ -4,6 +4,7 @@ import { readFile, readdir, rm, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { promisify } from "util";
 const execAsync = promisify(exec);
+const outDir = resolve("dist-icons");
 
 main();
 
@@ -14,38 +15,36 @@ async function main() {
     commit: commitId,
     icons: icons,
   };
-  writeFile("dist/index.json", JSON.stringify(index, null, 2), "utf-8");
+  writeFile(resolve(outDir, "index.json"), JSON.stringify(index, null, 2), "utf-8");
 
   const lightIndex = await getLightIndex(icons, commitId);
-  writeFile("dist/light-index.json", JSON.stringify(lightIndex, null, 2));
+  writeFile(resolve(outDir, "light-index.json"), JSON.stringify(lightIndex, null, 2));
 }
 
 async function fetchRepoAssets(): Promise<string> {
   // download the entire folder content from https://github.com/microsoft/fluentui-system-icons/tree/main/assets
-  // save them to dist/fluentui-system-icons/assets
-
-  const distDir = "dist";
+  // save them to outDir/fluentui-system-icons/assets
 
   // Create temp directory if it doesn't exist
   try {
-    await rm(distDir, { recursive: true });
+    await rm(outDir, { recursive: true });
   } catch {}
 
-  await mkdirSync(distDir, { recursive: true });
+  await mkdirSync(outDir, { recursive: true });
 
   // Clone the repository with sparse checkout to get only the assets folder
-  await execAsync(`git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${distDir}`);
-  await execAsync(`cd ${distDir} && git sparse-checkout set --no-cone`);
-  await execAsync(`cd ${distDir} && git sparse-checkout set 'assets/**/*.svg' 'assets/**/*.json'`);
+  await execAsync(`git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`);
+  await execAsync(`cd ${outDir} && git sparse-checkout set --no-cone`);
+  await execAsync(`cd ${outDir} && git sparse-checkout set 'assets/**/*.svg' 'assets/**/*.json'`);
 
   // Get the commit ID
-  const { stdout } = await execAsync(`cd ${distDir} && git rev-parse HEAD`);
+  const { stdout } = await execAsync(`cd ${outDir} && git rev-parse HEAD`);
   const commitId = stdout.trim();
 
   console.log(`Repository assets fetched successfully. Commit: ${commitId}`);
 
   // remove the .git directory to clean up
-  await rm(resolve(distDir, ".git"), { recursive: true });
+  await rm(resolve(outDir, ".git"), { recursive: true });
 
   return commitId;
 }
@@ -67,7 +66,7 @@ interface LightIndex {
 }
 
 async function buildIndex(): Promise<IndexIcon[]> {
-  const assetsDir = resolve("dist/assets");
+  const assetsDir = resolve(outDir, "assets");
   const assetFolders = await readdir(assetsDir);
 
   const icons: IndexIcon[] = [];
