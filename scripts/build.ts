@@ -8,6 +8,10 @@ const outDir = resolve("dist-icons");
 
 main();
 
+// TODO further compress the light index. to include size/style suffix
+// Compute file name from display name
+// Only support fill/regular per size
+
 async function main() {
   const commitId = await fetchRepoAssets();
   const icons = await buildIndex();
@@ -19,6 +23,8 @@ async function main() {
 
   const lightIndex = await getLightIndex(icons, commitId);
   await writeFile(resolve(outDir, "light-index.json"), JSON.stringify(lightIndex, null, 2));
+
+  await copyAssetsToPublic();
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -117,4 +123,12 @@ async function getLightIndex(indexIcons: IndexIcon[], commitId: string): Promise
     commit: commitId,
     icons: indexIcons.map((icon) => [icon.name, ...icon.metaphor]),
   };
+}
+
+async function copyAssetsToPublic() {
+  // Copy the assets to the public directory
+  const publicDir = resolve("public", "assets");
+  await rm(publicDir, { recursive: true, force: true });
+  await execAsync(`cp -r ${resolve(outDir, "assets")} ${publicDir}`);
+  console.log("Assets copied to public directory.");
 }
