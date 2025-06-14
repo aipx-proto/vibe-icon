@@ -134,6 +134,19 @@ async function buildIndex(): Promise<IndexIcon[]> {
   return icons;
 }
 
+function transformSVG(code: string): string {
+  // Replace fill="#212121" with fill="currentColor"
+  /**
+   * Convert the SVG to be a symbol, e.g.
+   * From:
+   * <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#212121">
+   * To:
+   * <symbol id="icon-name" viewBox="0 0 24 24" fill="currentColor">
+   */
+
+  return code;
+}
+
 async function getLightIndex(indexIcons: IndexIcon[], commitId: string): Promise<IconIndex> {
   // filename pattern is /.+_(\d+)_(filled|regular).svg/
   // parse into capture into weight and style
@@ -179,6 +192,8 @@ async function moveAssetsToPublic() {
   } catch {}
   mkdirSync(publicDir, { recursive: true });
 
+  await buildCombinedIndex();
+
   let progress = 0;
   const processFiles$ = from(iconFolders).pipe(
     mergeMap(async (folder) => {
@@ -222,4 +237,49 @@ async function moveAssetsToPublic() {
 
   // remove the assets directory
   await rm(resolve(outDir), { recursive: true, force: true });
+}
+
+async function buildCombinedIndex() {
+  // concatenate all the /dist-icons/assets/SVG/<icon-code-name>-24-regular.svg files into a single file
+  // and save to /public/icons.svg
+  const assetsDir = resolve(outDir, "assets");
+  const publicDir = resolve("public");
+  const iconFolders = await readdir(assetsDir);
+
+  let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">\n';
+
+  let progress = 0;
+  for (const folder of iconFolders) {
+    const svgDir = resolve(assetsDir, folder, "SVG");
+
+    try {
+      const svgFiles = await readdir(svgDir);
+      const regularFile = svgFiles.find((file) => file.endsWith("_24_regular.svg"));
+
+      if (regularFile) {
+        const match = regularFile.match(/ic_fluent_(.+)_24_regular\.svg/);
+        if (match) {
+          const iconCodeName = match[1].replace(/_/g, "-").toLowerCase();
+          const filePath = resolve(svgDir, regularFile);
+          let content = await readFile(filePath, "utf-8");
+
+          // Extract the path data from the SVG
+          const pathMatch = content.match(/<svg[^>]*>([\s\S]*)<\/svg>/);
+          if (pathMatch) {
+            combinedSvg += `  <symbol id="${iconCodeName}" viewBox="0 0 24 24">\n`;
+            combinedSvg += `    ${pathMatch[1].trim()}\n`;
+            combinedSvg += `  </symbol>\n`;
+          }
+        }
+      }
+
+      console.log(`Concatenated icon ${++progress}/${iconFolders.length}: ${folder}`);
+    } catch (error) {
+      // SVG directory doesn't exist for this icon
+    }
+  }
+
+  combinedSvg += "</svg>";
+
+  await writeFile(resolve(publicDir, "icons.svg"), combinedSvg, "utf-8");
 }
