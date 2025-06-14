@@ -12,7 +12,9 @@ const loadedIcons = new WeakSet<Element>();
 
 // State for pagination
 let currentResults: SearchResult[] = [];
-let displayLimit = 50;
+const DISPLAY_INITIAL_LIMIT = 50; // Initial number of icons to display
+const DISPLAY_INCREMENT = 50;
+let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
 
 // Set up Intersection Observer
 const iconObserver = new IntersectionObserver(
@@ -69,8 +71,8 @@ function renderResults(results: SearchResult[], limit: number) {
         ? html`
             <button
               @click=${() => {
-                displayLimit += 50;
-                renderResults(results, displayLimit);
+                currentDisplayLimit += DISPLAY_INCREMENT;
+                renderResults(results, currentDisplayLimit);
               }}
               style="margin: 20px auto; display: block; padding: 10px 20px; cursor: pointer;"
             >
@@ -96,7 +98,7 @@ const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement
 fromEvent(searchInput, "input")
   .pipe(
     switchMap(async () => {
-      if (!searchInput.value) return;
+      if (!searchInput.value) return [];
       const channel = new MessageChannel();
       worker.postMessage(
         {
@@ -121,9 +123,9 @@ fromEvent(searchInput, "input")
       if (results) {
         console.log("Search results:", results);
         // Reset limit on new query
-        displayLimit = 50;
+        currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
         currentResults = results;
-        renderResults(currentResults, displayLimit);
+        renderResults(currentResults, currentDisplayLimit);
       }
     })
   )
