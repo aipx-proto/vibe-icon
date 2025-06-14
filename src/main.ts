@@ -72,7 +72,6 @@ function renderDetails(icon: SearchResult) {
               </div>
             `
           : null}
-
         ${icon.options.map(
           (option) => html`
             <div class="style-section">
@@ -85,7 +84,7 @@ function renderDetails(icon: SearchResult) {
               <div class="code-snippet">
                 <h4>${option.style}</h4>
                 <pre><code>&lt;svg width="24" height="24"&gt;
-  &lt;use href="/${icon.filename}#${option.style}" /&gt;
+  &lt;use href="${location.origin}/${icon.filename}#${option.style}" /&gt;
 &lt;/svg&gt;</code></pre>
               </div>
             </div>
