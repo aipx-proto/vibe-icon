@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import type { IconIndex, InMemoryIcon } from "../typings/icon-index";
+import type { IconIndex, InMemoryIcon, SearchResult } from "../typings/icon-index";
 
 const indexAsync = decompressIndex();
 
@@ -19,7 +19,7 @@ self.onmessage = async (event: MessageEvent) => {
 async function searchIcons(query: string) {
   const index = await indexAsync;
   const lowerquery = query.toLowerCase();
-  const results = index.icons
+  const results: SearchResult[] = index.icons
     .filter((icon) => {
       return icon.lowerName.includes(lowerquery) || icon.metaphors.some((metaphor) => metaphor.includes(lowerquery));
     })
@@ -68,7 +68,7 @@ function getMatchScore(icon: InMemoryIcon, query: string): number {
 }
 
 async function decompressIndex() {
-  const iconsIndex = await fetch("/index.min.json").then((response) => response.json() as Promise<IconIndex>);
+  const iconsIndex = await fetch("/index.json").then((response) => response.json() as Promise<IconIndex>);
 
   const commit = iconsIndex.commit;
   const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options]]) => {

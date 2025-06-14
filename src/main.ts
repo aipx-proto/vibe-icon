@@ -1,7 +1,11 @@
+import { html, render } from "lit-html";
+import { repeat } from "lit-html/directives/repeat.js";
 import { fromEvent, switchMap, tap } from "rxjs";
+import type { SearchResult } from "../typings/icon-index";
 import SearchWorker from "./worker?worker";
 
 const worker = new SearchWorker();
+const resultsContainer = document.querySelector("#results") as HTMLElement;
 
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
 fromEvent(searchInput, "input")
@@ -17,7 +21,7 @@ fromEvent(searchInput, "input")
       );
 
       channel.port1.start();
-      return new Promise((resolve) => {
+      return new Promise<SearchResult[]>((resolve) => {
         channel.port1.addEventListener(
           "message",
           (event) => {
@@ -31,6 +35,19 @@ fromEvent(searchInput, "input")
     tap((results) => {
       if (results) {
         console.log("Search results:", results);
+        render(
+          repeat(
+            results.slice(0, 24),
+            (icon) => icon.name,
+            (icon) => html`
+              <div class="icon">
+                <img src="/${icon.name.toLocaleLowerCase().replace(/ /g, "-")}/${icon.options.at(-1)?.replaceAll("_", "/")}.svg" alt="${icon.name}" />
+                <span>${icon.name}</span>
+              </div>
+            `
+          ),
+          resultsContainer
+        );
       }
     })
   )

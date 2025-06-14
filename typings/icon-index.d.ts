@@ -19,3 +19,7 @@ export interface InMemoryIcon {
   metaphors: string[];
   options: string[];
 }
+
+export interface SearchResult extends InMemoryIcon {
+  score: number;
+}
