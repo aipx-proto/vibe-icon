@@ -18,7 +18,8 @@ async function main() {
   const commitId = await fetchRepoAssets();
   const iconIndex = await buildIconIndex(commitId);
   await compileIconSvgs(iconIndex);
-  await writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex));
+  await writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2));
+  await writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex));
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -83,13 +84,30 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
         const svgDir = resolve(folderPath, "SVG");
         const svgFiles = await readdir(svgDir);
 
+        const sizes = svgFiles
+          .filter((file) => file.endsWith(".svg"))
+          .map((file) => {
+            const match = file.match(filenamePattern);
+            return match ? parseInt(match[2]) : null;
+          })
+          .filter((size): size is number => size !== null);
+
+        // Determine target size once: prefer 24, otherwise largest
+        const uniqueSizes = [...new Set(sizes)];
+        const targetSize = uniqueSizes.includes(24) ? 24 : Math.max(...uniqueSizes);
+
         svgFiles
           .filter((file) => file.endsWith(".svg"))
           .forEach((file) => {
             const match = file.match(filenamePattern);
             if (match) {
               const [_, __, size, style] = match;
-              options.push({ size: parseInt(size), style });
+              const sizeNum = parseInt(size);
+
+              // Only include options for the target size
+              if (sizeNum === targetSize) {
+                options.push({ size: sizeNum, style });
+              }
             }
           });
 
