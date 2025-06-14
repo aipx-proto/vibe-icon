@@ -215,6 +215,11 @@ async function moveAssetsToPublic() {
 
   await lastValueFrom(processFiles$);
 
+  // copy index.min.json from outDir to the public directory
+  const indexMinPath = resolve(outDir, "index.min.json");
+  const indexMinContent = await readFile(indexMinPath, "utf-8");
+  await writeFile(resolve(publicDir, "index.json"), indexMinContent, "utf-8");
+
   // remove the assets directory
   await rm(resolve(outDir), { recursive: true, force: true });
 }
