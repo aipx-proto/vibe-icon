@@ -10,6 +10,10 @@ const resultsContainer = document.querySelector("#results") as HTMLElement;
 // Track loaded icons to avoid re-observing
 const loadedIcons = new WeakSet<Element>();
 
+// State for pagination
+let currentResults: SearchResult[] = [];
+let displayLimit = 50;
+
 // Set up Intersection Observer
 const iconObserver = new IntersectionObserver(
   (entries) => {
@@ -42,31 +46,51 @@ const iconObserver = new IntersectionObserver(
   }
 );
 
-// Set up MutationObserver to watch for new icons
-const mutationObserver = new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    mutation.addedNodes.forEach((node) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        const element = node as Element;
-        if (element.classList.contains("icon") && !loadedIcons.has(element)) {
-          iconObserver.observe(element);
-        }
-        // Also check for icon children if a container was added
-        element.querySelectorAll(".icon").forEach((icon) => {
-          if (!loadedIcons.has(icon)) {
-            iconObserver.observe(icon);
-          }
-        });
+// Function to render results with show more button
+function renderResults(results: SearchResult[], limit: number) {
+  const visibleResults = results.slice(0, limit);
+  const hasMore = results.length > limit;
+
+  render(
+    html`
+      ${repeat(
+        visibleResults,
+        (icon) => icon.name,
+        (icon) => html`
+          <div class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
+            <div class="svg-container" style="height: 24px; display: flex; gap: 8px">
+              <!-- SVG will be loaded when visible -->
+            </div>
+            <span>${icon.name}</span>
+          </div>
+        `
+      )}
+      ${hasMore
+        ? html`
+            <button
+              @click=${() => {
+                displayLimit += 50;
+                renderResults(results, displayLimit);
+              }}
+              style="margin: 20px auto; display: block; padding: 10px 20px; cursor: pointer;"
+            >
+              Show more (${results.length - limit} remaining)
+            </button>
+          `
+        : null}
+    `,
+    resultsContainer
+  );
+
+  // Observe new icons after render
+  requestAnimationFrame(() => {
+    resultsContainer.querySelectorAll(".icon").forEach((icon) => {
+      if (!loadedIcons.has(icon)) {
+        iconObserver.observe(icon);
       }
     });
   });
-});
-
-// Start observing the results container
-mutationObserver.observe(resultsContainer, {
-  childList: true,
-  subtree: true,
-});
+}
 
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
 fromEvent(searchInput, "input")
@@ -96,22 +120,10 @@ fromEvent(searchInput, "input")
     tap((results) => {
       if (results) {
         console.log("Search results:", results);
-
-        render(
-          repeat(
-            results.slice(0, 100), // sensible limit
-            (icon) => icon.name,
-            (icon) => html`
-              <div class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
-                <div class="svg-container" style="height: 24px; display: flex; gap: 8px">
-                  <!-- SVG will be loaded when visible -->
-                </div>
-                <span>${icon.name}</span>
-              </div>
-            `
-          ),
-          resultsContainer
-        );
+        // Reset limit on new query
+        displayLimit = 50;
+        currentResults = results;
+        renderResults(currentResults, displayLimit);
       }
     })
   )
