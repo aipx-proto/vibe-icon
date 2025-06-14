@@ -63,7 +63,7 @@ function renderResults(results: SearchResult[], limit: number) {
           visibleResults,
           (icon) => icon.name,
           (icon) => html`
-            <div class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
+            <button class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
               <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
                 <!-- SVG will be loaded when visible -->
               </div>
@@ -71,7 +71,7 @@ function renderResults(results: SearchResult[], limit: number) {
               <div hidden>
                 <div><span>${icon.metaphorHtmls.map(unsafeHTML)}</span></div>
               </div>
-            </div>
+            </button>
           `
         )}
       </div>

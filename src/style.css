@@ -3,7 +3,25 @@ html {
 }
 
 body {
-  padding: 16px;
+}
+
+.app-layout {
+  height: 100vh;
+  display: grid;
+  grid-template:
+    "header header" auto
+    "main aside" 1fr
+    / 1fr auto;
+
+  .app-header {
+    grid-area: header;
+  }
+  .app-main {
+    grid-area: main;
+  }
+  .app-aside {
+    grid-area: aside;
+  }
 }
 
 .icon {
@@ -12,9 +30,11 @@ body {
   place-items: center;
   border: 1px solid #444;
   border-radius: 8px;
-  gap: 8px;
+  gap: 16px;
   padding: 16px;
   background: #222;
+  color: #ddd;
+  font-weight: normal;
 }
 
 .icon-grid {

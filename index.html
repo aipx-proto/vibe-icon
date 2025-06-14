@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="https://esm.sh/gh/aipx-proto/mirai-css/styles/mirai.build.css?raw" />
     <title>Vibe Icon</title>
   </head>
-  <body>
-    <input type="search" id="search" name="query" />
-    <div id="results"></div>
+  <body class="app-layout">
+    <header class="app-header">
+      <input type="search" id="search" name="query" />
+    </header>
+    <main id="results" class="app-main">Search results will appear as you type</main>
+    <aside id="details" class="app-aside">Select an icon to see details</aside>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
