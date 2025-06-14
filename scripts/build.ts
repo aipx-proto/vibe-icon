@@ -2,7 +2,9 @@ import { exec } from "child_process";
 import { mkdirSync } from "fs";
 import { readFile, readdir, rm, writeFile } from "fs/promises";
 import { resolve } from "path";
+import { from, lastValueFrom, mergeMap, toArray } from "rxjs";
 import { promisify } from "util";
+import type { IconIndex } from "../typings/icon-index";
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
 
@@ -22,9 +24,9 @@ async function main() {
   await writeFile(resolve(outDir, "index.json"), JSON.stringify(index, null, 2), "utf-8");
 
   const lightIndex = await getLightIndex(icons, commitId);
-  await writeFile(resolve(outDir, "light-index.json"), JSON.stringify(lightIndex, null, 2));
+  await writeFile(resolve(outDir, "index.min.json"), JSON.stringify(lightIndex));
 
-  await copyAssetsToPublic();
+  await moveAssetsToPublic();
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -39,7 +41,9 @@ async function fetchRepoAssets(): Promise<string> {
   await mkdirSync(outDir, { recursive: true });
 
   // Clone the repository with sparse checkout to get only the assets folder
+  console.log("Fetching repository assets...");
   await execAsync(`git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`);
+  console.log("Filtering repository assets...");
   await execAsync(`cd ${outDir} && git sparse-checkout set --no-cone`);
   await execAsync(`cd ${outDir} && git sparse-checkout set 'assets/**/*.svg' 'assets/**/*.json'`);
 
@@ -66,69 +70,151 @@ interface IndexIcon {
   files: string[];
 }
 
-interface LightIndex {
-  commit: string;
-  icons: LightIndexIcon[];
-}
-
 async function buildIndex(): Promise<IndexIcon[]> {
   const assetsDir = resolve(outDir, "assets");
   const assetFolders = await readdir(assetsDir);
 
   const icons: IndexIcon[] = [];
 
-  for (const folder of assetFolders) {
-    const folderPath = resolve(assetsDir, folder);
-    const icon: IndexIcon = {
-      name: folder,
-      metaphor: [],
-      files: [],
-    };
+  let progress = 0;
 
-    // Try to read metadata.json
-    try {
-      const metadataPath = resolve(folderPath, "metadata.json");
-      const metadataContent = await readFile(metadataPath, "utf-8");
-      const metadata = JSON.parse(metadataContent);
+  const icons$ = from(assetFolders).pipe(
+    mergeMap(async (folder) => {
+      const folderPath = resolve(assetsDir, folder);
+      const icon: IndexIcon = {
+        name: folder,
+        metaphor: [],
+        files: [],
+      };
 
-      icon.name = metadata.name;
-      icon.metaphor = metadata.metaphor || [];
-    } catch (error) {
-      // metadata.json doesn't exist or is invalid
-    }
+      // Try to read metadata.json
+      try {
+        const metadataPath = resolve(folderPath, "metadata.json");
+        const metadataContent = await readFile(metadataPath, "utf-8");
+        const metadata = JSON.parse(metadataContent);
 
-    // Collect SVG files
-    try {
-      const svgDir = resolve(folderPath, "SVG");
-      const svgFiles = await readdir(svgDir);
-      icon.files = svgFiles.filter((file) => file.endsWith(".svg"));
-    } catch (error) {
-      // SVG directory doesn't exist
-    }
+        icon.name = metadata.name;
+        icon.metaphor = metadata.metaphor || [];
+      } catch (error) {
+        // metadata.json doesn't exist or is invalid
+      }
 
-    // Write icon.json to the asset folder
-    const iconJsonPath = resolve(folderPath, "icon.json");
-    await writeFile(iconJsonPath, JSON.stringify(icon, null, 2), "utf-8");
+      // Collect SVG files
+      try {
+        const svgDir = resolve(folderPath, "SVG");
+        const svgFiles = await readdir(svgDir);
+        icon.files = svgFiles.filter((file) => file.endsWith(".svg"));
 
-    icons.push(icon);
-  }
+        // concurrently replace the `fill="#212121"` with `fill="currentColor"` in each SVG file
+        await Promise.all(
+          icon.files.map(async (file) => {
+            const filePath = resolve(svgDir, file);
+            let content = await readFile(filePath, "utf-8");
+            content = content.replace(/fill="#212121"/g, 'fill="currentColor"');
+            await writeFile(filePath, content, "utf-8");
+          })
+        );
+        console.log(`Processed icon ${++progress}/${assetFolders.length}: ${icon.name}`);
+      } catch (error) {
+        throw new Error(`Failed to read SVG files for icon ${icon.name}: ${error}`);
+        // SVG directory doesn't exist
+      }
+
+      // Write icon.json to the asset folder
+      const iconJsonPath = resolve(folderPath, "icon.json");
+      await writeFile(iconJsonPath, JSON.stringify(icon, null, 2), "utf-8");
+
+      return icon;
+    }, 8),
+    toArray()
+  );
+
+  icons.push(...(await lastValueFrom(icons$)));
 
   return icons;
 }
 
-type LightIndexIcon = [name: string, ...metaphor: string[]]; // [name, ...metaphor]
+async function getLightIndex(indexIcons: IndexIcon[], commitId: string): Promise<IconIndex> {
+  // filename pattern is /.+_(\d+)_(filled|regular).svg/
+  // parse into capture into weight and style
 
-async function getLightIndex(indexIcons: IndexIcon[], commitId: string): Promise<LightIndex> {
+  const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
+
   return {
     commit: commitId,
-    icons: indexIcons.map((icon) => [icon.name, ...icon.metaphor]),
+    icons: Object.fromEntries(
+      indexIcons.map((icon) => [
+        icon.name,
+        [
+          icon.metaphor,
+          icon.files
+            .map((file) => {
+              const match = file.match(filenamePattern);
+              if (match) {
+                const [_, __, size, style] = match;
+                return `${size}_${style}`;
+              } else {
+                return null;
+              }
+            })
+            .filter((option) => option !== null),
+        ] as const,
+      ])
+    ),
   };
 }
 
-async function copyAssetsToPublic() {
-  // Copy the assets to the public directory
-  const publicDir = resolve("public", "assets");
-  await rm(publicDir, { recursive: true, force: true });
-  await execAsync(`cp -r ${resolve(outDir, "assets")} ${publicDir}`);
-  console.log("Assets copied to public directory.");
+async function moveAssetsToPublic() {
+  // Move assets from outDir to public. Concurrently process each icon folder. Use glob
+  // Input path: /dist-icons/assets/<icon_display_name>/SVG/ic_fluent_<icon_code_name>_<weight(digits)>_<style>.svg
+  // Output path: /public/<icon-code-name>/<weight>/<style>.svg
+
+  const assetsDir = resolve(outDir, "assets");
+  const publicDir = resolve("public");
+  const iconFolders = await readdir(assetsDir);
+
+  // Create empty public directory if it doesn't exist
+  try {
+    await rm(publicDir, { recursive: true });
+  } catch {}
+  mkdirSync(publicDir, { recursive: true });
+
+  let progress = 0;
+  const processFiles$ = from(iconFolders).pipe(
+    mergeMap(async (folder) => {
+      const svgDir = resolve(assetsDir, folder, "SVG");
+
+      try {
+        const svgFiles = await readdir(svgDir);
+
+        await Promise.all(
+          svgFiles
+            .filter((file) => file.endsWith(".svg"))
+            .map(async (file) => {
+              const match = file.match(/ic_fluent_(.+)_(\d+)_(filled|regular)\.svg/);
+              if (match) {
+                const [_, iconCodeName, weight, style] = match;
+                const iconName = iconCodeName.replace(/_/g, "-").toLowerCase(); // Convert to kebab-case
+                const targetDir = resolve(publicDir, iconName, weight);
+                const targetFile = resolve(targetDir, `${style}.svg`);
+
+                await mkdirSync(targetDir, { recursive: true });
+                const sourceFile = resolve(svgDir, file);
+                const content = await readFile(sourceFile, "utf-8");
+                await writeFile(targetFile, content, "utf-8");
+              }
+            })
+        );
+        console.log(`Transform folder structure ${++progress}/${iconFolders.length}`);
+      } catch (error) {
+        // SVG directory doesn't exist for this icon
+        throw new Error(`Failed to process folder ${folder}: ${error}`);
+      }
+    }, 8)
+  );
+
+  await lastValueFrom(processFiles$);
+
+  // remove the assets directory
+  await rm(resolve(outDir), { recursive: true, force: true });
 }

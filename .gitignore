@@ -1,4 +1,7 @@
 node_modules
 dist
 dist-icons
-public/assets
+public/**/*
+
+# negate
+!public/.gitkeep
