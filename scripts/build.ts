@@ -134,19 +134,6 @@ async function buildIndex(): Promise<IndexIcon[]> {
   return icons;
 }
 
-function transformSVG(code: string): string {
-  // Replace fill="#212121" with fill="currentColor"
-  /**
-   * Convert the SVG to be a symbol, e.g.
-   * From:
-   * <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#212121">
-   * To:
-   * <symbol id="icon-name" viewBox="0 0 24 24" fill="currentColor">
-   */
-
-  return code;
-}
-
 async function getLightIndex(indexIcons: IndexIcon[], commitId: string): Promise<IconIndex> {
   // filename pattern is /.+_(\d+)_(filled|regular).svg/
   // parse into capture into weight and style
