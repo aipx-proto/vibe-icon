@@ -74,6 +74,7 @@ async function decompressIndex() {
   const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options]]) => {
     return {
       name,
+      filename: name.replace(/ /g, "-").toLowerCase() + ".svg",
       lowerName: name.toLowerCase(),
       metaphors,
       options,

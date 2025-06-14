@@ -111,6 +111,12 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
             }
           });
 
+        // sort the styles, regular first, then filled
+        options.sort((a, b) => {
+          if (a.style === "regular" && b.style === "filled") return -1;
+          return 0;
+        });
+
         console.log(`Processed icon ${++progress}/${assetFolders.length}: ${displayName}`);
       } catch (error) {
         throw new Error(`Failed to read SVG files for icon ${displayName}: ${error}`);
@@ -118,7 +124,7 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
 
       return { name: displayName, data: [metaphor, options] as [string[], IconOption[]] };
     }, 8),
-    filter((icon) => icon !== null), // Filter out null results
+    filter((icon) => icon !== null && icon.data[1].length > 0), // Filter out null results
     toArray()
   );
 
@@ -126,7 +132,7 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
 
   return {
     commit: commitId,
-    icons: Object.fromEntries(iconEntries.map(({ name, data }) => [name, data])),
+    icons: Object.fromEntries(iconEntries.filter((entry) => entry !== null).map(({ name, data }) => [name, data])),
   };
 }
 
@@ -186,8 +192,11 @@ async function compileIconSvgs(iconIndex: IconIndex) {
           // Extract the inner content of the SVG
           const pathMatch = content.match(/<svg[^>]*>([\s\S]*)<\/svg>/);
           if (pathMatch) {
+            // replace fill="#\d+" with fill="currentColor"
+            const webSvg = pathMatch[1].replaceAll(/fill="#\d+"/g, 'fill="currentColor"').trim();
+
             combinedSvg += `  <symbol id="${style}" viewBox="0 0 ${targetSize} ${targetSize}">\n`;
-            combinedSvg += `    ${pathMatch[1].trim()}\n`;
+            combinedSvg += `    ${webSvg}\n`;
             combinedSvg += `  </symbol>\n`;
           }
         } catch (error) {

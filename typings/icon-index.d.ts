@@ -21,6 +21,7 @@ export interface InMemoryIndex {
 export interface InMemoryIcon {
   name: string;
   lowerName: string;
+  filename: string;
   metaphors: string[];
   options: IconOption[];
 }
