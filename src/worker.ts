@@ -34,9 +34,11 @@ async function searchIcons(query: string) {
 
 function getMatchScore(icon: InMemoryIcon, query: string): number {
   // Name full match: 100
-  // Name word prefix match: 10 per match
+  // Name prefix match: 50 * coverage percentage
+  // Name word prefix match: 10 per match * coverage percentage
   // Metaphor full match: 25
-  // Metaphor prefix match: 5
+  // Metaphor prefix match: 5 * coverage percentage
+  // Coverage bonus: up to 20 points based on query/target length ratio
   const lowerQuery = query.toLowerCase();
   let score = 0;
 
@@ -45,22 +47,36 @@ function getMatchScore(icon: InMemoryIcon, query: string): number {
     return 100;
   }
 
-  // Name word prefix match: 10 per match
+  // Calculate coverage percentage for the name
+  const nameCoverage = lowerQuery.length / icon.lowerName.length;
+
+  // Name prefix match: 50 * coverage percentage
+  if (icon.lowerName.startsWith(lowerQuery)) {
+    score += 80 * nameCoverage;
+  }
+
+  // Name word prefix match: 10 per match * coverage
   const nameWords = icon.lowerName.split(/[-_\s]+/);
   for (const word of nameWords) {
     if (word.startsWith(lowerQuery)) {
-      score += 10;
+      const wordCoverage = lowerQuery.length / word.length;
+      score += 10 * wordCoverage;
     }
   }
 
-  // Metaphor full match: 20
+  // Metaphor scoring with coverage
   for (const metaphor of icon.metaphors) {
     const lowerMetaphor = metaphor.toLowerCase();
+    const metaphorCoverage = lowerQuery.length / lowerMetaphor.length;
+
     if (lowerMetaphor === lowerQuery) {
-      score += 20;
+      score += 25;
+    } else if (lowerMetaphor.includes(lowerQuery)) {
+      // Contains match with coverage bonus
+      score += 15 * metaphorCoverage;
     } else if (lowerMetaphor.startsWith(lowerQuery)) {
-      // Metaphor prefix match: 5
-      score += 5;
+      // Prefix match with coverage bonus
+      score += 5 * metaphorCoverage;
     }
   }
 
