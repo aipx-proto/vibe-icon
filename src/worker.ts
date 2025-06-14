@@ -1,5 +1,4 @@
 /// <reference lib="webworker" />
-import iconsIndex from "../dist-icons/light-index.json";
 
 const indexAsync = decompressIndex();
 
@@ -27,6 +26,8 @@ async function searchIcons(query: string) {
 }
 
 async function decompressIndex() {
+  const iconsIndex = await import("../dist-icons/light-index.json");
+
   return iconsIndex.icons.map((icon) => {
     const name = icon[0];
     const metaphors = icon.slice(1) as string[];
