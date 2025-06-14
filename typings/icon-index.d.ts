@@ -28,4 +28,6 @@ export interface InMemoryIcon {
 
 export interface SearchResult extends InMemoryIcon {
   score: number;
+  nameHtml: string;
+  metaphorHtmls: string[];
 }

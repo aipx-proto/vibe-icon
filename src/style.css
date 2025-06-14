@@ -1,0 +1,39 @@
+html {
+  background-color: #111;
+}
+
+body {
+  padding: 16px;
+}
+
+.icon {
+  display: grid;
+  grid-template-rows: auto auto;
+  place-items: center;
+  border: 1px solid #444;
+  border-radius: 8px;
+  gap: 8px;
+  padding: 16px;
+  background: #222;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.icon-name {
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  text-align: center;
+}
+
+mark {
+  color: black;
+  font-weight: bold;
+  background-color: #fff;
+}

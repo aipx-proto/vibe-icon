@@ -1,7 +1,9 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
-import { fromEvent, switchMap, tap } from "rxjs";
+import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
+import { debounceTime, fromEvent, switchMap, tap } from "rxjs";
 import type { SearchResult } from "../typings/icon-index";
+import "./style.css";
 import SearchWorker from "./worker?worker";
 
 const worker = new SearchWorker();
@@ -28,8 +30,9 @@ const iconObserver = new IntersectionObserver(
 
         if (filename && styles.length > 0 && svgContainer && !svgContainer.dataset.loaded) {
           svgContainer.innerHTML = styles
+            .slice(0, 1)
             .map((style) => {
-              return `<svg width="24" height="24">
+              return `<svg width="48" height="48">
               <use href="/${filename}#${style}" />
             </svg>`;
             })
@@ -55,18 +58,23 @@ function renderResults(results: SearchResult[], limit: number) {
 
   render(
     html`
-      ${repeat(
-        visibleResults,
-        (icon) => icon.name,
-        (icon) => html`
-          <div class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
-            <div class="svg-container" style="height: 24px; display: flex; gap: 8px">
-              <!-- SVG will be loaded when visible -->
+      <div class="icon-grid">
+        ${repeat(
+          visibleResults,
+          (icon) => icon.name,
+          (icon) => html`
+            <div class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
+              <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
+                <!-- SVG will be loaded when visible -->
+              </div>
+              <div class="icon-name" title="${icon.name}">${unsafeHTML(icon.nameHtml)}</div>
+              <div hidden>
+                <div><span>${icon.metaphorHtmls.map(unsafeHTML)}</span></div>
+              </div>
             </div>
-            <span>${icon.name}</span>
-          </div>
-        `
-      )}
+          `
+        )}
+      </div>
       ${hasMore
         ? html`
             <button
@@ -97,6 +105,7 @@ function renderResults(results: SearchResult[], limit: number) {
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
 fromEvent(searchInput, "input")
   .pipe(
+    debounceTime(50),
     switchMap(async () => {
       if (!searchInput.value) return [];
       const channel = new MessageChannel();

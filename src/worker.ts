@@ -25,11 +25,37 @@ async function searchIcons(query: string) {
     })
     .map((icon) => ({
       ...icon,
+      ...getHighlight(icon, query),
       score: getMatchScore(icon, lowerquery),
     }))
     .sort((a, b) => b.score - a.score);
 
   return results;
+}
+
+function getHighlight(icon: InMemoryIcon, query: string): { nameHtml: string; metaphorHtmls: string[] } {
+  const lowerQuery = query.toLowerCase();
+
+  // Highlight name
+  const nameIndex = icon.lowerName.indexOf(lowerQuery);
+  let nameHtml = icon.name;
+  if (nameIndex === 0) {
+    // Prefix match
+    nameHtml = `<mark>${icon.name.substring(0, query.length)}</mark>${icon.name.substring(query.length)}`;
+  }
+
+  // Highlight metaphors
+  const metaphorHtmls = icon.metaphors.map((metaphor) => {
+    const lowerMetaphor = metaphor.toLowerCase();
+    const metaphorIndex = lowerMetaphor.indexOf(lowerQuery);
+    if (metaphorIndex === 0) {
+      // Prefix match
+      return `<mark>${metaphor.substring(0, query.length)}</mark>${metaphor.substring(query.length)}`;
+    }
+    return metaphor;
+  });
+
+  return { nameHtml, metaphorHtmls };
 }
 
 function getMatchScore(icon: InMemoryIcon, query: string): number {
