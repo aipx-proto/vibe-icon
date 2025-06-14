@@ -19,9 +19,6 @@ const DISPLAY_INITIAL_LIMIT = 50; // Initial number of icons to display
 const DISPLAY_INCREMENT = 50;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
 
-// State for selected icon
-let selectedIcon: SearchResult | null = null;
-
 // Set up Intersection Observer
 const iconObserver = new IntersectionObserver(
   (entries) => {
@@ -57,8 +54,6 @@ const iconObserver = new IntersectionObserver(
 
 // Function to render icon details
 function renderDetails(icon: SearchResult) {
-  selectedIcon = icon;
-
   render(
     html`
       <div class="icon-details">
