@@ -8,6 +8,7 @@ import SearchWorker from "./worker?worker";
 
 const worker = new SearchWorker();
 const resultsContainer = document.querySelector("#results") as HTMLElement;
+const detailsContainer = document.querySelector("#details") as HTMLElement;
 
 // Track loaded icons to avoid re-observing
 const loadedIcons = new WeakSet<Element>();
@@ -17,6 +18,9 @@ let currentResults: SearchResult[] = [];
 const DISPLAY_INITIAL_LIMIT = 50; // Initial number of icons to display
 const DISPLAY_INCREMENT = 50;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
+
+// State for selected icon
+let selectedIcon: SearchResult | null = null;
 
 // Set up Intersection Observer
 const iconObserver = new IntersectionObserver(
@@ -51,6 +55,48 @@ const iconObserver = new IntersectionObserver(
   }
 );
 
+// Function to render icon details
+function renderDetails(icon: SearchResult) {
+  selectedIcon = icon;
+
+  render(
+    html`
+      <div class="icon-details">
+        <h2>${icon.name}</h2>
+
+        ${icon.metaphors.length > 0
+          ? html`
+              <div class="metaphors">
+                <span>Metaphors: </span>
+                <span>${icon.metaphors.join(", ")}</span>
+              </div>
+            `
+          : null}
+
+        ${icon.options.map(
+          (option) => html`
+            <div class="style-section">
+              <div class="icon-preview">
+                <svg width="96" height="96">
+                  <use href="/${icon.filename}#${option.style}" />
+                </svg>
+              </div>
+
+              <div class="code-snippet">
+                <h4>${option.style}</h4>
+                <pre><code>&lt;svg width="24" height="24"&gt;
+  &lt;use href="/${icon.filename}#${option.style}" /&gt;
+&lt;/svg&gt;</code></pre>
+              </div>
+            </div>
+          `
+        )}
+      </div>
+    `,
+    detailsContainer
+  );
+}
+
 // Function to render results with show more button
 function renderResults(results: SearchResult[], limit: number) {
   const visibleResults = results.slice(0, limit);
@@ -63,7 +109,12 @@ function renderResults(results: SearchResult[], limit: number) {
           visibleResults,
           (icon) => icon.name,
           (icon) => html`
-            <button class="icon" data-filename="${icon.filename}" data-style="${icon.options.map((opt) => opt.style).join(",")}">
+            <button
+              class="icon"
+              data-filename="${icon.filename}"
+              data-style="${icon.options.map((opt) => opt.style).join(",")}"
+              @click=${() => renderDetails(icon)}
+            >
               <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
                 <!-- SVG will be loaded when visible -->
               </div>
