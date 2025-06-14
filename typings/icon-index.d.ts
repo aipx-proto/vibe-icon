@@ -1,6 +1,11 @@
 export interface IconIndex {
   commit: string;
-  icons: Record<string, [metaphors: string[], options: string[]]>;
+  icons: Record<string, [metaphors: string[], options: IconOption[]]>;
+}
+
+export interface IconOption {
+  size: number;
+  style: string;
 }
 
 export interface InMemoryIndex {
@@ -17,7 +22,7 @@ export interface InMemoryIcon {
   name: string;
   lowerName: string;
   metaphors: string[];
-  options: string[];
+  options: IconOption[];
 }
 
 export interface SearchResult extends InMemoryIcon {

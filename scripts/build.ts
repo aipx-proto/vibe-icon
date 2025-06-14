@@ -2,9 +2,9 @@ import { exec } from "child_process";
 import { mkdirSync } from "fs";
 import { readFile, readdir, rm, writeFile } from "fs/promises";
 import { resolve } from "path";
-import { from, lastValueFrom, mergeMap, toArray } from "rxjs";
+import { filter, from, lastValueFrom, mergeMap, toArray } from "rxjs";
 import { promisify } from "util";
-import type { IconIndex } from "../typings/icon-index";
+import type { IconIndex, IconOption } from "../typings/icon-index";
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
 
@@ -16,17 +16,9 @@ main();
 
 async function main() {
   const commitId = await fetchRepoAssets();
-  const icons = await buildIndex();
-  const index: Index = {
-    commit: commitId,
-    icons: icons,
-  };
-  await writeFile(resolve(outDir, "index.json"), JSON.stringify(index, null, 2), "utf-8");
-
-  const lightIndex = await getLightIndex(icons, commitId);
-  await writeFile(resolve(outDir, "index.min.json"), JSON.stringify(lightIndex));
-
-  await moveAssetsToPublic();
+  const iconIndex = await buildIconIndex(commitId);
+  await compileIconSvgs(iconIndex);
+  await writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex));
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -59,214 +51,141 @@ async function fetchRepoAssets(): Promise<string> {
   return commitId;
 }
 
-interface Index {
-  commit: string;
-  icons: IndexIcon[];
-}
-
-interface IndexIcon {
-  name: string;
-  metaphor: string[];
-  files: string[];
-}
-
-async function buildIndex(): Promise<IndexIcon[]> {
+async function buildIconIndex(commitId: string): Promise<IconIndex> {
   const assetsDir = resolve(outDir, "assets");
   const assetFolders = await readdir(assetsDir);
-
-  const icons: IndexIcon[] = [];
+  const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
 
   let progress = 0;
 
   const icons$ = from(assetFolders).pipe(
     mergeMap(async (folder) => {
       const folderPath = resolve(assetsDir, folder);
-      const icon: IndexIcon = {
-        name: folder,
-        metaphor: [],
-        files: [],
-      };
+      let displayName = folder;
+      let metaphor: string[] = [];
 
       // Try to read metadata.json
       try {
         const metadataPath = resolve(folderPath, "metadata.json");
         const metadataContent = await readFile(metadataPath, "utf-8");
         const metadata = JSON.parse(metadataContent);
-
-        icon.name = metadata.name;
-        icon.metaphor = metadata.metaphor || [];
-      } catch (error) {
-        // metadata.json doesn't exist or is invalid
+        displayName = metadata.name;
+        metaphor = metadata.metaphor || [];
+      } catch {
+        // metadata.json doesn't exist or is invalid - skip this folder
+        console.log(`Skipping folder ${folder}: no metadata.json found`);
+        return null;
       }
 
-      // Collect SVG files
+      // Collect and parse SVG files
+      const options: IconOption[] = [];
       try {
         const svgDir = resolve(folderPath, "SVG");
         const svgFiles = await readdir(svgDir);
-        icon.files = svgFiles.filter((file) => file.endsWith(".svg"));
 
-        // concurrently replace the `fill="#212121"` with `fill="currentColor"` in each SVG file
-        await Promise.all(
-          icon.files.map(async (file) => {
-            const filePath = resolve(svgDir, file);
-            let content = await readFile(filePath, "utf-8");
-            content = content.replace(/fill="#212121"/g, 'fill="currentColor"');
-            await writeFile(filePath, content, "utf-8");
-          })
-        );
-        console.log(`Processed icon ${++progress}/${assetFolders.length}: ${icon.name}`);
+        svgFiles
+          .filter((file) => file.endsWith(".svg"))
+          .forEach((file) => {
+            const match = file.match(filenamePattern);
+            if (match) {
+              const [_, __, size, style] = match;
+              options.push({ size: parseInt(size), style });
+            }
+          });
+
+        console.log(`Processed icon ${++progress}/${assetFolders.length}: ${displayName}`);
       } catch (error) {
-        throw new Error(`Failed to read SVG files for icon ${icon.name}: ${error}`);
-        // SVG directory doesn't exist
+        throw new Error(`Failed to read SVG files for icon ${displayName}: ${error}`);
       }
 
-      // Write icon.json to the asset folder
-      const iconJsonPath = resolve(folderPath, "icon.json");
-      await writeFile(iconJsonPath, JSON.stringify(icon, null, 2), "utf-8");
-
-      return icon;
+      return { name: displayName, data: [metaphor, options] as [string[], IconOption[]] };
     }, 8),
+    filter((icon) => icon !== null), // Filter out null results
     toArray()
   );
 
-  icons.push(...(await lastValueFrom(icons$)));
-
-  return icons;
-}
-
-async function getLightIndex(indexIcons: IndexIcon[], commitId: string): Promise<IconIndex> {
-  // filename pattern is /.+_(\d+)_(filled|regular).svg/
-  // parse into capture into weight and style
-
-  const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
+  const iconEntries = await lastValueFrom(icons$);
 
   return {
     commit: commitId,
-    icons: Object.fromEntries(
-      indexIcons.map((icon) => [
-        icon.name,
-        [
-          icon.metaphor,
-          icon.files
-            .map((file) => {
-              const match = file.match(filenamePattern);
-              if (match) {
-                const [_, __, size, style] = match;
-                return `${size}_${style}`;
-              } else {
-                return null;
-              }
-            })
-            .filter((option) => option !== null),
-        ] as const,
-      ])
-    ),
+    icons: Object.fromEntries(iconEntries.map(({ name, data }) => [name, data])),
   };
 }
 
-async function moveAssetsToPublic() {
-  // Move assets from outDir to public. Concurrently process each icon folder. Use glob
-  // Input path: /dist-icons/assets/<icon_display_name>/SVG/ic_fluent_<icon_code_name>_<weight(digits)>_<style>.svg
-  // Output path: /public/<icon-code-name>/<weight>/<style>.svg
+async function compileIconSvgs(iconIndex: IconIndex) {
+  // We only select a single most sensible icon size with this order:
+  // First see if 24 is available, if not, select the the largest available size
+  // For each style (filled, regular) under the selected size, we will convert it to a symbol inside a single svg that contains all the styles for this icon
+  // e.g. if the most sensible icon size is 24:
+  // Input:
+  // - /dist-icons/assets/SVG/ic_fluent_add_24_filled.svg
+  // - /dist-icons/assets/SVG/ic_fluent_add_24_regular.svg
+  // Output:
+  // - /public/add.svg#filled
+  // - /public/add.svg#regular
+  // Other icon sizes and styles will be ignored
 
   const assetsDir = resolve(outDir, "assets");
   const publicDir = resolve("public");
-  const iconFolders = await readdir(assetsDir);
 
+  // Ensure public directory exists
   // Create empty public directory if it doesn't exist
   try {
     await rm(publicDir, { recursive: true });
   } catch {}
   mkdirSync(publicDir, { recursive: true });
 
-  await buildCombinedIndex();
-
   let progress = 0;
-  const processFiles$ = from(iconFolders).pipe(
-    mergeMap(async (folder) => {
-      const svgDir = resolve(assetsDir, folder, "SVG");
+  const totalIcons = Object.keys(iconIndex.icons).length;
+  const icons$ = from(Object.entries(iconIndex.icons)).pipe(
+    mergeMap(async ([displayName, [metaphor, options]]) => {
+      // Find the most sensible size (prefer 24, otherwise largest)
+      const sizes = [...new Set(options.map((opt) => opt.size))].sort((a, b) => b - a);
+      const targetSize = sizes.includes(24) ? 24 : sizes[0];
 
-      try {
-        const svgFiles = await readdir(svgDir);
-
-        await Promise.all(
-          svgFiles
-            .filter((file) => file.endsWith(".svg"))
-            .map(async (file) => {
-              const match = file.match(/ic_fluent_(.+)_(\d+)_(filled|regular)\.svg/);
-              if (match) {
-                const [_, iconCodeName, weight, style] = match;
-                const iconName = iconCodeName.replace(/_/g, "-").toLowerCase(); // Convert to kebab-case
-                const targetDir = resolve(publicDir, iconName, weight);
-                const targetFile = resolve(targetDir, `${style}.svg`);
-
-                await mkdirSync(targetDir, { recursive: true });
-                const sourceFile = resolve(svgDir, file);
-                const content = await readFile(sourceFile, "utf-8");
-                await writeFile(targetFile, content, "utf-8");
-              }
-            })
-        );
-        console.log(`Transform folder structure ${++progress}/${iconFolders.length}`);
-      } catch (error) {
-        // SVG directory doesn't exist for this icon
-        throw new Error(`Failed to process folder ${folder}: ${error}`);
+      if (!targetSize) {
+        progress++;
+        console.log(`No valid size found for icon ${displayName}. Skipping...`);
+        return;
       }
-    }, 8)
-  );
 
-  await lastValueFrom(processFiles$);
+      // Get styles available for this size
+      const stylesForSize = options.filter((opt) => opt.size === targetSize).map((opt) => opt.style);
 
-  // copy index.min.json from outDir to the public directory
-  const indexMinPath = resolve(outDir, "index.min.json");
-  const indexMinContent = await readFile(indexMinPath, "utf-8");
-  await writeFile(resolve(publicDir, "index.json"), indexMinContent, "utf-8");
+      // Convert display name to code name format
+      const codeNameUnderscore = displayName.toLowerCase().replace(/\s+/g, "_");
+      const iconName = codeNameUnderscore.replace(/_/g, "-");
 
-  // remove the assets directory
-  await rm(resolve(outDir), { recursive: true, force: true });
-}
+      let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg">\n';
 
-async function buildCombinedIndex() {
-  // concatenate all the /dist-icons/assets/SVG/<icon-code-name>-24-regular.svg files into a single file
-  // and save to /public/icons.svg
-  const assetsDir = resolve(outDir, "assets");
-  const publicDir = resolve("public");
-  const iconFolders = await readdir(assetsDir);
+      for (const style of stylesForSize) {
+        const svgFileName = `ic_fluent_${codeNameUnderscore}_${targetSize}_${style}.svg`;
+        const svgPath = resolve(assetsDir, displayName, "SVG", svgFileName);
 
-  let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">\n';
+        try {
+          let content = await readFile(svgPath, "utf-8");
 
-  let progress = 0;
-  for (const folder of iconFolders) {
-    const svgDir = resolve(assetsDir, folder, "SVG");
-
-    try {
-      const svgFiles = await readdir(svgDir);
-      const regularFile = svgFiles.find((file) => file.endsWith("_24_regular.svg"));
-
-      if (regularFile) {
-        const match = regularFile.match(/ic_fluent_(.+)_24_regular\.svg/);
-        if (match) {
-          const iconCodeName = match[1].replace(/_/g, "-").toLowerCase();
-          const filePath = resolve(svgDir, regularFile);
-          let content = await readFile(filePath, "utf-8");
-
-          // Extract the path data from the SVG
+          // Extract the inner content of the SVG
           const pathMatch = content.match(/<svg[^>]*>([\s\S]*)<\/svg>/);
           if (pathMatch) {
-            combinedSvg += `  <symbol id="${iconCodeName}" viewBox="0 0 24 24">\n`;
+            combinedSvg += `  <symbol id="${style}" viewBox="0 0 ${targetSize} ${targetSize}">\n`;
             combinedSvg += `    ${pathMatch[1].trim()}\n`;
             combinedSvg += `  </symbol>\n`;
           }
+        } catch (error) {
+          console.error(`Failed to read ${svgFileName}: ${error}`);
         }
       }
 
-      console.log(`Concatenated icon ${++progress}/${iconFolders.length}: ${folder}`);
-    } catch (error) {
-      // SVG directory doesn't exist for this icon
-    }
-  }
+      combinedSvg += "</svg>";
 
-  combinedSvg += "</svg>";
+      // Write the combined SVG file
+      const outputPath = resolve(publicDir, `${iconName}.svg`);
+      await writeFile(outputPath, combinedSvg, "utf-8");
 
-  await writeFile(resolve(publicDir, "icons.svg"), combinedSvg, "utf-8");
+      console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
+    }, 8)
+  );
+
+  await lastValueFrom(icons$);
 }

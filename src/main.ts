@@ -41,7 +41,6 @@ fromEvent(searchInput, "input")
             (icon) => icon.name,
             (icon) => html`
               <div class="icon">
-                <img src="/${icon.name.toLocaleLowerCase().replace(/ /g, "-")}/${icon.options.at(-1)?.replaceAll("_", "/")}.svg" alt="${icon.name}" />
                 <span>${icon.name}</span>
               </div>
             `
