@@ -78,6 +78,15 @@ function renderDetails(icon: SearchResult) {
 
               <div class="code-snippet">
                 <h4>${option.style}</h4>
+                <p style="margin: 10px 0 5px 0; font-weight: 500;">1. Add to index.html:</p>
+                <pre><code>&lt;!-- Add this symbol definition in your HTML --&gt;
+&lt;svg style="display: none;"&gt;
+  &lt;symbol id="${icon.filename.split(".svg")[0]}-${option.style}"&gt;
+    &lt;!-- Icon content from ${icon.filename}#${option.style} --&gt;
+  &lt;/symbol&gt;
+&lt;/svg&gt;</code></pre>
+                
+                <p style="margin: 15px 0 5px 0; font-weight: 500;">2. Use the icon:</p>
                 <pre><code>&lt;svg width="24" height="24"&gt;
   &lt;use href="#${icon.filename.split(".svg")[0]}-${option.style}" /&gt;
 &lt;/svg&gt;</code></pre>
