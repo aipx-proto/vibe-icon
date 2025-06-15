@@ -94,9 +94,6 @@ function renderDetails(icon: SearchResult) {
                   `.trim()}
                 ></code-snippet>
                 <p style="margin: 15px 0 5px 0; font-weight: 500;">2. Use the icon:</p>
-                <pre><code>&lt;svg width="24" height="24"&gt;
-  &lt;use href="#${icon.filename.split(".svg")[0]}-${option.style}" /&gt;
-&lt;/svg&gt;</code></pre>
                 <code-snippet
                   .lang=${"html"}
                   .code=${`
