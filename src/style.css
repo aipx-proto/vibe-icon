@@ -51,23 +51,25 @@ html {
   transition: none;
 
   &[data-selected="true"] {
-    border-color: #0090d3;
-  }
-}
-
-.icon:hover {
-  &:not([data-selected="true"]) {
-    color: #fff;
-    border-color: #666;
+    color: white;
+    outline: 2px solid #999;
+    outline-offset: -2px;
   }
 
-  /* On hover, show second SVG and hide first when there are multiple SVGs */
-  .svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(1) {
-    opacity: 0;
-  }
+  &:focus,
+  &:hover {
+    background-color: #111;
+    outline: 2px solid #0090d3;
+    outline-offset: -2px;
 
-  .svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(2) {
-    opacity: 1;
+    /* On hover, show second SVG and hide first when there are multiple SVGs */
+    .svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(1) {
+      opacity: 0;
+    }
+
+    .svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(2) {
+      opacity: 1;
+    }
   }
 }
 
