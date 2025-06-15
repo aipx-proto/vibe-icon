@@ -60,6 +60,8 @@ function getHighlight(icon: InMemoryIcon, query: string): { nameHtml: string; me
 }
 
 function getMatchScore(icon: InMemoryIcon, query: string): number {
+  if (!query) return 0;
+
   // Name full match: 100
   // Name prefix match: 50 * coverage percentage
   // Name word prefix match: 10 per match * coverage percentage
