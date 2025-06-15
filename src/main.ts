@@ -31,9 +31,9 @@ const iconObserver = new IntersectionObserver(
 
         if (filename && styles.length > 0 && svgContainer && !svgContainer.dataset.loaded) {
           svgContainer.innerHTML = styles
-            .slice(0, 1)
-            .map((style) => {
-              return `<svg width="48" height="48">
+            .slice(0, 2) // Show up to 2 styles
+            .map((style, index) => {
+              return `<svg width="48" height="48" class="icon-svg" data-style-index="${index}" style="${index === 1 ? 'display: none;' : ''}">
               <use href="${import.meta.env.BASE_URL}/${filename}#${style}" />
             </svg>`;
             })
@@ -85,7 +85,7 @@ function renderDetails(icon: SearchResult) {
     &lt;!-- Icon content from ${icon.filename}#${option.style} --&gt;
   &lt;/symbol&gt;
 &lt;/svg&gt;</code></pre>
-                
+
                 <p style="margin: 15px 0 5px 0; font-weight: 500;">2. Use the icon:</p>
                 <pre><code>&lt;svg width="24" height="24"&gt;
   &lt;use href="#${icon.filename.split(".svg")[0]}-${option.style}" /&gt;
@@ -117,6 +117,22 @@ function renderResults(results: SearchResult[], limit: number) {
               data-filename="${icon.filename}"
               data-style="${icon.options.map((opt) => opt.style).join(",")}"
               @click=${() => renderDetails(icon)}
+              @mouseenter=${(e: MouseEvent) => {
+                const button = e.currentTarget as HTMLElement;
+                const svgs = button.querySelectorAll('.icon-svg');
+                if (svgs.length > 1) {
+                  (svgs[0] as HTMLElement).style.display = 'none';
+                  (svgs[1] as HTMLElement).style.display = 'block';
+                }
+              }}
+              @mouseleave=${(e: MouseEvent) => {
+                const button = e.currentTarget as HTMLElement;
+                const svgs = button.querySelectorAll('.icon-svg');
+                if (svgs.length > 1) {
+                  (svgs[0] as HTMLElement).style.display = 'block';
+                  (svgs[1] as HTMLElement).style.display = 'none';
+                }
+              }}
             >
               <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
                 <!-- SVG will be loaded when visible -->

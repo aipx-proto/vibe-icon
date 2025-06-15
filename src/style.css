@@ -34,8 +34,27 @@ html {
   gap: 16px;
   padding: 16px;
   background: #222;
-  color: #ddd;
+  color: #bbb;
   font-weight: normal;
+  transition: border-color 0.2s ease;
+}
+
+.icon:hover {
+  color: #fff;
+  border-color: #666;
+}
+
+.svg-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.icon-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.2s ease;
 }
 
 .icon-grid {
