@@ -1,7 +1,7 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
 import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
-import { debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
+import { BehaviorSubject, debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
 import type { SearchResult } from "../typings/icon-index";
 import { iconObserver, isIconLoaded } from "./icon-observer";
 import "./style.css";
@@ -21,6 +21,19 @@ const DISPLAY_INITIAL_LIMIT = 50; // Initial number of icons to display
 const DISPLAY_INCREMENT = 50;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
 
+// Create BehaviorSubject for selected icon
+const selectedIcon$ = new BehaviorSubject<SearchResult | null>(null);
+
+// Subscribe to selected icon changes and update details panel
+selectedIcon$.subscribe((icon) => {
+  if (icon) {
+    renderDetails(icon, detailsContainer);
+  } else {
+    // Clear details panel when no icon is selected
+    render(html``, detailsContainer);
+  }
+});
+
 // Function to render results with show more button
 function renderResults(results: SearchResult[], limit: number) {
   const visibleResults = results.slice(0, limit);
@@ -37,7 +50,7 @@ function renderResults(results: SearchResult[], limit: number) {
               class="icon"
               data-filename="${icon.filename}"
               data-style="${icon.options.map((opt) => opt.style).join(",")}"
-              @click=${() => renderDetails(icon, detailsContainer)}
+              @click=${() => selectedIcon$.next(icon)}
             >
               <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
                 <!-- SVG will be loaded when visible -->
@@ -111,6 +124,11 @@ fromEvent(searchInput, "input")
         currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
         currentResults = results;
         renderResults(currentResults, currentDisplayLimit);
+
+        // If no icon is selected and we have results, select the first one
+        if (selectedIcon$.value === null && results.length > 0) {
+          selectedIcon$.next(results[0]);
+        }
       }
     })
   )
