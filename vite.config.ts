@@ -9,6 +9,8 @@ export default defineConfig({
       name: "VibeIcon",
       fileName: "index",
     },
+    copyPublicDir: false,
+    outDir: "dist",
     sourcemap: "inline",
   },
 });

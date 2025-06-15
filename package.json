@@ -7,7 +7,7 @@
     "setup": "rm -rf dist-icons && tsx scripts/build.ts",
     "build": "rm -rf dist && rm -rf dist-site && tsc && npm run build:lib && npm run build:site && npm run build:types",
     "build:site": "vite build --config vite-site.config.ts",
-    "build:lib": "tsc lib/index.ts --outDir dist",
+    "build:lib": "vite build --config vite.config.ts",
     "build:types": "tsc lib/index.ts --declaration --emitDeclarationOnly --outDir dist",
     "preview": "vite preview"
   },
