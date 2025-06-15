@@ -4,4 +4,8 @@ export default defineConfig({
     format: "es",
   },
   base: "",
+  build: {
+    minify: false,
+    sourcemap: true,
+  },
 });

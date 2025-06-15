@@ -110,7 +110,8 @@ function getMatchScore(icon: InMemoryIcon, query: string): number {
 }
 
 async function decompressIndex() {
-  const iconsIndex = (await import("/index.json?url")) as any as IconIndex;
+  const basename = import.meta.env.BASE_URL;
+  const iconsIndex = await fetch(`${basename}index.json`).then((response) => response.json() as Promise<IconIndex>);
 
   const commit = iconsIndex.commit;
   const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options]]) => {
