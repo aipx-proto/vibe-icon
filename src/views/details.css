@@ -1,11 +1,25 @@
-/* Icon details styles */
-.icon-details {
-  padding: 1rem;
+.icon-doc-section {
+  display: grid;
+  gap: 8px;
+  p {
+    font-size: 16px;
+  }
+
+  code-snippet {
+    margin-bottom: 16px;
+  }
 }
 
-.icon-details h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
+.icon-details {
+  display: grid;
+  gap: 16px;
+  h1,
+  h2,
+  h3,
+  h4,
+  p {
+    margin: 0;
+  }
 }
 
 .icon-option {
@@ -13,8 +27,8 @@
   align-items: start;
   gap: 8px;
 
-  h3 {
-    margin: 0;
+  h2 {
+    font-size: 16px;
     text-transform: capitalize;
     grid-column: 1 / -1;
   }
@@ -41,6 +55,7 @@
 }
 
 .icon-option-list {
+  margin-top: 16px;
   display: grid;
   gap: 16px;
   container-type: inline-size;

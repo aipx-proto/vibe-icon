@@ -8,21 +8,22 @@ export function renderDetails(icon: SearchResult, detailsContainer: HTMLElement)
   render(
     html`
       <div class="icon-details">
-        <h2>${icon.name}</h2>
-
-        ${icon.metaphors.length > 0
-          ? html`
-              <div class="metaphors">
-                <span>Metaphors: </span>
-                <span>${icon.metaphors.join(", ")}</span>
-              </div>
-            `
-          : null}
-        <div class="icon-option-list">
+        <header>
+          <h1>${icon.name}</h1>
+          ${icon.metaphors.length > 0
+            ? html`
+                <div class="metaphors">
+                  <span>Metaphors: </span>
+                  <span>${icon.metaphors.join(", ")}</span>
+                </div>
+              `
+            : null}
+        </header>
+        <section class="icon-option-list">
           ${icon.options.map(
             (option) => html`
               <div class="icon-option">
-                <h3>${option.style}</h3>
+                <h2>${option.style}</h2>
                 <div class="icon-preview">
                   <svg width="48" height="48">
                     <use href="${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" />
@@ -42,15 +43,15 @@ export function renderDetails(icon: SearchResult, detailsContainer: HTMLElement)
               </div>
             `
           )}
-        </div>
-        <section>
-          <h3>Install</h3>
-          <p>1. Add library script to HTML</p>
+        </section>
+        <section class="icon-doc-section">
+          <h2>Install</h2>
+          <p>Add library script to index.html</p>
           <code-snippet
             .lang=${"html"}
             .code=${`<script src="https://esm.sh/${packageJson.name}@${packageJson.version}" type="module"></script>`}
           ></code-snippet>
-          <p>2. Add icon to HTML</p>
+          <p>Add icon to HTML</p>
           <code-snippet
             .lang=${"html"}
             .code=${icon.options
@@ -58,9 +59,9 @@ export function renderDetails(icon: SearchResult, detailsContainer: HTMLElement)
               .join("\n")}
           ></code-snippet>
         </section>
-        <section>
-          <h3>Advanced install</h3>
-          <p>1. Add to index.html:</p>
+        <section class="icon-doc-section">
+          <h2>Advanced install</h2>
+          <p>Add SVG symbols to index.html</p>
           <code-snippet
             .lang=${"html"}
             .code=${`
@@ -78,7 +79,7 @@ ${icon.options
 </svg>
             `.trim()}
           ></code-snippet>
-          <p>2. Use the icon:</p>
+          <p>Use SVG symbols in HTML</p>
           <code-snippet
             .lang=${"html"}
             .code=${icon.options
