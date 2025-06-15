@@ -34,7 +34,7 @@ const iconObserver = new IntersectionObserver(
             .slice(0, 1)
             .map((style) => {
               return `<svg width="48" height="48">
-              <use href="/${filename}#${style}" />
+              <use href="${import.meta.env.BASE_URL}/${filename}#${style}" />
             </svg>`;
             })
             .join("");
@@ -72,14 +72,14 @@ function renderDetails(icon: SearchResult) {
             <div class="style-section">
               <div class="icon-preview">
                 <svg width="96" height="96">
-                  <use href="/${icon.filename}#${option.style}" />
+                  <use href="${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" />
                 </svg>
               </div>
 
               <div class="code-snippet">
                 <h4>${option.style}</h4>
                 <pre><code>&lt;svg width="24" height="24"&gt;
-  &lt;use href="${location.origin}/${icon.filename}#${option.style}" /&gt;
+  &lt;use href="${location.origin}${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" /&gt;
 &lt;/svg&gt;</code></pre>
               </div>
             </div>
