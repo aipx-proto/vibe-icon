@@ -79,7 +79,7 @@ function renderDetails(icon: SearchResult) {
               <div class="code-snippet">
                 <h4>${option.style}</h4>
                 <pre><code>&lt;svg width="24" height="24"&gt;
-  &lt;use href="${location.origin}${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" /&gt;
+  &lt;use href="#${icon.filename.split(".svg")[0]}-${option.style}" /&gt;
 &lt;/svg&gt;</code></pre>
               </div>
             </div>
