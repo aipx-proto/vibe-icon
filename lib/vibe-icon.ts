@@ -1,3 +1,5 @@
+import { Subject, Subscription, switchMap } from "rxjs";
+
 export class VibeIcon extends HTMLElement {
   static define() {
     if (!customElements.get("vibe-icon")) {
@@ -7,22 +9,32 @@ export class VibeIcon extends HTMLElement {
 
   static observedAttributes = ["name", "size", "style"];
 
+  private renderRequest$ = new Subject<void>();
+  private subscription: Subscription | null = null;
+
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
   }
 
   connectedCallback() {
-    this.render();
+    this.subscription = this.renderRequest$.pipe(switchMap(() => this.render())).subscribe();
+
+    this.renderRequest$.next();
+  }
+
+  disconnectedCallback() {
+    this.subscription?.unsubscribe();
+    this.subscription = null;
   }
 
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     if (oldValue !== newValue) {
-      this.render();
+      this.renderRequest$.next();
     }
   }
 
-  render() {
+  async render() {
     const name = this.getAttribute("name");
     const size = this.getAttribute("size") || "24";
     const style = this.getAttribute("style") || "regular";
