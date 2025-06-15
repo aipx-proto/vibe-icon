@@ -95,6 +95,23 @@ function renderResults(results: SearchResult[], limit: number) {
 }
 
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
+
+// Add keydown event listener for Enter key
+fromEvent<KeyboardEvent>(searchInput, "keydown")
+  .pipe(
+    tap((event) => {
+      if (event.key === "Enter") {
+        // Find and click the first icon button
+        const firstIcon = resultsContainer.querySelector(".icon") as HTMLButtonElement;
+        if (firstIcon) {
+          firstIcon.click();
+          firstIcon.focus();
+        }
+      }
+    })
+  )
+  .subscribe();
+
 fromEvent(searchInput, "input")
   .pipe(
     debounceTime(50),
