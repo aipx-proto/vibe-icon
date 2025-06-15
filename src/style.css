@@ -1,5 +1,8 @@
+:root {
+  color-scheme: dark;
+}
 html {
-  background-color: #111;
+  background-color: #0d0d0d;
 }
 
 .app-layout {
@@ -21,9 +24,7 @@ html {
   }
   .app-aside {
     grid-area: aside;
-    overflow-y: auto;
     padding: 16px;
-    scrollbar-gutter: stable;
   }
 }
 

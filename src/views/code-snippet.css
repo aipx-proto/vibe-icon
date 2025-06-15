@@ -2,6 +2,7 @@
   margin: 0;
   padding: 1ch;
   border-radius: 8px;
+  border: 1px solid #444;
   code {
     white-space: pre-wrap;
   }

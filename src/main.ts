@@ -3,6 +3,7 @@ import { repeat } from "lit-html/directives/repeat.js";
 import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
 import { debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
 import type { SearchResult } from "../typings/icon-index";
+import { iconObserver, isIconLoaded } from "./icon-observer";
 import "./style.css";
 import { CodeSnippet } from "./views/code-snippet";
 import { renderDetails } from "./views/details";
@@ -14,47 +15,11 @@ const worker = new SearchWorker();
 const resultsContainer = document.querySelector("#results") as HTMLElement;
 const detailsContainer = document.querySelector("#details") as HTMLElement;
 
-// Track loaded icons to avoid re-observing
-const loadedIcons = new WeakSet<Element>();
-
 // State for pagination
 let currentResults: SearchResult[] = [];
 const DISPLAY_INITIAL_LIMIT = 50; // Initial number of icons to display
 const DISPLAY_INCREMENT = 50;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
-
-// Set up Intersection Observer
-const iconObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const iconElement = entry.target as HTMLElement;
-        const svgContainer = iconElement.querySelector(".svg-container") as HTMLElement;
-        const filename = iconElement.dataset.filename;
-        const styles = iconElement.dataset.style?.split(",") || [];
-
-        if (filename && styles.length > 0 && svgContainer && !svgContainer.dataset.loaded) {
-          svgContainer.innerHTML = styles
-            .slice(0, 2) // Show up to 2 styles
-            .map((style, index) => {
-              return `<svg width="48" height="48" class="icon-svg" data-style-index="${index}"}">
-              <use href="${import.meta.env.BASE_URL}/${filename}#${style}" />
-            </svg>`;
-            })
-            .join("");
-
-          svgContainer.dataset.loaded = "true";
-          iconObserver.unobserve(iconElement);
-          loadedIcons.add(iconElement);
-        }
-      }
-    });
-  },
-  {
-    rootMargin: "50px", // Start loading 50px before entering viewport
-    threshold: 0.01,
-  }
-);
 
 // Function to render results with show more button
 function renderResults(results: SearchResult[], limit: number) {
@@ -105,7 +70,7 @@ function renderResults(results: SearchResult[], limit: number) {
   // Observe new icons after render
   requestAnimationFrame(() => {
     resultsContainer.querySelectorAll(".icon").forEach((icon) => {
-      if (!loadedIcons.has(icon)) {
+      if (!isIconLoaded(icon)) {
         iconObserver.observe(icon);
       }
     });
