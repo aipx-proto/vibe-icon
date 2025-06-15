@@ -1,11 +1,14 @@
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
+
+// https://vite.dev/config/
 export default defineConfig({
-  worker: {
-    format: "es",
-  },
-  base: "vibe-icon",
   build: {
-    minify: false,
-    sourcemap: true,
+    lib: {
+      entry: resolve(__dirname, "lib/index.ts"),
+      name: "VibeIcon",
+      fileName: "index",
+    },
+    sourcemap: "inline",
   },
 });
