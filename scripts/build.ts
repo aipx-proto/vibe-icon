@@ -70,7 +70,7 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
         const metadataPath = resolve(folderPath, "metadata.json");
         const metadataContent = await readFile(metadataPath, "utf-8");
         const metadata = JSON.parse(metadataContent);
-        displayName = metadata.name;
+        displayName = metadata.name.replace(/\s+/g, " ").trim(); // Normalize display name
         metaphor = metadata.metaphor || [];
       } catch {
         // metadata.json doesn't exist or is invalid - skip this folder
