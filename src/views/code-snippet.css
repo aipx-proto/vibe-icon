@@ -1,0 +1,8 @@
+.shiki {
+  margin: 0;
+  padding: 1ch;
+  border-radius: 8px;
+  code {
+    white-space: pre-wrap;
+  }
+}

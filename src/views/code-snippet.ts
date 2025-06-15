@@ -1,4 +1,5 @@
 import { codeToHtml } from "shiki";
+import style from "./code-snippet.css?raw";
 
 const theme = "one-dark-pro"; // theme name
 
@@ -36,7 +37,7 @@ export class CodeSnippet extends HTMLElement {
     if (lang && code) {
       codeToHtml(code, { lang, theme })
         .then((html) => {
-          this.shadowRoot!.innerHTML = html;
+          this.shadowRoot!.innerHTML = `<style>${style}</style>${html}`;
         })
         .catch((error) => {
           console.error("Error rendering code snippet:", error);

@@ -1,0 +1,55 @@
+/* Icon details styles */
+.icon-details {
+  padding: 1rem;
+}
+
+.icon-details h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.icon-option {
+  display: grid;
+  align-items: start;
+  gap: 8px;
+
+  h3 {
+    margin: 0;
+    text-transform: capitalize;
+    grid-column: 1 / -1;
+  }
+}
+
+.icon-info {
+  align-content: start;
+  display: grid;
+  gap: 8px;
+
+  menu {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@container (min-width: 40rem) {
+  .icon-option {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+.icon-option-list {
+  display: grid;
+  gap: 16px;
+  container-type: inline-size;
+}
+
+.icon-preview {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #222;
+  border-radius: 8px;
+}
