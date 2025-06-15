@@ -43,7 +43,10 @@ export class VibeIcon extends HTMLElement {
       if (VibeIcon.cache.has(name)) {
         svgText = await VibeIcon.cache.get(name)!;
       } else {
-        const asyncResult = fetch(`${import.meta.env.BASE_URL}/${name}.svg`).then((response) => response.text());
+        const asyncResult = fetch(
+          // @ts-ignore
+          `${location.hostname === "localhost" ? import.meta.env.BASE_URL : "https://aipx-proto.github.io/vibe-icon"}/${name}.svg`
+        ).then((response) => response.text());
         VibeIcon.cache.set(name, asyncResult);
         svgText = await asyncResult;
       }
