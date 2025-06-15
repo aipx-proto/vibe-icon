@@ -48,23 +48,30 @@ function renderResults(results: SearchResult[], limit: number) {
         ${repeat(
           visibleResults,
           (icon) => icon.name,
-          (icon) => html`
-            <button
-              class="icon"
-              data-filename="${icon.filename}"
-              data-style="${icon.options.map((opt) => opt.style).join(",")}"
-              data-selected="${currentSelectedIcon?.name === icon.name}"
-              @click=${() => selectedIcon$.next(icon)}
-            >
-              <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
-                <!-- SVG will be loaded when visible -->
-              </div>
-              <div class="icon-name" title="${icon.name}">${unsafeHTML(icon.nameHtml)}</div>
-              <div hidden>
-                <div><span>${icon.metaphorHtmls.map(unsafeHTML)}</span></div>
-              </div>
-            </button>
-          `
+          (icon, index) => {
+            const isSelected = currentSelectedIcon?.name === icon.name;
+            const isFirstIcon = index === 0 && !currentSelectedIcon;
+            const tabIndex = isSelected || isFirstIcon ? 0 : -1;
+
+            return html`
+              <button
+                class="icon"
+                data-filename="${icon.filename}"
+                data-style="${icon.options.map((opt) => opt.style).join(",")}"
+                data-selected="${isSelected}"
+                tabindex="${tabIndex}"
+                @click=${() => selectedIcon$.next(icon)}
+              >
+                <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
+                  <!-- SVG will be loaded when visible -->
+                </div>
+                <div class="icon-name" title="${icon.name}">${unsafeHTML(icon.nameHtml)}</div>
+                <div hidden>
+                  <div><span>${icon.metaphorHtmls.map(unsafeHTML)}</span></div>
+                </div>
+              </button>
+            `;
+          }
         )}
       </div>
       ${hasMore
