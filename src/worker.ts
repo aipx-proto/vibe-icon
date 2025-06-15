@@ -1,14 +1,12 @@
 /// <reference lib="webworker" />
 import type { IconIndex, InMemoryIcon, SearchResult } from "../typings/icon-index";
 
-const indexAsync = decompressIndex();
-
 // handle messages from the main thread
 self.onmessage = async (event: MessageEvent) => {
   const { searchQuery } = event.data;
   const channel = event.ports[0];
 
-  if (!searchQuery) return;
+  if (searchQuery === undefined) return;
 
   const results = await searchIcons(searchQuery);
   channel.postMessage({
@@ -16,12 +14,15 @@ self.onmessage = async (event: MessageEvent) => {
   });
 };
 
+const indexAsync = decompressIndex();
+
 async function searchIcons(query: string) {
+  const isEmpty = !query || query.trim() === "";
   const index = await indexAsync;
   const lowerquery = query.toLowerCase();
   const results: SearchResult[] = index.icons
     .filter((icon) => {
-      return icon.lowerName.includes(lowerquery) || icon.metaphors.some((metaphor) => metaphor.includes(lowerquery));
+      return isEmpty ? true : icon.lowerName.includes(lowerquery) || icon.metaphors.some((metaphor) => metaphor.includes(lowerquery));
     })
     .map((icon) => ({
       ...icon,

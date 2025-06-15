@@ -1,10 +1,11 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
 import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
-import { debounceTime, fromEvent, switchMap, tap } from "rxjs";
+import { debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
 import type { SearchResult } from "../typings/icon-index";
 import "./style.css";
 import { CodeSnippet } from "./views/code-snippet";
+import { renderDetails } from "./views/details";
 import SearchWorker from "./worker?worker";
 
 CodeSnippet.define();
@@ -55,62 +56,6 @@ const iconObserver = new IntersectionObserver(
   }
 );
 
-// Function to render icon details
-function renderDetails(icon: SearchResult) {
-  render(
-    html`
-      <div class="icon-details">
-        <h2>${icon.name}</h2>
-
-        ${icon.metaphors.length > 0
-          ? html`
-              <div class="metaphors">
-                <span>Metaphors: </span>
-                <span>${icon.metaphors.join(", ")}</span>
-              </div>
-            `
-          : null}
-        ${icon.options.map(
-          (option) => html`
-            <div class="style-section">
-              <div class="icon-preview">
-                <svg width="96" height="96">
-                  <use href="${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" />
-                </svg>
-              </div>
-
-              <div class="code-snippet">
-                <h4>${option.style}</h4>
-                <p>1. Add to index.html:</p>
-                <code-snippet
-                  .lang=${"html"}
-                  .code=${`
-<svg style="display: none;">
-  <symbol id="${icon.filename.split(".svg")[0]}-${option.style}">
-    <!-- Icon content from ${icon.filename}#${option.style} -->
-  </symbol>
-</svg>
-                  `.trim()}
-                ></code-snippet>
-                <p>2. Use the icon:</p>
-                <code-snippet
-                  .lang=${"html"}
-                  .code=${`
-<svg width="24" height="24">
-  <use href="#${icon.filename.split(".svg")[0]}-${option.style}" />
-</svg>
-                    `.trim()}
-                ></code-snippet>
-              </div>
-            </div>
-          `
-        )}
-      </div>
-    `,
-    detailsContainer
-  );
-}
-
 // Function to render results with show more button
 function renderResults(results: SearchResult[], limit: number) {
   const visibleResults = results.slice(0, limit);
@@ -127,7 +72,7 @@ function renderResults(results: SearchResult[], limit: number) {
               class="icon"
               data-filename="${icon.filename}"
               data-style="${icon.options.map((opt) => opt.style).join(",")}"
-              @click=${() => renderDetails(icon)}
+              @click=${() => renderDetails(icon, detailsContainer)}
             >
               <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
                 <!-- SVG will be loaded when visible -->
@@ -171,8 +116,9 @@ const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement
 fromEvent(searchInput, "input")
   .pipe(
     debounceTime(50),
+    startWith(""), // Trigger initial search
     switchMap(async () => {
-      if (!searchInput.value) return [];
+      console.log("OUT");
       const channel = new MessageChannel();
       worker.postMessage(
         {
