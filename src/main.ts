@@ -81,8 +81,7 @@ function renderDetails(icon: SearchResult) {
 
               <div class="code-snippet">
                 <h4>${option.style}</h4>
-                <p style="margin: 10px 0 5px 0; font-weight: 500;">1. Add to index.html:</p>
-
+                <p>1. Add to index.html:</p>
                 <code-snippet
                   .lang=${"html"}
                   .code=${`
@@ -93,7 +92,7 @@ function renderDetails(icon: SearchResult) {
 </svg>
                   `.trim()}
                 ></code-snippet>
-                <p style="margin: 15px 0 5px 0; font-weight: 500;">2. Use the icon:</p>
+                <p>2. Use the icon:</p>
                 <code-snippet
                   .lang=${"html"}
                   .code=${`
