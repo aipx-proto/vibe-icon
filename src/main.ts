@@ -48,6 +48,31 @@ fromEvent<KeyboardEvent>(document, "keydown")
         return;
       }
 
+      // Handle Escape key
+      if (event.key === "Escape") {
+        // Skip escape handling when focused on search input to preserve default behavior
+        if (document.activeElement === searchInput) return;
+
+        event.preventDefault();
+
+        // If focus is in details container, move to selected search result button
+        if (detailsContainer.contains(document.activeElement)) {
+          const selectedIconElement = resultsContainer.querySelector('.icon[data-selected="true"]') as HTMLButtonElement;
+          if (selectedIconElement) {
+            selectedIconElement.focus();
+            selectedIconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+          return;
+        }
+
+        // If focus is on selected result button, move to search input
+        if (document.activeElement?.classList.contains("icon") && document.activeElement?.getAttribute("data-selected") === "true") {
+          searchInput.focus();
+          searchInput.select();
+          return;
+        }
+      }
+
       // Handle Enter key on focused icon button
       if (event.key === "Enter" && document.activeElement?.classList.contains("icon")) {
         event.preventDefault();
