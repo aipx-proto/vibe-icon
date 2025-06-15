@@ -3,7 +3,7 @@ export default defineConfig({
   worker: {
     format: "es",
   },
-  base: "",
+  base: "vibe-icon",
   build: {
     minify: false,
     sourcemap: true,
