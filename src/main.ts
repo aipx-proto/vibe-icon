@@ -4,6 +4,7 @@ import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
 import { BehaviorSubject, debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
 import type { SearchResult } from "../typings/icon-index";
 import { iconObserver, isIconLoaded } from "./icon-observer";
+import { initKeyboardNavigation } from "./keyboard-navigation";
 import "./style.css";
 import { CodeSnippet } from "./views/code-snippet";
 import { renderDetails } from "./views/details";
@@ -14,6 +15,7 @@ CodeSnippet.define();
 const worker = new SearchWorker();
 const resultsContainer = document.querySelector("#results") as HTMLElement;
 const detailsContainer = document.querySelector("#details") as HTMLElement;
+const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
 
 // State for pagination
 let currentResults: SearchResult[] = [];
@@ -36,188 +38,20 @@ selectedIcon$.subscribe((icon) => {
   }
 });
 
-// Function to focus on selected icon or first icon
-function focusOnIconFromSearch() {
-  // First check if there's already a selected icon
-  const selectedIconElement = resultsContainer.querySelector('.icon[data-selected="true"]') as HTMLButtonElement;
-  if (selectedIconElement) {
-    selectedIconElement.focus();
-    selectedIconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    return;
-  }
-
-  // Otherwise, find and click the first icon button
-  const firstIcon = resultsContainer.querySelector(".icon") as HTMLButtonElement;
-  if (firstIcon) {
-    firstIcon.click();
-    firstIcon.focus();
-  }
-}
-
-// Add keyboard navigation for arrow keys
-fromEvent<KeyboardEvent>(document, "keydown")
-  .pipe(
-    tap((event) => {
-      // Handle Ctrl/Cmd + K to focus search box
-      if ((event.ctrlKey || event.metaKey) && event.key === "k") {
-        event.preventDefault();
-        searchInput.focus();
-        searchInput.select();
-        return;
-      }
-
-      // Handle Escape key
-      if (event.key === "Escape") {
-        // Skip escape handling when focused on search input to preserve default behavior
-        if (document.activeElement === searchInput) return;
-
-        event.preventDefault();
-
-        // If focus is in details container, move to selected search result button
-        if (detailsContainer.contains(document.activeElement)) {
-          const selectedIconElement = resultsContainer.querySelector('.icon[data-selected="true"]') as HTMLButtonElement;
-          if (selectedIconElement) {
-            selectedIconElement.focus();
-            selectedIconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          }
-          return;
-        }
-
-        // If focus is on selected result button, move to search input
-        if (document.activeElement?.classList.contains("icon") && document.activeElement?.getAttribute("data-selected") === "true") {
-          searchInput.focus();
-          searchInput.select();
-          return;
-        }
-      }
-
-      // Handle Enter key on focused icon button
-      if (event.key === "Enter" && document.activeElement?.classList.contains("icon")) {
-        event.preventDefault();
-        // Find the first HTML copy button in the details panel
-        requestAnimationFrame(() => {
-          const firstHtmlButton = detailsContainer.querySelector(".icon-info menu button:first-child") as HTMLButtonElement;
-          firstHtmlButton?.focus();
-        });
-        return;
-      }
-
-      // Handle Enter or ArrowDown when focused on search input
-      if (document.activeElement === searchInput && (event.key === "ArrowDown" || event.key === "Enter")) {
-        event.preventDefault();
-        focusOnIconFromSearch();
-        return;
-      }
-
-      // Only handle arrow keys when not focused on search input
-      if (document.activeElement === searchInput) return;
-
-      // Only handle arrow keys when focus is within the results container
-      if (!resultsContainer.contains(document.activeElement)) return;
-
-      const visibleResults = currentResults.slice(0, currentDisplayLimit);
-      if (visibleResults.length === 0) return;
-
-      const currentIndex = selectedIcon$.value ? visibleResults.findIndex((icon) => icon.name === selectedIcon$.value?.name) : -1;
-
-      let newIndex = currentIndex;
-
-      // Calculate grid columns dynamically
-      const iconGrid = resultsContainer.querySelector(".icon-grid");
-      if (!iconGrid) return;
-
-      const firstIcon = iconGrid.querySelector(".icon");
-      if (!firstIcon) return;
-
-      const iconStyle = window.getComputedStyle(firstIcon as HTMLElement);
-      const iconWidth = (firstIcon as HTMLElement).offsetWidth + parseFloat(iconStyle.marginLeft) + parseFloat(iconStyle.marginRight);
-      const gridWidth = (iconGrid as HTMLElement).offsetWidth;
-      const columns = Math.floor(gridWidth / iconWidth) || 1;
-
-      switch (event.key) {
-        case "ArrowUp":
-          event.preventDefault();
-          // If in the top row, focus back to search input
-          if (currentIndex < columns) {
-            searchInput.focus();
-            return;
-          }
-          newIndex = currentIndex - columns;
-          if (newIndex < 0) newIndex = currentIndex;
-          break;
-        case "ArrowDown":
-          event.preventDefault();
-          newIndex = currentIndex + columns;
-          if (newIndex >= visibleResults.length) {
-            // Check if we need to show more
-            if (currentResults.length > currentDisplayLimit) {
-              currentDisplayLimit += DISPLAY_INCREMENT;
-              renderResults(currentResults, currentDisplayLimit);
-              // After render, focus on the next item
-              requestAnimationFrame(() => {
-                const nextIcon = visibleResults[currentIndex + columns];
-                if (nextIcon) {
-                  selectedIcon$.next(nextIcon);
-                  const iconElement = resultsContainer.querySelector(`[data-filename="${nextIcon.filename}"]`) as HTMLElement;
-                  iconElement?.focus();
-                  iconElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                }
-              });
-              return;
-            }
-            newIndex = currentIndex;
-          }
-          break;
-        case "ArrowLeft":
-          event.preventDefault();
-          newIndex = currentIndex - 1;
-          if (newIndex < 0) newIndex = 0;
-          break;
-        case "ArrowRight":
-          event.preventDefault();
-          newIndex = currentIndex + 1;
-          if (newIndex >= visibleResults.length) {
-            // Check if we need to show more
-            if (currentResults.length > currentDisplayLimit) {
-              currentDisplayLimit += DISPLAY_INCREMENT;
-              renderResults(currentResults, currentDisplayLimit);
-              // After render, focus on the next item
-              requestAnimationFrame(() => {
-                const nextIcon = visibleResults[currentIndex + 1];
-                if (nextIcon) {
-                  selectedIcon$.next(nextIcon);
-                  const iconElement = resultsContainer.querySelector(`[data-filename="${nextIcon.filename}"]`) as HTMLElement;
-                  iconElement?.focus();
-                  iconElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                }
-              });
-              return;
-            }
-            newIndex = visibleResults.length - 1;
-          }
-          break;
-        default:
-          return;
-      }
-
-      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < visibleResults.length) {
-        const newIcon = visibleResults[newIndex];
-        selectedIcon$.next(newIcon);
-
-        // Focus and scroll to the new icon
-        requestAnimationFrame(() => {
-          const iconElement = resultsContainer.querySelector(`[data-filename="${newIcon.filename}"]`) as HTMLElement;
-          if (iconElement) {
-            iconElement.focus();
-            iconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          }
-        });
-      }
-    })
-  )
-  .subscribe();
-
-const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
+// Initialize Keyboard Navigation
+initKeyboardNavigation({
+  resultsContainer,
+  detailsContainer,
+  searchInput,
+  selectedIcon$,
+  getCurrentResults: () => currentResults,
+  getDisplayLimit: () => currentDisplayLimit,
+  setDisplayLimit: (newLimit) => {
+    currentDisplayLimit = newLimit;
+  },
+  renderResultsFn: renderResults,
+  DISPLAY_INCREMENT,
+});
 
 fromEvent(searchInput, "input")
   .pipe(
