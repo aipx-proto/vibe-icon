@@ -28,6 +28,8 @@ const selectedIcon$ = new BehaviorSubject<SearchResult | null>(null);
 selectedIcon$.subscribe((icon) => {
   if (icon) {
     renderDetails(icon, detailsContainer);
+    // Re-render results to update selected state
+    renderResults(currentResults, currentDisplayLimit);
   } else {
     // Clear details panel when no icon is selected
     render(html``, detailsContainer);
@@ -38,6 +40,7 @@ selectedIcon$.subscribe((icon) => {
 function renderResults(results: SearchResult[], limit: number) {
   const visibleResults = results.slice(0, limit);
   const hasMore = results.length > limit;
+  const currentSelectedIcon = selectedIcon$.value;
 
   render(
     html`
@@ -50,6 +53,7 @@ function renderResults(results: SearchResult[], limit: number) {
               class="icon"
               data-filename="${icon.filename}"
               data-style="${icon.options.map((opt) => opt.style).join(",")}"
+              data-selected="${currentSelectedIcon?.name === icon.name}"
               @click=${() => selectedIcon$.next(icon)}
             >
               <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
