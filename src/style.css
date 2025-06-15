@@ -6,7 +6,7 @@ html {
   height: 100vh;
   display: grid;
   grid-template:
-    "header header" auto
+    "header aside" auto
     "main aside" 1fr
     / 1fr 1fr;
 
@@ -55,6 +55,20 @@ html {
   top: 0;
   left: 0;
   transition: opacity 0.2s ease;
+}
+
+/* Hide second SVG by default when there are multiple SVGs */
+.svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(2) {
+  opacity: 0;
+}
+
+/* On hover, show second SVG and hide first when there are multiple SVGs */
+.icon:hover .svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(1) {
+  opacity: 0;
+}
+
+.icon:hover .svg-container:has(.icon-svg:nth-child(2)) .icon-svg:nth-child(2) {
+  opacity: 1;
 }
 
 .icon-grid {
