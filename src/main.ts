@@ -36,6 +36,24 @@ selectedIcon$.subscribe((icon) => {
   }
 });
 
+// Function to focus on selected icon or first icon
+function focusOnIconFromSearch() {
+  // First check if there's already a selected icon
+  const selectedIconElement = resultsContainer.querySelector('.icon[data-selected="true"]') as HTMLButtonElement;
+  if (selectedIconElement) {
+    selectedIconElement.focus();
+    selectedIconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    return;
+  }
+
+  // Otherwise, find and click the first icon button
+  const firstIcon = resultsContainer.querySelector(".icon") as HTMLButtonElement;
+  if (firstIcon) {
+    firstIcon.click();
+    firstIcon.focus();
+  }
+}
+
 // Add keyboard navigation for arrow keys
 fromEvent<KeyboardEvent>(document, "keydown")
   .pipe(
@@ -84,15 +102,10 @@ fromEvent<KeyboardEvent>(document, "keydown")
         return;
       }
 
-      // Handle down arrow when focused on search input
-      if (document.activeElement === searchInput && event.key === "ArrowDown") {
+      // Handle Enter or ArrowDown when focused on search input
+      if (document.activeElement === searchInput && (event.key === "ArrowDown" || event.key === "Enter")) {
         event.preventDefault();
-        // Find and click the first icon button
-        const firstIcon = resultsContainer.querySelector(".icon") as HTMLButtonElement;
-        if (firstIcon) {
-          firstIcon.click();
-          firstIcon.focus();
-        }
+        focusOnIconFromSearch();
         return;
       }
 
@@ -205,22 +218,6 @@ fromEvent<KeyboardEvent>(document, "keydown")
   .subscribe();
 
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
-
-// Add keydown event listener for Enter key
-fromEvent<KeyboardEvent>(searchInput, "keydown")
-  .pipe(
-    tap((event) => {
-      if (event.key === "Enter") {
-        // Find and click the first icon button
-        const firstIcon = resultsContainer.querySelector(".icon") as HTMLButtonElement;
-        if (firstIcon) {
-          firstIcon.click();
-          firstIcon.focus();
-        }
-      }
-    })
-  )
-  .subscribe();
 
 fromEvent(searchInput, "input")
   .pipe(
