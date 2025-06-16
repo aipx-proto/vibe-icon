@@ -29,6 +29,11 @@
   p {
     margin: 0;
   }
+
+  menu button {
+    padding: 8px 24px;
+    font-size: 16px;
+  }
 }
 
 .icon-option {
