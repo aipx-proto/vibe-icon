@@ -45,7 +45,7 @@ export function renderResults(results: SearchResult[], limit: number, context: R
         context.resultsContainer
       );
     } else if (context.searchInput.value.trim() !== "") {
-      render(html` <div class="result-status">No exact match. Press ENTER to try AI search</div> `, context.resultsContainer);
+      render(html` <div class="result-status">No exact match. Press <kbd>ENTER</kbd> to try AI search</div> `, context.resultsContainer);
     } else {
       // Empty search input, don't show any message
       render(html``, context.resultsContainer);
