@@ -7,18 +7,34 @@ self.onmessage = async (event: MessageEvent) => {
   const channel = event.ports[0];
 
   if (searchQuery !== undefined) {
-    const results = await searchIcons(searchQuery);
-    channel.postMessage({
-      searchResults: results,
-    });
+    try {
+      const results = await searchIcons(searchQuery);
+      channel.postMessage({
+        searchResults: results,
+      });
+    } catch (error) {
+      console.error("Error during search:", error);
+      channel.postMessage({
+        searchResults: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
   }
 
   if (aiQuery !== undefined) {
-    const { settings, query } = aiQuery as { settings: Record<string, any>; query: string };
-    const aiResults = await askAI(settings, query);
-    channel.postMessage({
-      aiResults: aiResults,
-    });
+    try {
+      const { settings, query } = aiQuery as { settings: Record<string, any>; query: string };
+      const aiResults = await askAI(settings, query);
+      channel.postMessage({
+        aiResults,
+      });
+    } catch (error) {
+      console.error("Error during AI search:", error);
+      channel.postMessage({
+        aiResults: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
   }
 };
 
@@ -62,7 +78,6 @@ Now respond with the names of the top matching icons, quality over quantity. In 
     },
   });
 
-  console.log(result);
   const structuredResult = JSON.parse(result.output_text) ?? {};
   const index = await indexAsync;
 

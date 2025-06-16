@@ -47,6 +47,10 @@ fromEvent(aiSearchButton, "click")
           "message",
           (event) => {
             resolve(event.data.aiResults);
+            const error = event.data.error;
+            if (error) {
+              // TODO display search error
+            }
             channel.port1.close();
           },
           { once: true }
@@ -156,6 +160,10 @@ fromEvent(searchInput, "input")
           "message",
           (event) => {
             resolve(event.data.searchResults);
+            const error = event.data.error;
+            if (error) {
+              // TODO display search error
+            }
             channel.port1.close();
           },
           { once: true }
