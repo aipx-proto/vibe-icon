@@ -167,6 +167,11 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
               .join("\n\n")}
           ></code-snippet>
         </section>
+        <p>
+          This is not a Microsoft official project. It is generated from the open source project
+          <a href="https://github.com/microsoft/fluentui-system-icons" target="_blank">Fluent UI System Icons</a>. This site is built with the awesome
+          <a href="https://github.com/aipx-proto/mirai-css/" target="_blank">Mirai CSS</a>, a library for teleporting the apps of the future to here and now.
+        </p>
       </div>
     `,
     detailsContainer

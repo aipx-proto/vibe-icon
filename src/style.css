@@ -5,6 +5,10 @@ html {
   background-color: #0d0d0d;
 }
 
+body {
+  font-size: 16px;
+}
+
 .app-layout {
   height: 100vh;
   padding: 16px;
