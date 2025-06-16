@@ -27,16 +27,20 @@ let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
 const selectedIcon$ = new BehaviorSubject<SearchResult | null>(null);
 
 // Subscribe to selected icon changes and update details panel
-selectedIcon$.subscribe((icon) => {
-  if (icon) {
-    renderDetails(icon, detailsContainer);
-    // Re-render results to update selected state
-    renderResults(currentResults, currentDisplayLimit);
-  } else {
-    // Clear details panel when no icon is selected
-    render(html``, detailsContainer);
-  }
-});
+selectedIcon$
+  .pipe(
+    switchMap(async (icon) => {
+      if (icon) {
+        // Re-render results to update selected state
+        renderResults(currentResults, currentDisplayLimit);
+        await renderDetails(icon, detailsContainer);
+      } else {
+        // Clear details panel when no icon is selected
+        render(html``, detailsContainer);
+      }
+    })
+  )
+  .subscribe();
 
 // Initialize Keyboard Navigation
 initKeyboardNavigation({
