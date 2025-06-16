@@ -3,18 +3,96 @@ import type { IconIndex, InMemoryIcon, SearchResult } from "../typings/icon-inde
 
 // handle messages from the main thread
 self.onmessage = async (event: MessageEvent) => {
-  const { searchQuery } = event.data;
+  const { searchQuery, aiQuery } = event.data ?? {};
   const channel = event.ports[0];
 
-  if (searchQuery === undefined) return;
+  if (searchQuery !== undefined) {
+    try {
+      const results = await searchIcons(searchQuery);
+      channel.postMessage({
+        searchResults: results,
+      });
+    } catch (error) {
+      console.error("Error during search:", error);
+      channel.postMessage({
+        searchResults: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
 
-  const results = await searchIcons(searchQuery);
-  channel.postMessage({
-    searchResults: results,
-  });
+  if (aiQuery !== undefined) {
+    try {
+      const { settings, query } = aiQuery as { settings: Record<string, any>; query: string };
+      const aiResults = await askAI(settings, query);
+      channel.postMessage({
+        aiResults,
+      });
+    } catch (error) {
+      console.error("Error during AI search:", error);
+      channel.postMessage({
+        aiResults: [],
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
 };
 
 const indexAsync = decompressIndex();
+
+async function askAI(settings: any, query: string): Promise<SearchResult[]> {
+  const [openai, iconSheet] = await Promise.all([import("openai"), fetch(`${import.meta.env.BASE_URL}/index.csv`).then((res) => res.text())]);
+
+  const client = new openai.AzureOpenAI({
+    endpoint: settings.endpoint,
+    apiKey: settings.apiKey,
+    deployment: settings.deployment,
+    apiVersion: settings.apiVersion,
+    dangerouslyAllowBrowser: true,
+  });
+
+  const result = await client.responses.parse({
+    model: settings.model,
+    input: [
+      {
+        role: "developer",
+        content: `
+Help user choose the best icon from the sheet below. Try match user's query with the best icon name and metaphors.
+
+\`\`\`csv
+${iconSheet}
+\`\`\`
+
+Now respond with the names of the top matching icons, quality over quantity. In this JSON format:
+{
+  iconNames: string[]
+}
+            `,
+      },
+      { role: "user", content: query },
+    ],
+    text: {
+      format: {
+        type: "json_object",
+      },
+    },
+  });
+
+  const structuredResult = JSON.parse(result.output_text) ?? {};
+  const index = await indexAsync;
+
+  const iconNames = structuredResult.iconNames || [];
+  const results: SearchResult[] = index.icons
+    .filter((icon) => iconNames.includes(icon.name))
+    .map((icon) => ({
+      ...icon,
+      nameHtml: icon.name,
+      metaphorHtmls: icon.metaphors.map((metaphor) => metaphor),
+      score: 100, // AI results are considered perfect matches
+    }));
+
+  return results;
+}
 
 async function searchIcons(query: string) {
   const isEmpty = !query || query.trim() === "";

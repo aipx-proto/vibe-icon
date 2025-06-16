@@ -11,6 +11,8 @@ interface KeyboardNavigationParams {
   setDisplayLimit: (newLimit: number) => void;
   renderResultsFn: (results: SearchResult[], limit: number) => void;
   DISPLAY_INCREMENT: number;
+  getSearchState: () => string; // Changed from SearchState to string for simplicity, can be refined
+  aiSearchButton: HTMLButtonElement;
 }
 
 export function initKeyboardNavigation({
@@ -23,6 +25,8 @@ export function initKeyboardNavigation({
   setDisplayLimit,
   renderResultsFn,
   DISPLAY_INCREMENT,
+  getSearchState,
+  aiSearchButton,
 }: KeyboardNavigationParams): void {
   const focusOnIconFromSearch = () => {
     const selectedIconElement = resultsContainer.querySelector('.icon[data-selected="true"]') as HTMLButtonElement;
@@ -76,10 +80,21 @@ export function initKeyboardNavigation({
           return;
         }
 
-        if (document.activeElement === searchInput && (event.key === "ArrowDown" || event.key === "Enter")) {
+        if (document.activeElement === searchInput && event.key === "ArrowDown") {
           event.preventDefault();
           focusOnIconFromSearch();
           return;
+        }
+
+        // Handle Enter key for AI search when searchInput is focused
+        if (document.activeElement === searchInput && event.key === "Enter") {
+          const currentSearchState = getSearchState();
+          if (currentSearchState === "completed" && searchInput.value.trim() !== "") {
+            // Prevent default form submission or other Enter key actions
+            event.preventDefault();
+            aiSearchButton.click();
+            return; // Ensure no other keydown logic for Enter on searchInput runs
+          }
         }
 
         if (document.activeElement === searchInput || !resultsContainer.contains(document.activeElement)) return;

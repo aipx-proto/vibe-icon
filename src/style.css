@@ -33,15 +33,43 @@ body {
 
   .app-header {
     position: sticky;
-    background-color: #0d0d0d;
+    background-color: #222;
     z-index: 1;
     top: 0;
+    box-shadow: var(--mri-shadow-16);
+
+    .outline-container {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      border-radius: 8px;
+      border: 1px solid #444;
+
+      &:focus-within {
+        outline: 2px solid #0090d3;
+        outline-offset: -2px;
+        background-color: #000;
+      }
+    }
 
     input[type="search"] {
-      &:focus {
-        outline: 2px solid white !important;
-        outline-offset: -2px;
-        background: black;
+      border: none;
+      outline: none;
+      background: none;
+    }
+
+    button {
+      color: #aaa;
+      border-radius: 0 8px 8px 0;
+      border: none;
+      outline: none;
+      background: #222;
+      transition: none;
+      font-size: 16px;
+
+      &:hover,
+      &:focus-visible {
+        color: white;
+        background-color: #000;
       }
     }
   }
@@ -54,7 +82,7 @@ body {
 .app-header {
   input {
     width: 100%;
-    font-size: 20px;
+    font-size: 16px;
     height: auto;
     padding: 12px;
   }
