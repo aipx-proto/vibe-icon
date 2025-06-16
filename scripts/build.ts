@@ -18,8 +18,11 @@ async function main() {
   const commitId = await fetchRepoAssets();
   const iconIndex = await buildIconIndex(commitId);
   await compileIconSvgs(iconIndex);
-  await writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2));
-  await writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex));
+  await Promise.all([
+    writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
+    writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
+    createCsvIndex(iconIndex),
+  ]);
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -217,4 +220,22 @@ async function compileIconSvgs(iconIndex: IconIndex) {
   );
 
   await lastValueFrom(icons$);
+}
+
+async function createCsvIndex(iconIndex: IconIndex) {
+  let csvContent = "Name,Metaphors\n";
+
+  for (const [displayName, [metaphors, _]] of Object.entries(iconIndex.icons)) {
+    // Escape the display name if it contains commas or quotes
+    const escapedName = displayName.includes(",") || displayName.includes('"') ? `"${displayName.replace(/"/g, '""')}"` : displayName;
+
+    // Join metaphors with comma and escape if necessary
+    const metaphorString = metaphors.join(",");
+    const escapedMetaphors = metaphorString.includes(",") || metaphorString.includes('"') ? `"${metaphorString.replace(/"/g, '""')}"` : metaphorString;
+
+    csvContent += `${escapedName},${escapedMetaphors}\n`;
+  }
+
+  await writeFile(resolve("public", "index.csv"), csvContent);
+  console.log("CSV index created successfully");
 }

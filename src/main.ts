@@ -19,7 +19,16 @@ const worker = new SearchWorker();
 const resultsContainer = document.querySelector("#results") as HTMLElement;
 const detailsContainer = document.querySelector("#details") as HTMLElement;
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
+const vibeButton = document.querySelector("vibe-button")!;
 const aiSearchButton = document.querySelector("#ai-search") as HTMLButtonElement;
+
+fromEvent(aiSearchButton, "click")
+  .pipe(
+    switchMap(async () => {
+      const settings = vibeButton.settings;
+    })
+  )
+  .subscribe();
 
 // State for pagination
 let currentResults: SearchResult[] = [];
