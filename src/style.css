@@ -24,6 +24,7 @@ html {
 
     overflow-y: auto;
     scrollbar-gutter: stable;
+    scroll-padding-block-start: 16px; /* offset the gap */
   }
 
   .app-header {
