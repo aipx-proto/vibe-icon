@@ -38,6 +38,26 @@ async function handleSvgCopy(svgContent: string, button: HTMLButtonElement) {
   }
 }
 
+async function handlePreviewCopy(svgContent: string, previewElement: HTMLElement) {
+  try {
+    await navigator.clipboard.writeText(svgContent);
+    console.log("SVG copied to clipboard from preview");
+
+    // Create and show overlay
+    const overlay = document.createElement("div");
+    overlay.className = "copy-overlay";
+    overlay.textContent = "✅ Copied";
+    previewElement.appendChild(overlay);
+
+    // Remove overlay after 3 seconds
+    setTimeout(() => {
+      overlay.remove();
+    }, 3000);
+  } catch (err) {
+    console.error("Failed to copy SVG from preview: ", err);
+  }
+}
+
 function handleDownload(svgContent: string, fileName: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
   try {
@@ -102,11 +122,16 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
             return html`
               <div class="icon-option">
                 <h2>${option.style}</h2>
-                <div class="icon-preview">
+                <button
+                  class="icon-preview"
+                  @click=${(e: Event) => handlePreviewCopy(fullSvgContent, e.currentTarget as HTMLElement)}
+                  type="button"
+                  aria-label="Copy SVG code"
+                >
                   <svg width="48" height="48">
                     <use href="${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" />
                   </svg>
-                </div>
+                </button>
                 <div class="icon-info">
                   <code-snippet .lang=${"html"} .code=${htmlCode}></code-snippet>
                   <menu>
