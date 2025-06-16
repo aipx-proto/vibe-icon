@@ -25,7 +25,7 @@ export async function copyIconToClipboard(
       if (overlay.parentNode === targetElement) {
         targetElement.removeChild(overlay);
       }
-    }, 3000);
+    }, 2000);
   } catch (err) {
     console.error("Failed to copy SVG: ", err);
 
@@ -38,6 +38,6 @@ export async function copyIconToClipboard(
       if (overlay.parentNode === targetElement) {
         targetElement.removeChild(overlay);
       }
-    }, 3000);
+    }, 2000);
   }
 }

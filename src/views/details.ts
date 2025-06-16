@@ -17,7 +17,7 @@ async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
     button.textContent = "✅ Copied";
     setTimeout(() => {
       button.textContent = originalText;
-    }, 3000);
+    }, 2000);
   } catch (err) {
     console.error("Failed to copy HTML: ", err);
     // Consider adding a user notification for errors
@@ -33,7 +33,7 @@ async function handleSvgCopy(svgContent: string, button: HTMLButtonElement) {
     button.textContent = "✅ Copied";
     setTimeout(() => {
       button.textContent = originalText;
-    }, 3000);
+    }, 2000);
   } catch (err) {
     console.error("Failed to copy SVG: ", err);
     // Consider adding a user notification for errors
@@ -60,7 +60,7 @@ function handleDownload(svgContent: string, fileName: string, button: HTMLButton
     button.textContent = "✅ Downloaded";
     setTimeout(() => {
       button.textContent = originalText;
-    }, 3000);
+    }, 2000);
   } catch (err) {
     console.error("Failed to download SVG: ", err);
     // Consider adding a user notification for errors
@@ -108,6 +108,7 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
                   class="icon-preview"
                   @click=${(e: Event) => handlePreviewCopy(fullSvgContent, e.currentTarget as HTMLElement)}
                   type="button"
+                  title="Copy SVG code"
                   aria-label="Copy SVG code"
                 >
                   <svg width="48" height="48">
@@ -136,9 +137,19 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
           <p>Add icon to HTML</p>
           <code-snippet
             .lang=${"html"}
-            .code=${icon.options
-              .map((option) => `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>`)
-              .join("\n")}
+            .code=${`   
+              ${icon.options
+                .map((option) =>
+                  `
+<!-- ${option.style} style -->
+<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>
+                `.trim()
+                )
+                .join("\n\n")}
+
+<!-- custom size -->
+<vibe-icon name="${icon.filename.split(".svg")[0]}" size="16"></vibe-icon>
+            `.trim()}
           ></code-snippet>
         </section>
         <section class="icon-doc-section">

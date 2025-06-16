@@ -44,7 +44,7 @@ fromEvent(aiSearchButton, "click")
         {
           aiQuery: {
             settings,
-            query: searchInput.value,
+            query: searchInput.value.trim(),
           },
         },
         [channel.port2]
@@ -166,7 +166,7 @@ fromEvent(searchInput, "input")
       const channel = new MessageChannel();
       worker.postMessage(
         {
-          searchQuery: searchInput.value,
+          searchQuery: searchInput.value.trim(),
         },
         [channel.port2]
       );
