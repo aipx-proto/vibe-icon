@@ -6,6 +6,7 @@ import type { SearchResult } from "../typings/icon-index";
 import { iconObserver, isIconLoaded } from "./icon-observer";
 import { initKeyboardNavigation } from "./keyboard-navigation";
 import "./style.css";
+import { generateSvgFromSymbol } from "./utils/svg-utils"; // Added import
 import { CodeSnippet } from "./views/code-snippet";
 import { renderDetails } from "./views/details";
 import SearchWorker from "./worker?worker";
@@ -122,7 +123,69 @@ function renderResults(results: SearchResult[], limit: number) {
                 data-style="${icon.options.map((opt) => opt.style).join(",")}"
                 data-selected="${isSelected}"
                 tabindex="${tabIndex}"
-                @click=${() => selectedIcon$.next(icon)}
+                @click=${async (event: Event) => {
+                  const buttonElement = event.currentTarget as HTMLElement;
+                  const currentSelectedIconFromSubject = selectedIcon$.value;
+
+                  if (currentSelectedIconFromSubject?.name === icon.name) {
+                    // Already selected, so copy
+                    if (buttonElement.querySelector(".icon-copy-overlay")) {
+                      return; // Prevent re-triggering if overlay is already shown
+                    }
+                    try {
+                      const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
+                      if (!response.ok) {
+                        throw new Error(`Failed to fetch SVG: ${response.statusText}`);
+                      }
+                      const svgText = await response.text();
+                      const svgDoc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+
+                      // Determine the style to use - default to 'regular' or the first option
+                      let styleToCopy = "regular";
+                      const regularOption = icon.options.find((opt) => opt.style === "regular");
+                      if (!regularOption && icon.options.length > 0) {
+                        styleToCopy = icon.options[0].style; // Fallback to the first available style
+                      }
+
+                      const inlinedSvgContent = generateSvgFromSymbol(svgDoc, styleToCopy);
+
+                      if (!inlinedSvgContent) {
+                        throw new Error(`Failed to generate SVG for style '${styleToCopy}' from ${icon.filename}`);
+                      }
+
+                      await navigator.clipboard.writeText(inlinedSvgContent);
+
+                      const overlay = document.createElement("div");
+                      overlay.className = "icon-copy-overlay";
+                      overlay.textContent = "✅ Copied";
+                      buttonElement.appendChild(overlay);
+
+                      setTimeout(() => {
+                        if (overlay.parentNode === buttonElement) {
+                          buttonElement.removeChild(overlay);
+                        }
+                      }, 3000);
+                    } catch (err) {
+                      console.error("Failed to copy SVG from grid icon: ", err);
+                      const overlay = document.createElement("div");
+                      overlay.className = "icon-copy-overlay icon-copy-error";
+                      overlay.textContent = "❌ Error";
+
+                      // Remove any existing overlay before adding error overlay
+                      const existingOverlay = buttonElement.querySelector(".icon-copy-overlay");
+                      if (existingOverlay) existingOverlay.remove();
+
+                      buttonElement.appendChild(overlay);
+                      setTimeout(() => {
+                        if (overlay.parentNode === buttonElement) {
+                          buttonElement.removeChild(overlay);
+                        }
+                      }, 2000);
+                    }
+                  } else {
+                    selectedIcon$.next(icon);
+                  }
+                }}
               >
                 <div class="svg-container" style="height: 48px; display: flex; gap: 8px">
                   <!-- SVG will be loaded when visible -->

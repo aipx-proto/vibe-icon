@@ -1,6 +1,7 @@
 import { html, render } from "lit-html";
 import packageJson from "../../package.json";
 import type { SearchResult } from "../../typings/icon-index";
+import { generateSvgFromSymbol } from "../utils/svg-utils"; // Added import
 import "./details.css";
 
 const iconIdPrefix = "icon-";
@@ -111,11 +112,7 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
         </header>
         <section class="icon-option-list">
           ${icon.options.map((option) => {
-            const symbolElement = svgDoc.querySelector(`symbol#${option.style}`);
-            const rawSymbolContent = symbolElement?.innerHTML.trim() || "<!-- Icon content not found -->";
-            const viewBox = symbolElement?.getAttribute("viewBox") || svgDoc.documentElement.getAttribute("viewBox") || "0 0 24 24";
-
-            const fullSvgContent = `<svg width="24" height="24" viewBox="${viewBox}" xmlns="http://www.w3.org/2000/svg">${rawSymbolContent}</svg>`;
+            const fullSvgContent = generateSvgFromSymbol(svgDoc, option.style) || `<!-- Error generating SVG for style ${option.style} -->`;
             const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>`;
             const downloadFileName = `${icon.filename.split(".svg")[0]}-${option.style}.svg`;
 
