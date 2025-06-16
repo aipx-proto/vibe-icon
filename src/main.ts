@@ -26,6 +26,43 @@ fromEvent(aiSearchButton, "click")
   .pipe(
     switchMap(async () => {
       const settings = vibeButton.settings;
+      const channel = new MessageChannel();
+      worker.postMessage(
+        {
+          aiQuery: {
+            settings,
+            query: searchInput.value,
+          },
+        },
+        [channel.port2]
+      );
+
+      channel.port1.start();
+      return new Promise<SearchResult[]>((resolve) => {
+        channel.port1.addEventListener(
+          "message",
+          (event) => {
+            resolve(event.data.aiResults);
+            channel.port1.close();
+          },
+          { once: true }
+        );
+      });
+    }),
+    tap((results) => {
+      console.log("AI Search Results:", results);
+      // Display AI search results in the grid
+      if (results) {
+        // Reset limit on new AI search
+        currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
+        currentResults = results;
+        renderResults(currentResults, currentDisplayLimit);
+
+        // If no icon is selected and we have results, select the first one
+        if (selectedIcon$.value === null && results.length > 0) {
+          selectedIcon$.next(results[0]);
+        }
+      }
     })
   )
   .subscribe();
