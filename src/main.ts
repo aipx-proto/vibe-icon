@@ -124,8 +124,10 @@ initKeyboardNavigation({
   setDisplayLimit: (newLimit) => {
     currentDisplayLimit = newLimit;
   },
+  getSearchState: () => searchState,
   renderResultsFn: renderResults,
   DISPLAY_INCREMENT,
+  aiSearchButton,
 });
 
 fromEvent(searchInput, "input")
@@ -170,18 +172,6 @@ fromEvent(searchInput, "input")
         if (selectedIcon$.value === null && results.length > 0) {
           selectedIcon$.next(results[0]);
         }
-      }
-    })
-  )
-  .subscribe();
-
-// Also handle Enter key for AI search
-fromEvent(searchInput, "keydown")
-  .pipe(
-    tap((event) => {
-      const keyEvent = event as KeyboardEvent;
-      if (keyEvent.key === "Enter" && searchState === "completed" && currentResults.length === 0 && searchInput.value.trim() !== "") {
-        aiSearchButton.click();
       }
     })
   )
