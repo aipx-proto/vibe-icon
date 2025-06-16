@@ -21,8 +21,8 @@ const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement
 
 // State for pagination
 let currentResults: SearchResult[] = [];
-const DISPLAY_INITIAL_LIMIT = 50; // Initial number of icons to display
-const DISPLAY_INCREMENT = 50;
+const DISPLAY_INITIAL_LIMIT = 48; // Initial number of icons to display
+const DISPLAY_INCREMENT = 48;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
 
 // Create BehaviorSubject for selected icon
