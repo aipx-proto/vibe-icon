@@ -24,6 +24,12 @@ const aiSearchButton = document.querySelector("#ai-search") as HTMLButtonElement
 
 fromEvent(aiSearchButton, "click")
   .pipe(
+    tap(() => {
+      // Set AI searching state
+      searchState = "ai-searching";
+      isAISearch = true;
+      renderResults([], 0); // Show loading state
+    }),
     switchMap(async () => {
       const settings = vibeButton.settings;
       const channel = new MessageChannel();
@@ -52,6 +58,7 @@ fromEvent(aiSearchButton, "click")
     tap((results) => {
       console.log("AI Search Results:", results);
       // Display AI search results in the grid
+      searchState = "completed";
       if (results) {
         // Reset limit on new AI search
         currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
@@ -72,6 +79,11 @@ let currentResults: SearchResult[] = [];
 const DISPLAY_INITIAL_LIMIT = 48; // Initial number of icons to display
 const DISPLAY_INCREMENT = 48;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
+
+// Add state for search status
+type SearchState = "idle" | "searching" | "ai-searching" | "completed";
+let searchState: SearchState = "idle";
+let isAISearch = false;
 
 // Create BehaviorSubject for selected icon
 const selectedIcon$ = new BehaviorSubject<SearchResult | null>(null);
@@ -111,6 +123,11 @@ fromEvent(searchInput, "input")
   .pipe(
     debounceTime(50),
     startWith(""), // Trigger initial search
+    tap(() => {
+      // Reset to keyword search when user types
+      isAISearch = false;
+      searchState = "searching";
+    }),
     switchMap(async () => {
       const channel = new MessageChannel();
       worker.postMessage(
@@ -133,6 +150,7 @@ fromEvent(searchInput, "input")
       });
     }),
     tap((results) => {
+      searchState = "completed";
       if (results) {
         // Reset limit on new query
         currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
@@ -149,10 +167,49 @@ fromEvent(searchInput, "input")
   .subscribe();
 
 // Function to render results with show more button
-function renderResults(results: SearchResult[], limit: number) {
+export function renderResults(results: SearchResult[], limit: number) {
   const visibleResults = results.slice(0, limit);
   const hasMore = results.length > limit;
   const currentSelectedIcon = selectedIcon$.value;
+
+  // Handle different states
+  if (searchState === "ai-searching") {
+    render(
+      html`
+        <div style="text-align: center; padding: 60px 20px; color: #666;">
+          <div style="font-size: 18px;">😎 Matching the best icons by vibe...</div>
+        </div>
+      `,
+      resultsContainer
+    );
+    return;
+  }
+
+  if (searchState === "completed" && results.length === 0) {
+    if (isAISearch) {
+      render(
+        html`
+          <div style="text-align: center; padding: 60px 20px; color: #666;">
+            <div style="font-size: 18px;">No results from AI search. Please elaborate what the icon is used for and try again</div>
+          </div>
+        `,
+        resultsContainer
+      );
+    } else if (searchInput.value.trim() !== "") {
+      render(
+        html`
+          <div style="text-align: center; padding: 60px 20px; color: #666;">
+            <div style="font-size: 18px;">No exact match. Press ENTER to try AI search</div>
+          </div>
+        `,
+        resultsContainer
+      );
+    } else {
+      // Empty search input, don't show any message
+      render(html``, resultsContainer);
+    }
+    return;
+  }
 
   render(
     html`
@@ -252,3 +309,15 @@ function renderResults(results: SearchResult[], limit: number) {
     });
   });
 }
+
+// Also handle Enter key for AI search
+fromEvent(searchInput, "keydown")
+  .pipe(
+    tap((event) => {
+      const keyEvent = event as KeyboardEvent;
+      if (keyEvent.key === "Enter" && searchState === "completed" && currentResults.length === 0 && searchInput.value.trim() !== "") {
+        aiSearchButton.click();
+      }
+    })
+  )
+  .subscribe();
