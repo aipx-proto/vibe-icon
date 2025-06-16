@@ -87,3 +87,7 @@
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
+.coding-agent-prompt {
+  margin-top: 8px;
+}

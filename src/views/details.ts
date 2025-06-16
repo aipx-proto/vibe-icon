@@ -1,7 +1,9 @@
 import { html, render } from "lit-html";
 import packageJson from "../../package.json";
 import type { SearchResult } from "../../typings/icon-index";
+import { renderTemplate } from "../render-template"; // Added import
 import { generateSvgFromSymbol } from "../svg"; // Added import
+import codingAgentPrompt from "./coding-agent-prompt.md?raw";
 import { copyIconToClipboard } from "./copy-icon"; // Added import
 import "./details.css";
 
@@ -151,6 +153,20 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
 <vibe-icon name="${icon.filename.split(".svg")[0]}" size="16"></vibe-icon>
             `.trim()}
           ></code-snippet>
+          <details>
+            <summary>Ask a coding agent</summary>
+            <div class="coding-agent-prompt">
+              <code-snippet
+                .lang=${"markdown"}
+                .code=${renderTemplate(codingAgentPrompt, {
+                  iconName: icon.filename.split(".svg")[0],
+                  packageName: packageJson.name,
+                  packageVersion: packageJson.version,
+                  searchToolUrl: window.location.origin + import.meta.env.BASE_URL,
+                })}
+              ></code-snippet>
+            </div>
+          </details>
         </section>
         <section class="icon-doc-section">
           <h2>Advanced install</h2>
