@@ -1,0 +1,6 @@
+.result-status {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+  color: #999;
+}

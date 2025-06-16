@@ -76,7 +76,7 @@ export function initKeyboardNavigation({
           return;
         }
 
-        if (document.activeElement === searchInput && (event.key === "ArrowDown" || event.key === "Enter")) {
+        if (document.activeElement === searchInput && event.key === "ArrowDown") {
           event.preventDefault();
           focusOnIconFromSearch();
           return;
