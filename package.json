@@ -31,6 +31,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@rehype-pretty/transformers": "^0.13.2",
     "lit-html": "^3.3.0",
     "openai": "^5.3.0",
     "rxjs": "^7.8.2",

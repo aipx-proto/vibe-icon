@@ -6,4 +6,23 @@
   code {
     white-space: pre-wrap;
   }
+
+  --copy-icon: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>📋</text></svg>");
+  --success-icon: url("data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%2210 0 100 100%22><text y=%22.90em%22 font-size=%2290%22>✅</text></svg>");
+}
+
+.shiki:hover {
+  .rehype-pretty-copy {
+    opacity: 1;
+    background-color: #282c34;
+  }
+}
+
+.rehype-pretty-copy {
+  background: none;
+  backdrop-filter: none !important;
+  opacity: 0;
+  top: 4px;
+  cursor: pointer;
+  border: none;
 }

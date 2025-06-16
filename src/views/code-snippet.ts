@@ -1,3 +1,4 @@
+import { transformerCopyButton } from "@rehype-pretty/transformers";
 import { codeToHtml } from "shiki";
 import style from "./code-snippet.css?raw";
 
@@ -10,6 +11,13 @@ export class CodeSnippet extends HTMLElement {
     }
   }
   static observedAttributes = ["data-lang", "data-code"];
+
+  private transformers = [
+    transformerCopyButton({
+      visibility: "always",
+      feedbackDuration: 2_000,
+    }),
+  ];
 
   constructor() {
     super();
@@ -35,7 +43,7 @@ export class CodeSnippet extends HTMLElement {
     const code = this.getAttribute("data-code");
 
     if (lang && code) {
-      codeToHtml(code, { lang, theme })
+      codeToHtml(code, { lang, theme, transformers: this.transformers })
         .then((html) => {
           this.shadowRoot!.innerHTML = `<style>${style}</style>${html}`;
         })
