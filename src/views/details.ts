@@ -5,19 +5,60 @@ import "./details.css";
 
 const iconIdPrefix = "icon-";
 
+// Helper functions for copy and download
+async function handleHtmlCopy(htmlCode: string) {
+  try {
+    await navigator.clipboard.writeText(htmlCode);
+    // Consider adding a user notification (e.g., a toast message)
+    console.log("HTML copied to clipboard");
+  } catch (err) {
+    console.error("Failed to copy HTML: ", err);
+    // Consider adding a user notification for errors
+  }
+}
+
+async function handleSvgCopy(svgContent: string) {
+  try {
+    await navigator.clipboard.writeText(svgContent);
+    // Consider adding a user notification
+    console.log("SVG copied to clipboard");
+  } catch (err) {
+    console.error("Failed to copy SVG: ", err);
+    // Consider adding a user notification for errors
+  }
+}
+
+function handleDownload(svgContent: string, fileName: string) {
+  try {
+    const blob = new Blob([svgContent], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a); // Appending to body is required for Firefox
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    console.log("SVG downloaded:", fileName);
+  } catch (err) {
+    console.error("Failed to download SVG: ", err);
+    // Consider adding a user notification for errors
+  }
+}
+
 // Function to render icon details
 export async function renderDetails(icon: SearchResult, detailsContainer: HTMLElement) {
-  const advancedInstallIconOptions = await Promise.all(
-    icon.options.map(async (option) => {
-      const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
-      const svgText = await response.text();
-      const symbol = new DOMParser().parseFromString(svgText, "image/svg+xml").querySelector(`symbol#${option.style}`);
-      const iconContent = symbol?.innerHTML || "<!-- Icon content not found -->";
-      return `  <symbol id="${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}">
-    ${iconContent.trim()}
+  const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
+  const svgText = await response.text();
+  const svgDoc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+
+  const advancedInstallIconOptionsStrings = icon.options.map((option) => {
+    const symbol = svgDoc.querySelector(`symbol#${option.style}`);
+    const iconContent = symbol?.innerHTML.trim() || "<!-- Icon content not found -->";
+    return `  <symbol id="${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}">
+    ${iconContent}
   </symbol>`;
-    })
-  );
+  });
 
   render(
     html`
@@ -34,8 +75,16 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
             : null}
         </header>
         <section class="icon-option-list">
-          ${icon.options.map(
-            (option) => html`
+          ${icon.options.map((option) => {
+            const symbolElement = svgDoc.querySelector(`symbol#${option.style}`);
+            const rawSymbolContent = symbolElement?.innerHTML.trim() || "<!-- Icon content not found -->";
+            const viewBox = symbolElement?.getAttribute("viewBox") || svgDoc.documentElement.getAttribute("viewBox") || "0 0 24 24";
+
+            const fullSvgContent = `<svg width="24" height="24" viewBox="${viewBox}" xmlns="http://www.w3.org/2000/svg">${rawSymbolContent}</svg>`;
+            const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>`;
+            const downloadFileName = `${icon.filename.split(".svg")[0]}-${option.style}.svg`;
+
+            return html`
               <div class="icon-option">
                 <h2>${option.style}</h2>
                 <div class="icon-preview">
@@ -44,19 +93,16 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
                   </svg>
                 </div>
                 <div class="icon-info">
-                  <code-snippet
-                    .lang=${"html"}
-                    .code=${`<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>`}
-                  ></code-snippet>
+                  <code-snippet .lang=${"html"} .code=${htmlCode}></code-snippet>
                   <menu>
-                    <button>HTML</button>
-                    <button>SVG</button>
-                    <button>Download</button>
+                    <button @click=${() => handleHtmlCopy(htmlCode)}>HTML</button>
+                    <button @click=${() => handleSvgCopy(fullSvgContent)}>SVG</button>
+                    <button @click=${() => handleDownload(fullSvgContent, downloadFileName)}>Download</button>
                   </menu>
                 </div>
               </div>
-            `
-          )}
+            `;
+          })}
         </section>
         <section class="icon-doc-section">
           <h2>Install</h2>
@@ -83,7 +129,7 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
 
   <!-- Code for existing icons -->
 
-${advancedInstallIconOptions.join("\n\n")}
+${advancedInstallIconOptionsStrings.join("\n\n")}
 </svg>
             `.trim()}
           ></code-snippet>
