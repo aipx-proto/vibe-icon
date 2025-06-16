@@ -3,8 +3,22 @@ import packageJson from "../../package.json";
 import type { SearchResult } from "../../typings/icon-index";
 import "./details.css";
 
+const iconIdPrefix = "icon-";
+
 // Function to render icon details
-export function renderDetails(icon: SearchResult, detailsContainer: HTMLElement) {
+export async function renderDetails(icon: SearchResult, detailsContainer: HTMLElement) {
+  const advancedInstallIconOptions = await Promise.all(
+    icon.options.map(async (option) => {
+      const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
+      const svgText = await response.text();
+      const symbol = new DOMParser().parseFromString(svgText, "image/svg+xml").querySelector(`symbol#${option.style}`);
+      const iconContent = symbol?.innerHTML || "<!-- Icon content not found -->";
+      return `  <symbol id="${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}">
+    ${iconContent.trim()}
+  </symbol>`;
+    })
+  );
+
   render(
     html`
       <div class="icon-details">
@@ -67,15 +81,9 @@ export function renderDetails(icon: SearchResult, detailsContainer: HTMLElement)
             .code=${`
 <svg style="display: none;">
 
-  <!-- Other icons code -->
+  <!-- Code for existing icons -->
 
-${icon.options
-  .map(
-    (option) => `  <symbol id="${icon.filename.split(".svg")[0]}-${option.style}">
-    <!-- Icon content -->
-  </symbol>`
-  )
-  .join("\n\n")}
+${advancedInstallIconOptions.join("\n\n")}
 </svg>
             `.trim()}
           ></code-snippet>
@@ -85,7 +93,7 @@ ${icon.options
             .code=${icon.options
               .map(
                 (option) => `<svg width="24" height="24">
-  <use href="#${icon.filename.split(".svg")[0]}-${option.style}" />
+  <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}" />
 </svg>`
               )
               .join("\n\n")}
