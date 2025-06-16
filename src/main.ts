@@ -31,6 +31,14 @@ fromEvent(aiSearchButton, "click")
       if (!searchInput.value.trim()) return { aiResults: [], error: null };
 
       const settings = vibeButton.settings;
+
+      if (!settings.endpoint || !settings.apiKey) {
+        return {
+          aiResults: [],
+          error: "Please add Azure OpenAI connection via the button in the bottom right corner.",
+        };
+      }
+
       const channel = new MessageChannel();
       worker.postMessage(
         {
