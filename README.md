@@ -10,15 +10,15 @@
 
 ## Keyboard Shortcuts
 
-| Key                                                 | Action                   | Remarks                |
-| --------------------------------------------------- | ------------------------ | ---------------------- |
-| <kbd>Enter</kbd>                                    | Search with AI\*         | when in search box     |
-| <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>K</kbd>       | Focus search box         |                        |
-| <kbd>↓</kbd>                                        | Focus on search results  | when in search box     |
-| <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> | Navigate search results  | when in search results |
-| <kbd>Escape</kbd>                                   | Return to search box     | when in search results |
-| <kbd>Enter</kbd>                                    | Open icon details        | when in search results |
-| <kbd>Escape</kbd>                                   | Return to search results | when in icon details   |
-| Double click a tile                                 | Copy SVG                 |                        |
+| Key                                                 | Action                   | When              |
+| --------------------------------------------------- | ------------------------ | ----------------- |
+| <kbd>Enter</kbd>                                    | Search with AI\*         | in search box     |
+| <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> + <kbd>K</kbd>       | Focus search box         |                   |
+| <kbd>↓</kbd>                                        | Focus on search results  | in search box     |
+| <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> | Navigate search results  | in search results |
+| <kbd>Escape</kbd>                                   | Return to search box     | in search results |
+| <kbd>Enter</kbd>                                    | Open icon details        | in search results |
+| <kbd>Escape</kbd>                                   | Return to search results | in icon details   |
+| Double click a tile                                 | Copy SVG                 |                   |
 
 \*Search with AI requires a valid Azure OpenAI connection. Click the AI Foundry button in the corner of the screen to set it up.
