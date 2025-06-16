@@ -2,6 +2,7 @@ import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
 import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
 import { BehaviorSubject, debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
+import "vibe-button";
 import type { SearchResult } from "../typings/icon-index";
 import { iconObserver, isIconLoaded } from "./icon-observer";
 import { initKeyboardNavigation } from "./keyboard-navigation";
@@ -18,6 +19,7 @@ const worker = new SearchWorker();
 const resultsContainer = document.querySelector("#results") as HTMLElement;
 const detailsContainer = document.querySelector("#details") as HTMLElement;
 const searchInput = document.querySelector(`[name="query"]`) as HTMLInputElement;
+const aiSearchButton = document.querySelector("#ai-search") as HTMLButtonElement;
 
 // State for pagination
 let currentResults: SearchResult[] = [];

@@ -13,11 +13,15 @@
   <body class="app-layout">
     <div class="left-pane">
       <header class="app-header">
-        <input id="search" name="query" type="search" placeholder="Icon name or metaphor" class="mri-appearance-outline" autofocus />
+        <div class="outline-container">
+          <input id="search" name="query" type="search" placeholder="Keyword or description" class="mri-appearance-outline" autofocus />
+          <button id="ai-search">AI search</button>
+        </div>
       </header>
       <main id="results" class="app-main"></main>
     </div>
     <aside id="details" class="app-aside"></aside>
+    <vibe-button></vibe-button>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
