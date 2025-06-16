@@ -6,7 +6,7 @@
 > Five out of vibe stars  
 > —Vibecon Awards
 
-[Open icon browser](https://aipx-proto.github.io/vibe-icon/)
+[Open the Vibe Icon picker](https://aipx-proto.github.io/vibe-icon/)
 
 ## Keyboard Shortcuts
 
