@@ -8,7 +8,7 @@ import { generateSvgFromSymbol } from "../svg";
 import { copyIconToClipboard } from "./copy-icon";
 import "./results.css";
 
-type SearchState = "idle" | "searching" | "ai-searching" | "completed";
+type SearchState = "idle" | "searching" | "ai-searching" | "completed" | "error";
 
 interface RenderResultsContext {
   resultsContainer: HTMLElement;
@@ -18,6 +18,7 @@ interface RenderResultsContext {
   isAISearch: boolean;
   currentDisplayLimit: number;
   DISPLAY_INCREMENT: number;
+  searchErrorMessage: string | null;
 }
 
 // Function to render results with show more button
@@ -27,6 +28,11 @@ export function renderResults(results: SearchResult[], limit: number, context: R
   const currentSelectedIcon = context.selectedIcon$.value;
 
   // Handle different states
+  if (context.searchState === "error") {
+    render(html` <div class="result-status">⚠️ ${context.searchErrorMessage || "An unexpected error occurred."}</div> `, context.resultsContainer);
+    return;
+  }
+
   if (context.searchState === "ai-searching") {
     render(html` <div class="result-status">😎 Matching the best icons by vibe...</div> `, context.resultsContainer);
     return;

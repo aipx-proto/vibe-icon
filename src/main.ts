@@ -24,10 +24,11 @@ fromEvent(aiSearchButton, "click")
       // Set AI searching state
       searchState = "ai-searching";
       isAISearch = true;
+      searchErrorMessage = null; // Clear previous errors
       renderResults([], 0); // Show loading state
     }),
     switchMap(async () => {
-      if (!searchInput.value.trim()) return [];
+      if (!searchInput.value.trim()) return { aiResults: [], error: null };
 
       const settings = vibeButton.settings;
       const channel = new MessageChannel();
@@ -42,34 +43,39 @@ fromEvent(aiSearchButton, "click")
       );
 
       channel.port1.start();
-      return new Promise<SearchResult[]>((resolve) => {
+      return new Promise<{ aiResults: SearchResult[]; error: any }>((resolve) => {
         channel.port1.addEventListener(
           "message",
           (event) => {
-            resolve(event.data.aiResults);
-            const error = event.data.error;
-            if (error) {
-              // TODO display search error
-            }
+            resolve(event.data); // Resolve with the whole data object
             channel.port1.close();
           },
           { once: true }
         );
       });
     }),
-    tap((results) => {
-      console.log("AI Search Results:", results);
-      // Display AI search results in the grid
-      searchState = "completed";
-      if (results) {
-        // Reset limit on new AI search
-        currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
-        currentResults = results;
-        renderResults(currentResults, currentDisplayLimit);
+    tap((data) => {
+      const results = data.aiResults;
+      const error = data.error;
+      console.log("AI Search Data:", data);
 
-        // If no icon is selected and we have results, select the first one
-        if (selectedIcon$.value === null && results.length > 0) {
-          selectedIcon$.next(results[0]);
+      if (error) {
+        searchState = "error";
+        searchErrorMessage = typeof error === "string" ? error : error.message || "AI search failed. Please try again.";
+        currentResults = [];
+        renderResults(currentResults, 0);
+      } else {
+        searchState = "completed";
+        if (results) {
+          // Reset limit on new AI search
+          currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
+          currentResults = results;
+          renderResults(currentResults, currentDisplayLimit);
+
+          // If no icon is selected and we have results, select the first one
+          if (selectedIcon$.value === null && results.length > 0) {
+            selectedIcon$.next(results[0]);
+          }
         }
       }
     })
@@ -83,9 +89,10 @@ const DISPLAY_INCREMENT = 48;
 let currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
 
 // Add state for search status
-type SearchState = "idle" | "searching" | "ai-searching" | "completed";
+type SearchState = "idle" | "searching" | "ai-searching" | "completed" | "error";
 let searchState: SearchState = "idle";
 let isAISearch = false;
+let searchErrorMessage: string | null = null;
 
 // Create BehaviorSubject for selected icon
 const selectedIcon$ = new BehaviorSubject<SearchResult | null>(null);
@@ -116,6 +123,7 @@ function renderResults(results: SearchResult[], limit: number) {
     isAISearch,
     currentDisplayLimit,
     DISPLAY_INCREMENT,
+    searchErrorMessage,
   });
 }
 
@@ -144,6 +152,7 @@ fromEvent(searchInput, "input")
       // Reset to keyword search when user types
       isAISearch = false;
       searchState = "searching";
+      searchErrorMessage = null; // Clear previous errors
     }),
     switchMap(async () => {
       const channel = new MessageChannel();
@@ -155,32 +164,38 @@ fromEvent(searchInput, "input")
       );
 
       channel.port1.start();
-      return new Promise<SearchResult[]>((resolve) => {
+      return new Promise<{ searchResults: SearchResult[]; error: any }>((resolve) => {
         channel.port1.addEventListener(
           "message",
           (event) => {
-            resolve(event.data.searchResults);
-            const error = event.data.error;
-            if (error) {
-              // TODO display search error
-            }
+            resolve(event.data); // Resolve with the whole data object
             channel.port1.close();
           },
           { once: true }
         );
       });
     }),
-    tap((results) => {
-      searchState = "completed";
-      if (results) {
-        // Reset limit on new query
-        currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
-        currentResults = results;
-        renderResults(currentResults, currentDisplayLimit);
+    tap((data) => {
+      const results = data.searchResults;
+      const error = data.error;
 
-        // If no icon is selected and we have results, select the first one
-        if (selectedIcon$.value === null && results.length > 0) {
-          selectedIcon$.next(results[0]);
+      if (error) {
+        searchState = "error";
+        searchErrorMessage = typeof error === "string" ? error : error.message || "Keyword search failed. Please try again.";
+        currentResults = [];
+        renderResults(currentResults, 0);
+      } else {
+        searchState = "completed";
+        if (results) {
+          // Reset limit on new query
+          currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
+          currentResults = results;
+          renderResults(currentResults, currentDisplayLimit);
+
+          // If no icon is selected and we have results, select the first one
+          if (selectedIcon$.value === null && results.length > 0) {
+            selectedIcon$.next(results[0]);
+          }
         }
       }
     })
