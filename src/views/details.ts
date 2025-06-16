@@ -6,29 +6,40 @@ import "./details.css";
 const iconIdPrefix = "icon-";
 
 // Helper functions for copy and download
-async function handleHtmlCopy(htmlCode: string) {
+async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
+  const originalText = button.textContent;
   try {
     await navigator.clipboard.writeText(htmlCode);
     // Consider adding a user notification (e.g., a toast message)
     console.log("HTML copied to clipboard");
+    button.textContent = "✅ Copied";
+    setTimeout(() => {
+      button.textContent = originalText;
+    }, 3000);
   } catch (err) {
     console.error("Failed to copy HTML: ", err);
     // Consider adding a user notification for errors
   }
 }
 
-async function handleSvgCopy(svgContent: string) {
+async function handleSvgCopy(svgContent: string, button: HTMLButtonElement) {
+  const originalText = button.textContent;
   try {
     await navigator.clipboard.writeText(svgContent);
     // Consider adding a user notification
     console.log("SVG copied to clipboard");
+    button.textContent = "✅ Copied";
+    setTimeout(() => {
+      button.textContent = originalText;
+    }, 3000);
   } catch (err) {
     console.error("Failed to copy SVG: ", err);
     // Consider adding a user notification for errors
   }
 }
 
-function handleDownload(svgContent: string, fileName: string) {
+function handleDownload(svgContent: string, fileName: string, button: HTMLButtonElement) {
+  const originalText = button.textContent;
   try {
     const blob = new Blob([svgContent], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
@@ -40,6 +51,10 @@ function handleDownload(svgContent: string, fileName: string) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     console.log("SVG downloaded:", fileName);
+    button.textContent = "✅ Downloaded";
+    setTimeout(() => {
+      button.textContent = originalText;
+    }, 3000);
   } catch (err) {
     console.error("Failed to download SVG: ", err);
     // Consider adding a user notification for errors
@@ -95,9 +110,9 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
                 <div class="icon-info">
                   <code-snippet .lang=${"html"} .code=${htmlCode}></code-snippet>
                   <menu>
-                    <button @click=${() => handleHtmlCopy(htmlCode)}>HTML</button>
-                    <button @click=${() => handleSvgCopy(fullSvgContent)}>SVG</button>
-                    <button @click=${() => handleDownload(fullSvgContent, downloadFileName)}>Download</button>
+                    <button @click=${(e: Event) => handleHtmlCopy(htmlCode, e.target as HTMLButtonElement)}>HTML</button>
+                    <button @click=${(e: Event) => handleSvgCopy(fullSvgContent, e.target as HTMLButtonElement)}>SVG</button>
+                    <button @click=${(e: Event) => handleDownload(fullSvgContent, downloadFileName, e.target as HTMLButtonElement)}>Download</button>
                   </menu>
                 </div>
               </div>
