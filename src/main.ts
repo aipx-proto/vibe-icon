@@ -27,6 +27,8 @@ fromEvent(aiSearchButton, "click")
       renderResults([], 0); // Show loading state
     }),
     switchMap(async () => {
+      if (!searchInput.value.trim()) return [];
+
       const settings = vibeButton.settings;
       const channel = new MessageChannel();
       worker.postMessage(
