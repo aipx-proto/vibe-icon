@@ -73,7 +73,7 @@ function handleDownload(svgContent: string, fileName: string, button: HTMLButton
 export async function renderDetails(icon: SearchResult, detailsContainer: HTMLElement) {
   const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
   const svgText = await response.text();
-  const svgDoc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+  const svgDoc = new DOMParser().parseFromString(svgText, "text/html");
 
   const advancedInstallIconOptionsStrings = icon.options.map((option) => {
     const symbol = svgDoc.querySelector(`symbol#${option.style}`);
@@ -198,6 +198,7 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
           This is not a Microsoft official project. It is generated from the open source project
           <a href="https://github.com/microsoft/fluentui-system-icons" target="_blank">Fluent UI System Icons</a>. This site is built with the awesome
           <a href="https://github.com/aipx-proto/mirai-css/" target="_blank">Mirai CSS</a>, a library for teleporting the apps of the future to here and now.
+          Source code and documentation available on [GitHub](https://github.com/aipx-proto/vibe-icon)
         </p>
       </div>
     `,
