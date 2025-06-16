@@ -6,8 +6,9 @@ import type { SearchResult } from "../typings/icon-index";
 import { iconObserver, isIconLoaded } from "./icon-observer";
 import { initKeyboardNavigation } from "./keyboard-navigation";
 import "./style.css";
-import { generateSvgFromSymbol } from "./utils/svg-utils"; // Added import
+import { generateSvgFromSymbol } from "./svg"; // Added import
 import { CodeSnippet } from "./views/code-snippet";
+import { copyIconToClipboard } from "./views/copy-icon"; // Added import
 import { renderDetails } from "./views/details";
 import SearchWorker from "./worker?worker";
 
@@ -129,7 +130,7 @@ function renderResults(results: SearchResult[], limit: number) {
 
                   if (currentSelectedIconFromSubject?.name === icon.name) {
                     // Already selected, so copy
-                    if (buttonElement.querySelector(".icon-copy-overlay")) {
+                    if (buttonElement.querySelector(".copy-overlay")) {
                       return; // Prevent re-triggering if overlay is already shown
                     }
                     try {
@@ -153,34 +154,11 @@ function renderResults(results: SearchResult[], limit: number) {
                         throw new Error(`Failed to generate SVG for style '${styleToCopy}' from ${icon.filename}`);
                       }
 
-                      await navigator.clipboard.writeText(inlinedSvgContent);
-
-                      const overlay = document.createElement("div");
-                      overlay.className = "icon-copy-overlay";
-                      overlay.textContent = "✅ Copied";
-                      buttonElement.appendChild(overlay);
-
-                      setTimeout(() => {
-                        if (overlay.parentNode === buttonElement) {
-                          buttonElement.removeChild(overlay);
-                        }
-                      }, 3000);
+                      await copyIconToClipboard(inlinedSvgContent, buttonElement);
                     } catch (err) {
                       console.error("Failed to copy SVG from grid icon: ", err);
-                      const overlay = document.createElement("div");
-                      overlay.className = "icon-copy-overlay icon-copy-error";
-                      overlay.textContent = "❌ Error";
-
-                      // Remove any existing overlay before adding error overlay
-                      const existingOverlay = buttonElement.querySelector(".icon-copy-overlay");
-                      if (existingOverlay) existingOverlay.remove();
-
-                      buttonElement.appendChild(overlay);
-                      setTimeout(() => {
-                        if (overlay.parentNode === buttonElement) {
-                          buttonElement.removeChild(overlay);
-                        }
-                      }, 2000);
+                      // Ensure error overlay is handled by copyIconToClipboard by passing the buttonElement
+                      await copyIconToClipboard("", buttonElement, "", "❌ Error copying");
                     }
                   } else {
                     selectedIcon$.next(icon);

@@ -1,0 +1,18 @@
+.copy-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0d0d0d;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  pointer-events: none;
+}
+
+.copy-overlay.icon-copy-error {
+  color: #ff6b6b; /* A reddish color for errors */
+  background-color: rgba(50, 10, 10, 0.9); /* Dark red semi-transparent background */
+}

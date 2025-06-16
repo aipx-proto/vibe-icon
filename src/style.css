@@ -17,6 +17,7 @@ html {
 
   .left-pane {
     grid-area: left;
+    align-content: start;
     display: grid;
     gap: 16px;
     padding-inline-end: 12px;
@@ -127,24 +128,4 @@ mark {
   color: black;
   font-weight: bold;
   background-color: #fff;
-}
-
-.icon-copy-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(13, 13, 13, 0.9); /* Dark semi-transparent background */
-  border-radius: inherit; /* Inherit from parent .icon's border-radius */
-  font-size: 16px;
-  font-weight: 600;
-  color: white;
-  pointer-events: none; /* Allow clicks to pass through if needed */
-  z-index: 10; /* Ensure it's on top of other icon content */
-}
-
-.icon-copy-overlay.icon-copy-error {
-  color: #ff6b6b; /* A reddish color for errors */
-  background-color: rgba(50, 10, 10, 0.9); /* Dark red semi-transparent background */
 }

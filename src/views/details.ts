@@ -1,7 +1,8 @@
 import { html, render } from "lit-html";
 import packageJson from "../../package.json";
 import type { SearchResult } from "../../typings/icon-index";
-import { generateSvgFromSymbol } from "../utils/svg-utils"; // Added import
+import { generateSvgFromSymbol } from "../svg"; // Added import
+import { copyIconToClipboard } from "./copy-icon"; // Added import
 import "./details.css";
 
 const iconIdPrefix = "icon-";
@@ -40,23 +41,7 @@ async function handleSvgCopy(svgContent: string, button: HTMLButtonElement) {
 }
 
 async function handlePreviewCopy(svgContent: string, previewElement: HTMLElement) {
-  try {
-    await navigator.clipboard.writeText(svgContent);
-    console.log("SVG copied to clipboard from preview");
-
-    // Create and show overlay
-    const overlay = document.createElement("div");
-    overlay.className = "copy-overlay";
-    overlay.textContent = "✅ Copied";
-    previewElement.appendChild(overlay);
-
-    // Remove overlay after 3 seconds
-    setTimeout(() => {
-      overlay.remove();
-    }, 3000);
-  } catch (err) {
-    console.error("Failed to copy SVG from preview: ", err);
-  }
+  await copyIconToClipboard(svgContent, previewElement);
 }
 
 function handleDownload(svgContent: string, fileName: string, button: HTMLButtonElement) {

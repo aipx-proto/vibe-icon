@@ -1,8 +1,8 @@
 export function generateSvgFromSymbol(
-  svgDoc: Document,          // The parsed SVG document object
-  style: string,             // The ID of the symbol (e.g., "regular", "filled")
-  width: number = 24,        // Desired width of the output SVG
-  height: number = 24,       // Desired height of the output SVG
+  svgDoc: Document, // The parsed SVG document object
+  style: string, // The ID of the symbol (e.g., "regular", "filled")
+  width: number = 24, // Desired width of the output SVG
+  height: number = 24, // Desired height of the output SVG
   defaultViewBox: string = "0 0 24 24" // Fallback viewBox if not found on symbol or root SVG
 ): string | null {
   const symbolElement = svgDoc.querySelector(`symbol#${style}`);
