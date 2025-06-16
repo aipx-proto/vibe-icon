@@ -62,7 +62,6 @@ fromEvent(searchInput, "input")
     debounceTime(50),
     startWith(""), // Trigger initial search
     switchMap(async () => {
-      console.log("OUT");
       const channel = new MessageChannel();
       worker.postMessage(
         {
@@ -85,7 +84,6 @@ fromEvent(searchInput, "input")
     }),
     tap((results) => {
       if (results) {
-        console.log("Search results:", results);
         // Reset limit on new query
         currentDisplayLimit = DISPLAY_INITIAL_LIMIT;
         currentResults = results;
