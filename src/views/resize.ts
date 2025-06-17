@@ -1,0 +1,58 @@
+import "./resize.css";
+
+export function startResizer() {
+  // Corrected typo: starResizer -> startResizer
+  const resizeHandle = document.getElementById("resize-handle");
+  const leftPane = document.querySelector(".left-pane") as HTMLElement | null;
+  const appLayout = document.querySelector(".app-layout") as HTMLElement | null;
+
+  if (!resizeHandle || !leftPane || !appLayout) {
+    console.error("Resize elements not found");
+    return;
+  }
+
+  let isResizing = false;
+
+  resizeHandle.addEventListener("mousedown", () => {
+    isResizing = true;
+    // Add a class to the body to indicate resizing, for cursor changes etc.
+    document.body.style.cursor = "col-resize";
+    appLayout.style.userSelect = "none"; // Prevent text selection during drag
+    resizeHandle.toggleAttribute("data-resizing", true);
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isResizing) return;
+
+    // Calculate the new width for the left pane
+    // The new width is the mouse's X position minus the appLayout's left offset
+    const containerRect = appLayout.getBoundingClientRect();
+    let newLeftWidth = e.clientX - containerRect.left;
+
+    // Constrain the width of the left pane (e.g., min and max width)
+    const minWidth = 200; // Minimum width for left pane
+    // Ensure right pane (aside) also has a minimum width, e.g., 200px
+    // The resize handle is 10px wide
+    const maxWidth = containerRect.width - 200;
+
+    if (newLeftWidth < minWidth) {
+      newLeftWidth = minWidth;
+    }
+    if (newLeftWidth > maxWidth) {
+      newLeftWidth = maxWidth;
+    }
+
+    // Adjust the grid-template-columns of the app-layout
+    // The resize handle width is 16px
+    appLayout.style.gridTemplateColumns = `${newLeftWidth}px 16px 1fr`;
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = ""; // Reset cursor
+      appLayout.style.userSelect = ""; // Re-enable text selection
+      resizeHandle.toggleAttribute("data-resizing", false);
+    }
+  });
+}

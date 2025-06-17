@@ -1,0 +1,31 @@
+.resize-handle {
+  grid-area: handle;
+  cursor: col-resize;
+  width: 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none; /* Prevent text selection during drag */
+  opacity: 0.5;
+
+  &[data-resizing],
+  &:hover {
+    &::before {
+      background-color: #0090d3; /* Change color on hover */
+    }
+  }
+
+  &[data-resizing] {
+    opacity: 1; /* Full opacity when resizing */
+  }
+}
+
+.resize-handle::before {
+  content: "";
+  width: 4px;
+  border-radius: 2px;
+  position: relative;
+  height: 100%; /* Adjust for visual appearance */
+  background-color: transparent;
+}

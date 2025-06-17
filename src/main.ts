@@ -6,6 +6,7 @@ import { initKeyboardNavigation } from "./keyboard-navigation";
 import "./style.css";
 import { CodeSnippet } from "./views/code-snippet";
 import { renderDetails } from "./views/details";
+import { startResizer } from "./views/resize"; // Added import for resizer
 import { renderResults as renderResultsImpl } from "./views/results"; // Added import
 import SearchWorker from "./worker?worker";
 
@@ -151,6 +152,9 @@ initKeyboardNavigation({
   DISPLAY_INCREMENT,
   aiSearchButton,
 });
+
+// Initialize Resizer
+startResizer();
 
 fromEvent(searchInput, "input")
   .pipe(

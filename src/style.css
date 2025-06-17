@@ -12,12 +12,11 @@ body {
 .app-layout {
   height: 100vh;
   padding: 16px;
-  gap: 16px;
+  gap: 0; /* Adjusted gap for resize handle */
   display: grid;
   grid-template:
-    "left aside" auto
-    "left aside" 2fr
-    / 1fr 1fr;
+    "left handle aside" auto
+    "left handle aside" 1fr / 1fr 16px 1fr; /* Initial layout updated */
 
   .left-pane {
     grid-area: left;
