@@ -1,5 +1,7 @@
 import "./resize.css";
 
+const MIN_WIDTH = 300; // Minimum width for the left pane
+
 export function startResizer() {
   // Corrected typo: starResizer -> startResizer
   const resizeHandle = document.getElementById("resize-handle");
@@ -32,13 +34,12 @@ export function startResizer() {
     let newLeftWidth = e.clientX - containerRect.left;
 
     // Constrain the width of the left pane (e.g., min and max width)
-    const minWidth = 200; // Minimum width for left pane
     // Ensure right pane (aside) also has a minimum width, e.g., 200px
     // The resize handle is 10px wide
-    const maxWidth = containerRect.width - 200;
+    const maxWidth = containerRect.width - MIN_WIDTH;
 
-    if (newLeftWidth < minWidth) {
-      newLeftWidth = minWidth;
+    if (newLeftWidth < MIN_WIDTH) {
+      newLeftWidth = MIN_WIDTH;
     }
     if (newLeftWidth > maxWidth) {
       newLeftWidth = maxWidth;
