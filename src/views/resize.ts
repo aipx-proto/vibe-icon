@@ -12,9 +12,11 @@ export function startResizer() {
   }
 
   let isResizing = false;
+  let resizeHandleWidth = 16; // Default width, will be updated on mousedown
 
   resizeHandle.addEventListener("mousedown", () => {
     isResizing = true;
+    resizeHandleWidth = resizeHandle.offsetWidth; // Get the actual width
     // Add a class to the body to indicate resizing, for cursor changes etc.
     document.body.style.cursor = "col-resize";
     appLayout.style.userSelect = "none"; // Prevent text selection during drag
@@ -43,8 +45,8 @@ export function startResizer() {
     }
 
     // Adjust the grid-template-columns of the app-layout
-    // The resize handle width is 16px
-    appLayout.style.gridTemplateColumns = `${newLeftWidth}px 16px 1fr`;
+    // The resize handle width is now dynamic
+    appLayout.style.gridTemplateColumns = `${newLeftWidth}px ${resizeHandleWidth}px 1fr`;
   });
 
   document.addEventListener("mouseup", () => {
