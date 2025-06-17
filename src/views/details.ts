@@ -79,7 +79,10 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
     const symbol = svgDoc.querySelector(`symbol#${option.style}`);
     const iconContent = symbol?.innerHTML.trim() || "<!-- Icon content not found -->";
     return `  <symbol id="${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}">
-    ${iconContent}
+${iconContent
+  .split("\n")
+  .map((line) => `    ${line}`)
+  .join("\n")}
   </symbol>`;
   });
 
@@ -175,7 +178,6 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
             .lang=${"html"}
             .code=${`
 <svg style="display: none;">
-
   <!-- Code for existing icons -->
 
 ${advancedInstallIconOptionsStrings.join("\n\n")}
