@@ -157,7 +157,7 @@ ${iconContent
             `.trim()}
           ></code-snippet>
           <details>
-            <summary>Ask a coding agent</summary>
+            <summary>Ask a coding agent 😎</summary>
             <div class="coding-agent-prompt">
               <code-snippet
                 .lang=${"markdown"}
