@@ -228,7 +228,9 @@ async function createCsvIndex(iconIndex: IconIndex) {
     const escapedName = displayName.includes(",") || displayName.includes('"') ? `"${displayName.replace(/"/g, '""')}"` : displayName;
 
     // Join metaphors with comma and escape if necessary
-    const metaphorString = metaphors.join(",");
+    // Replace multi space or new lines with a single space
+    const metaphorString = metaphors.join(",").replace(/\s+/g, " ").trim();
+
     const escapedMetaphors = metaphorString.includes(",") || metaphorString.includes('"') ? `"${metaphorString.replace(/"/g, '""')}"` : metaphorString;
 
     csvContent += `${escapedName},${escapedMetaphors}\n`;
