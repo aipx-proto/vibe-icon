@@ -5,6 +5,7 @@ import { resolve } from "path";
 import { filter, from, lastValueFrom, mergeMap, toArray } from "rxjs";
 import { promisify } from "util";
 import type { IconIndex, IconOption } from "../typings/icon-index";
+import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
 
@@ -179,11 +180,8 @@ async function compileIconSvgs(iconIndex: IconIndex) {
       // Get styles available for this size
       const stylesForSize = options.filter((opt) => opt.size === targetSize).map((opt) => opt.style);
 
-      // Convert display name to code name format
-      // there is a upstream bug that converts "Multipler _5x" to "multipler_5x"
-      // this makes it indistinguishable from "Multipler 5x". We will inherit the bug for now by collapsing multiple underscores
-      const codeNameUnderscore = displayName.toLowerCase().replace(/\s+/g, "_").replace(/_+/g, "_");
-      const iconName = displayName.toLocaleLowerCase().replace(/\s+/g, "-");
+      const codeNameUnderscore = displayNameToSourceAssetSVGFilename(displayName);
+      const iconName = displayNameToVibeIconSVGFilename(displayName);
 
       let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg">\n';
 

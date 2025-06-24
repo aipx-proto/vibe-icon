@@ -1,4 +1,5 @@
 import { Subject, Subscription, switchMap } from "rxjs";
+import { displayNameToVibeIconSVGFilename } from "../scripts/normalize-name";
 
 export class VibeIcon extends HTMLElement {
   static define() {
@@ -34,7 +35,7 @@ export class VibeIcon extends HTMLElement {
   }
 
   async render() {
-    const name = this.getAttribute("name");
+    const name = displayNameToVibeIconSVGFilename(this.getAttribute("name") ?? "emoji-meme");
     const size = this.getAttribute("size") || "24";
     const style = this.hasAttribute("filled") ? "filled" : "regular";
 
