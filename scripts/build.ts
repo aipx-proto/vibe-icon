@@ -9,6 +9,7 @@ import { getMostSensibleIconSize } from "./get-sensible-size";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
+const packagedIconsDir = resolve("node_modules", "@fluentui/svg-icons/icons");
 
 main();
 
@@ -205,8 +206,8 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
       let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg">\n';
 
       for (const style of stylesForSize) {
-        const svgFileName = `ic_fluent_${codeNameUnderscore}_${targetSize}_${style}.svg`;
-        const svgPath = resolve(assetsDir, displayName, "SVG", svgFileName);
+        const svgFileName = `${codeNameUnderscore}_${targetSize}_${style}.svg`;
+        const svgPath = resolve(packagedIconsDir, svgFileName);
 
         try {
           let content = await readFile(svgPath, "utf-8");
