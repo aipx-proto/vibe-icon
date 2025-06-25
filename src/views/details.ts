@@ -234,6 +234,8 @@ ${icon.parsedSVG.svgInnerHTML
                   packageName: packageJson.name,
                   packageVersion: packageJson.version,
                   searchToolUrl: window.location.origin + import.meta.env.BASE_URL,
+                  uniqueSizes: uniqueSizes.join(", "),
+                  preferredNumericSize,
                 })}
               ></code-snippet>
             </div>
@@ -258,7 +260,7 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
             .code=${icon.options
               .map(
                 (option) => `<svg width="${preferredNumericSize}" height="${preferredNumericSize}">
-  <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}" />
+  <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${option.style}" />
 </svg>`
               )
               .join("\n\n")}
