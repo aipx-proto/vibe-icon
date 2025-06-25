@@ -163,6 +163,7 @@ async function compileIconSvgs(iconIndex: IconIndex) {
   mkdirSync(publicDir, { recursive: true });
 
   let progress = 0;
+  let sizeFrequency: Record<number, number> = {};
   const totalIcons = Object.keys(iconIndex.icons).length;
   const icons$ = from(Object.entries(iconIndex.icons)).pipe(
     mergeMap(async ([displayName, [metaphor, options]]) => {
@@ -211,10 +212,14 @@ async function compileIconSvgs(iconIndex: IconIndex) {
       await writeFile(outputPath, combinedSvg, "utf-8");
 
       console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
+      sizeFrequency[targetSize] ??= 0;
+      sizeFrequency[targetSize]++;
     }, 8)
   );
 
   await lastValueFrom(icons$);
+
+  console.log(`Size stats:\n${JSON.stringify(sizeFrequency, null, 2)}`);
 }
 
 async function createCsvIndex(iconIndex: IconIndex) {
