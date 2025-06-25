@@ -189,7 +189,7 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
             .lang=${"html"}
             .code=${icon.options
               .map(
-                (option) => `<svg width="24" height="24">
+                (option) => `<svg width="20" height="20">
   <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}" />
 </svg>`
               )
