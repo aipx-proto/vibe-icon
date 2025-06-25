@@ -116,6 +116,7 @@ ${iconContent
 
   /* use subject value, but if not compatible, fallback to auto */
   const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
+  const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
 
   render(
     html`
@@ -154,7 +155,9 @@ ${iconContent
 
         <section class="icon-option-list">
           ${icon.options.map((option) => {
-            const fullSvgContent = generateSvgFromSymbol(svgDoc, option.style) || `<!-- Error generating SVG for style ${option.style} -->`;
+            const fullSvgContent =
+              generateSvgFromSymbol(svgDoc, option.style, preferredNumericSize, preferredNumericSize) ||
+              `<!-- Error generating SVG for style ${option.style} -->`;
             const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}${
               preferredSize === "auto" ? "" : ` size="${preferredSize}"`
             }></vibe-icon>`;
