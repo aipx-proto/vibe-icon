@@ -1,5 +1,5 @@
 import { Subject, Subscription, switchMap } from "rxjs";
-import { displayNameToVibeIconSVGFilename } from "../scripts/normalize-name";
+import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../scripts/normalize-name";
 
 export class VibeIcon extends HTMLElement {
   static define() {
@@ -38,20 +38,37 @@ export class VibeIcon extends HTMLElement {
     const name = displayNameToVibeIconSVGFilename(this.getAttribute("name") ?? "emoji-meme");
     const size = this.getAttribute("size") || "24";
     const style = this.hasAttribute("filled") ? "filled" : "regular";
+    const hasExplicitSize = this.hasAttribute("size");
+    const cacheKey = hasExplicitSize ? `${name}_${size}_${style}` : name;
 
-    if (name) {
-      let svgText = "";
-      if (VibeIcon.cache.has(name)) {
-        svgText = await VibeIcon.cache.get(name)!;
-      } else {
-        const asyncResult = fetch(
-          // @ts-ignore
-          `${import.meta.env.VITE_VIBE_BUTTON_ENDPOINT}/${name}.svg`
-        ).then((response) => response.text());
-        VibeIcon.cache.set(name, asyncResult);
-        svgText = await asyncResult;
-      }
+    let svgText = "";
+    if (VibeIcon.cache.has(cacheKey)) {
+      svgText = await VibeIcon.cache.get(cacheKey)!;
+    } else {
+      const asyncResult = fetch(
+        // @ts-ignore
+        this.getSourceCodePath(name, size, style)
+      ).then((response) => response.text());
+      VibeIcon.cache.set(cacheKey, asyncResult);
+      svgText = await asyncResult;
+    }
 
+    if (hasExplicitSize) {
+      // sample response
+      // <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-5 9a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9.14 9.14 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.35 4.35 0 0 0 17 13a2 2 0 0 0-2-2H5Z"></path></svg>
+
+      const parsedsvg = new DOMParser().parseFromString(svgText, "image/svg+xml");
+      parsedsvg.querySelector("path")?.setAttribute("fill", "currentColor");
+
+      this.shadowRoot!.innerHTML = `
+<style>:host { display: contents; }</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" data-icon="${name}" data-style="${style}" viewBox="${
+        parsedsvg.querySelector("svg")?.getAttribute("viewBox") || "0 0 24 24"
+      }">
+  ${parsedsvg.querySelector("svg")?.innerHTML || ""}
+</svg>
+`;
+    } else {
       // the fetched SVG are symbols, e.g.:
       // <svg xmlns="http://www.w3.org/2000/svg">
       //   <symbol id="regular" viewBox="0 0 24 24">
@@ -71,6 +88,17 @@ export class VibeIcon extends HTMLElement {
   ${symbol?.innerHTML || ""}
 </svg>
       `.trim();
+    }
+  }
+
+  private getSourceCodePath(name: string, size: string, style: string): string {
+    const explicitSize = this.getAttribute("size");
+    if (explicitSize) {
+      const svgFilename = displayNameToSourceAssetSVGFilename(this.getAttribute("name") ?? "emoji-meme");
+      return `https://esm.sh/@fluentui/svg-icons/icons/${svgFilename}_${size}_${style}.svg?raw`;
+    } else {
+      const svgFilename = displayNameToVibeIconSVGFilename(name);
+      return `${import.meta.env.VITE_VIBE_BUTTON_ENDPOINT}/${svgFilename}.svg`;
     }
   }
 }
