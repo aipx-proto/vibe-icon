@@ -67,7 +67,7 @@ export class VibeIcon extends HTMLElement {
       }">
   ${parsedsvg.querySelector("svg")?.innerHTML || ""}
 </svg>
-`;
+`.trim();
     } else {
       // the fetched SVG are symbols, e.g.:
       // <svg xmlns="http://www.w3.org/2000/svg">
