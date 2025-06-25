@@ -188,7 +188,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
   let sizeFrequency: Record<number, number> = {};
   const totalIcons = Object.keys(iconIndex.icons).length;
   const icons$ = from(Object.entries(iconIndex.icons)).pipe(
-    mergeMap(async ([displayName, [metaphor, options]]) => {
+    mergeMap(async ([displayName, [_metaphor, options]]) => {
       const targetSize = getMostSensibleIconSize(options.map((opt) => opt.size));
 
       if (!targetSize) {
