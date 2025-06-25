@@ -35,8 +35,8 @@ export class VibeIcon extends HTMLElement {
   }
 
   async render() {
-    const name = displayNameToVibeIconSVGFilename(this.getAttribute("name") ?? "emoji-meme");
-    const size = this.getAttribute("size") || "24";
+    const name = this.getAttribute("name") ?? "emoji meme";
+    const size = this.getAttribute("size") ?? "24";
     const style = this.hasAttribute("filled") ? "filled" : "regular";
     const hasExplicitSize = this.hasAttribute("size");
     const cacheKey = hasExplicitSize ? `${name}_${size}_${style}` : name;
@@ -94,7 +94,7 @@ export class VibeIcon extends HTMLElement {
   private getSourceCodePath(name: string, size: string, style: string): string {
     const explicitSize = this.getAttribute("size");
     if (explicitSize) {
-      const svgFilename = displayNameToSourceAssetSVGFilename(this.getAttribute("name") ?? "emoji-meme");
+      const svgFilename = displayNameToSourceAssetSVGFilename(name);
       return `https://esm.sh/@fluentui/svg-icons/icons/${svgFilename}_${size}_${style}.svg?raw`;
     } else {
       const svgFilename = displayNameToVibeIconSVGFilename(name);

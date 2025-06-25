@@ -1,6 +1,7 @@
 import { html, render } from "lit-html";
 import { BehaviorSubject, debounceTime, fromEvent, startWith, switchMap, tap } from "rxjs";
 import "vibe-button";
+import "../lib/index";
 import type { SearchResult } from "../typings/icon-index";
 import { initKeyboardNavigation } from "./keyboard-navigation";
 import "./style.css";

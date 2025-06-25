@@ -92,12 +92,9 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
 }
 
 export async function renderDetailsInternal(icon: SearchResult, detailsContainer: HTMLElement, size: string) {
-  const [svgText, metadata] = await Promise.all([
-    fetch(`${import.meta.env.BASE_URL}/${icon.filename}`).then((res) => res.text()),
-    fetch(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`)
-      .then((res) => res.json())
-      .catch(() => ({ options: [] })) as Promise<MetadataEntry>,
-  ]);
+  const metadata = (await fetch(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`)
+    .then((res) => res.json())
+    .catch(() => ({ options: [] }))) as MetadataEntry;
 
   const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
 
