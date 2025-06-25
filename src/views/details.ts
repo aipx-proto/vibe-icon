@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import packageJson from "../../package.json";
-import type { SearchResult } from "../../typings/icon-index";
+import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
 import { renderTemplate } from "../render-template"; // Added import
 import { generateSvgFromSymbol } from "../svg"; // Added import
 import codingAgentPrompt from "./coding-agent-prompt.md?raw";
@@ -69,10 +69,14 @@ function handleDownload(svgContent: string, fileName: string, button: HTMLButton
   }
 }
 
-// Function to render icon details
 export async function renderDetails(icon: SearchResult, detailsContainer: HTMLElement) {
-  const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
-  const svgText = await response.text();
+  const [svgText, metadata] = await Promise.all([
+    fetch(`${import.meta.env.BASE_URL}/${icon.filename}`).then((res) => res.text()),
+    fetch(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`)
+      .then((res) => res.json())
+      .catch(() => ({ options: [] })) as Promise<MetadataEntry>,
+  ]);
+
   const svgDoc = new DOMParser().parseFromString(svgText, "text/html");
 
   const advancedInstallIconOptionsStrings = icon.options.map((option) => {
@@ -85,6 +89,8 @@ ${iconContent
   .join("\n")}
   </symbol>`;
   });
+
+  const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
 
   render(
     html`
@@ -106,6 +112,11 @@ ${iconContent
             const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>`;
             const downloadFileName = `${icon.filename.split(".svg")[0]}-${option.style}.svg`;
 
+            const availableSizes = metadata.options
+              .filter((opt) => opt.style === option.style)
+              .map((opt) => opt.size)
+              .sort((a, b) => a - b);
+
             return html`
               <div class="icon-option">
                 <h2>${option.style}</h2>
@@ -126,6 +137,10 @@ ${iconContent
                     <button @click=${(e: Event) => handleHtmlCopy(htmlCode, e.target as HTMLButtonElement)}>HTML</button>
                     <button @click=${(e: Event) => handleSvgCopy(fullSvgContent, e.target as HTMLButtonElement)}>SVG</button>
                     <button @click=${(e: Event) => handleDownload(fullSvgContent, downloadFileName, e.target as HTMLButtonElement)}>Download</button>
+                    <select class="mri-appearance-outline">
+                      <option value="auto" selected>auto</option>
+                      ${availableSizes.map((size) => html`<option value="${size}">${size}</option>`)}
+                    </select>
                   </menu>
                 </div>
               </div>
@@ -152,7 +167,7 @@ ${iconContent
                 )
                 .join("\n\n")}
 
-<!-- custom size -->
+<!-- custom sizes: ${uniqueSizes.join(", ")} -->
 <vibe-icon name="${icon.filename.split(".svg")[0]}" size="16"></vibe-icon>
             `.trim()}
           ></code-snippet>

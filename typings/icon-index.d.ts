@@ -5,6 +5,11 @@ export interface IconIndex {
 
 export type MetadataMap = Record<string, { options: IconOption[] }>;
 
+export interface MetadataEntry {
+  name: string;
+  options: IconOption[];
+}
+
 export interface IconOption {
   size: number;
   style: string;
