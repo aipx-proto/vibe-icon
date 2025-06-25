@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
-import { BehaviorSubject, combineLatestWith, Subject, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatestWith, from, Subject, switchMap } from "rxjs";
 import packageJson from "../../package.json";
 import { displayNameToSourceAssetSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
@@ -78,9 +78,7 @@ const preferredSize$ = new BehaviorSubject<string>("auto");
 detailsData$
   .pipe(
     combineLatestWith(preferredSize$),
-    switchMap(async ([{ icon, detailsContainer }, size]) => {
-      await renderDetailsInternal(icon, detailsContainer, size);
-    })
+    switchMap(([{ icon, detailsContainer }, size]) => from(renderDetailsInternal(icon, detailsContainer, size)))
   )
   .subscribe();
 
