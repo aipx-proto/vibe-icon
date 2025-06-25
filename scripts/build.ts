@@ -167,9 +167,9 @@ async function compileIconSvgs(iconIndex: IconIndex) {
   const totalIcons = Object.keys(iconIndex.icons).length;
   const icons$ = from(Object.entries(iconIndex.icons)).pipe(
     mergeMap(async ([displayName, [metaphor, options]]) => {
-      // Find the most sensible size (prefer 24, otherwise largest)
-      const sizes = [...new Set(options.map((opt) => opt.size))].sort((a, b) => b - a);
-      const targetSize = sizes.includes(24) ? 24 : sizes[0];
+      // Find the most sensible size (prefer 20, then 16, otherwise smallest)
+      const sizes = [...new Set(options.map((opt) => opt.size))].sort((a, b) => a - b);
+      const targetSize = sizes.includes(20) ? 20 : sizes.includes(16) ? 16 : sizes[0];
 
       if (!targetSize) {
         progress++;
