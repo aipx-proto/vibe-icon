@@ -15,8 +15,8 @@ The library provides a `<vibe-icon>` component that requires a `name` prop and o
 <!-- filled style -->
 <vibe-icon name="{{ iconName }}" filled></vibe-icon>
 
-<!-- custom size -->
-<vibe-icon name="{{ iconName }}" size="16"></vibe-icon>
+<!-- custom size: {{ uniqueSizes }} -->
+<vibe-icon name="{{ iconName }}" size="{{ preferredNumericSize }}"></vibe-icon>
 ```
 
 I specifically want to use the `{{ iconName }}` icon. If other icons are needed, I will manually find them with a [search tool]({{ searchToolUrl }}).

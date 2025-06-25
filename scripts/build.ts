@@ -19,7 +19,7 @@ main();
 async function main() {
   const commitId = await fetchRepoAssets();
   const { index: iconIndex, metadata } = await buildIconIndex(commitId);
-  await compileIconSvgs(iconIndex);
+  await compileIconSvgs(iconIndex, metadata);
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
@@ -157,17 +157,21 @@ async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; met
   };
 }
 
-async function compileIconSvgs(iconIndex: IconIndex) {
+async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
   // We only select a single most sensible icon size with this order:
   // For each style (filled, regular) under the selected size, we will convert it to a symbol inside a single svg that contains all the styles for this icon
   // e.g. if the most sensible icon size is 20:
   // Input:
-  // - /dist-icons/assets/SVG/ic_fluent_add_20_filled.svg
-  // - /dist-icons/assets/SVG/ic_fluent_add_20_regular.svg
-  // Output:
-  // - /public/add.svg#filled
-  // - /public/add.svg#regular
-  // Other icon sizes and styles will be ignored
+  // - /dist-icons/assets/Add Circle/SVG/ic_fluent_add_circle_20_filled.svg
+  // - /dist-icons/assets/Add Circle/SVG/ic_fluent_add_circle_20_regular.svg
+  // Sensible icon size output:
+  // - /public/add_circle.svg#filled
+  // - /public/add_circle.svg#regular
+  // Full output:
+  // - /public/add_circle_20_filled.svg
+  // - /public/add_circle_20_regular.svg
+  // - /public/add_circle_24_filled.svg
+  // - /public/add_circle_24_regular.svg
 
   const assetsDir = resolve(outDir, "assets");
   const publicDir = resolve("public");
@@ -227,6 +231,29 @@ async function compileIconSvgs(iconIndex: IconIndex) {
       // Write the combined SVG file
       const outputPath = resolve(publicDir, `${iconName}.svg`);
       await writeFile(outputPath, combinedSvg, "utf-8");
+
+      // Generate full output for all available sizes and styles
+      if (metadata[displayName]) {
+        const allOptions = metadata[displayName].options;
+
+        for (const { size, style } of allOptions) {
+          const svgFileName = `ic_fluent_${codeNameUnderscore}_${size}_${style}.svg`;
+          const svgPath = resolve(assetsDir, displayName, "SVG", svgFileName);
+          const outputFileName = `${iconName}-${size}-${style}.svg`;
+          const outputFilePath = resolve(publicDir, outputFileName);
+
+          try {
+            let content = await readFile(svgPath, "utf-8");
+
+            // Replace fill colors with currentColor for web usage
+            content = content.replaceAll(/fill="#\d+"/g, 'fill="currentColor"');
+
+            await writeFile(outputFilePath, content, "utf-8");
+          } catch (error) {
+            console.error(`Failed to process ${svgFileName}: ${error}`);
+          }
+        }
+      }
 
       console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
       sizeFrequency[targetSize] ??= 0;
