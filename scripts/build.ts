@@ -141,12 +141,11 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
 
 async function compileIconSvgs(iconIndex: IconIndex) {
   // We only select a single most sensible icon size with this order:
-  // First see if 24 is available, if not, select the the largest available size
   // For each style (filled, regular) under the selected size, we will convert it to a symbol inside a single svg that contains all the styles for this icon
-  // e.g. if the most sensible icon size is 24:
+  // e.g. if the most sensible icon size is 20:
   // Input:
-  // - /dist-icons/assets/SVG/ic_fluent_add_24_filled.svg
-  // - /dist-icons/assets/SVG/ic_fluent_add_24_regular.svg
+  // - /dist-icons/assets/SVG/ic_fluent_add_20_filled.svg
+  // - /dist-icons/assets/SVG/ic_fluent_add_20_regular.svg
   // Output:
   // - /public/add.svg#filled
   // - /public/add.svg#regular
