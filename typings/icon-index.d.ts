@@ -3,6 +3,8 @@ export interface IconIndex {
   icons: Record<string, [metaphors: string[], options: IconOption[]]>;
 }
 
+export type MetadataMap = Record<string, { options: IconOption[] }>;
+
 export interface IconOption {
   size: number;
   style: string;

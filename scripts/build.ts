@@ -4,7 +4,7 @@ import { readFile, readdir, rm, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { filter, from, lastValueFrom, mergeMap, toArray } from "rxjs";
 import { promisify } from "util";
-import type { IconIndex, IconOption } from "../typings/icon-index";
+import type { IconIndex, IconOption, MetadataMap } from "../typings/icon-index";
 import { getMostSensibleIconSize } from "./get-sensible-size";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
 const execAsync = promisify(exec);
@@ -18,13 +18,14 @@ main();
 
 async function main() {
   const commitId = await fetchRepoAssets();
-  const iconIndex = await buildIconIndex(commitId);
+  const { index: iconIndex, metadata } = await buildIconIndex(commitId);
   await compileIconSvgs(iconIndex);
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
     createCsvIndex(iconIndex),
   ]);
+  await saveMetadata(metadata);
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -57,10 +58,11 @@ async function fetchRepoAssets(): Promise<string> {
   return commitId;
 }
 
-async function buildIconIndex(commitId: string): Promise<IconIndex> {
+async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; metadata: Record<string, { options: IconOption[] }> }> {
   const assetsDir = resolve(outDir, "assets");
   const assetFolders = await readdir(assetsDir);
   const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
+  const metadataMap = new Map<string, { name: string; options: IconOption[] }>();
 
   let progress = 0;
 
@@ -99,6 +101,19 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
 
         const targetSize = getMostSensibleIconSize(sizes);
 
+        const allOptions: IconOption[] = svgFiles
+          .filter((file) => file.endsWith(".svg"))
+          .map((file) => {
+            const match = file.match(filenamePattern);
+            if (match) {
+              const [_, __, size, style] = match;
+              return { size: parseInt(size), style };
+            }
+            return null;
+          })
+          .filter((opt): opt is IconOption => opt !== null);
+        metadataMap.set(displayName, { name: displayName, options: allOptions });
+
         svgFiles
           .filter((file) => file.endsWith(".svg"))
           .forEach((file) => {
@@ -134,8 +149,11 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
   const iconEntries = await lastValueFrom(icons$);
 
   return {
-    commit: commitId,
-    icons: Object.fromEntries(iconEntries.filter((entry) => entry !== null).map(({ name, data }) => [name, data])),
+    index: {
+      commit: commitId,
+      icons: Object.fromEntries(iconEntries.filter((entry) => entry !== null).map(({ name, data }) => [name, data])),
+    },
+    metadata: Object.fromEntries(Array.from(metadataMap.entries()).map(([name, { options }]) => [name, { options }])),
   };
 }
 
@@ -239,4 +257,23 @@ async function createCsvIndex(iconIndex: IconIndex) {
 
   await writeFile(resolve("public", "index.csv"), csvContent);
   console.log("CSV index created successfully");
+}
+
+async function saveMetadata(metadata: MetadataMap) {
+  // render each meatadata entry to <public>/<icon-name>.metadata.json
+  const publicDir = resolve("public");
+  await mkdirSync(publicDir, { recursive: true });
+  const totalMetadata = Object.entries(metadata).length;
+  let progress = 0;
+
+  const metadata$ = from(Object.entries(metadata)).pipe(
+    mergeMap(async ([name, { options }]) => {
+      const fileName = displayNameToVibeIconSVGFilename(name);
+      const filePath = resolve(publicDir, `${fileName}.metadata.json`);
+      await writeFile(filePath, JSON.stringify({ name, options }, null, 2), "utf-8");
+      console.log(`Metadata saved ${++progress}/${totalMetadata}: ${name}`);
+    }, 8)
+  );
+
+  await lastValueFrom(metadata$);
 }
