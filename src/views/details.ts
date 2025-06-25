@@ -1,4 +1,6 @@
 import { html, render } from "lit-html";
+import { repeat } from "lit-html/directives/repeat.js";
+import { BehaviorSubject, combineLatestWith, Subject, switchMap } from "rxjs";
 import packageJson from "../../package.json";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
 import { renderTemplate } from "../render-template"; // Added import
@@ -12,6 +14,7 @@ const iconIdPrefix = "icon-";
 // Helper functions for copy and download
 async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
+
   try {
     await navigator.clipboard.writeText(htmlCode);
     // Consider adding a user notification (e.g., a toast message)
@@ -69,7 +72,26 @@ function handleDownload(svgContent: string, fileName: string, button: HTMLButton
   }
 }
 
+const detailsData$ = new Subject<{ icon: SearchResult; detailsContainer: HTMLElement }>();
+const preferredSize$ = new BehaviorSubject<string>("auto");
+
+detailsData$
+  .pipe(
+    combineLatestWith(preferredSize$),
+    switchMap(async ([{ icon, detailsContainer }, size]) => {
+      await renderDetailsInternal(icon, detailsContainer, size);
+    })
+  )
+  .subscribe();
+
 export async function renderDetails(icon: SearchResult, detailsContainer: HTMLElement) {
+  detailsData$.next({
+    icon,
+    detailsContainer,
+  });
+}
+
+export async function renderDetailsInternal(icon: SearchResult, detailsContainer: HTMLElement, size: string) {
   const [svgText, metadata] = await Promise.all([
     fetch(`${import.meta.env.BASE_URL}/${icon.filename}`).then((res) => res.text()),
     fetch(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`)
@@ -92,6 +114,9 @@ ${iconContent
 
   const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
 
+  /* use subject value, but if not compatible, fallback to auto */
+  const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
+
   render(
     html`
       <div class="icon-details">
@@ -106,17 +131,34 @@ ${iconContent
               `
             : null}
         </header>
+        <section>
+          <div
+            class="mri-control-group"
+            @click=${(e: MouseEvent) => {
+              const target = e.target as HTMLButtonElement;
+              if (target.tagName === "BUTTON") {
+                const newSize = target.dataset.value || "auto";
+                preferredSize$.next(newSize);
+              }
+            }}
+          >
+            <button data-value="auto" class="${preferredSize === "auto" ? "mri-active" : ""}">Auto (${icon.options.at(0)?.size})</button>
+            ${repeat(
+              uniqueSizes,
+              (i) => i,
+              (sizeOptions) =>
+                html`<button data-value="${sizeOptions}" class="${sizeOptions.toString() === preferredSize ? "mri-active" : ""}">${sizeOptions}</button>`
+            )}
+          </div>
+        </section>
+
         <section class="icon-option-list">
           ${icon.options.map((option) => {
             const fullSvgContent = generateSvgFromSymbol(svgDoc, option.style) || `<!-- Error generating SVG for style ${option.style} -->`;
-            const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>`;
+            const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}${
+              preferredSize === "auto" ? "" : ` size="${preferredSize}"`
+            }></vibe-icon>`;
             const downloadFileName = `${icon.filename.split(".svg")[0]}-${option.style}.svg`;
-
-            const availableSizes = metadata.options
-              .filter((opt) => opt.style === option.style)
-              .map((opt) => opt.size)
-              .sort((a, b) => a - b);
-
             return html`
               <div class="icon-option">
                 <h2>${option.style}</h2>
@@ -137,10 +179,6 @@ ${iconContent
                     <button @click=${(e: Event) => handleHtmlCopy(htmlCode, e.target as HTMLButtonElement)}>HTML</button>
                     <button @click=${(e: Event) => handleSvgCopy(fullSvgContent, e.target as HTMLButtonElement)}>SVG</button>
                     <button @click=${(e: Event) => handleDownload(fullSvgContent, downloadFileName, e.target as HTMLButtonElement)}>Download</button>
-                    <select class="mri-appearance-outline">
-                      <option value="auto" selected>auto</option>
-                      ${availableSizes.map((size) => html`<option value="${size}">${size}</option>`)}
-                    </select>
                   </menu>
                 </div>
               </div>
@@ -168,7 +206,7 @@ ${iconContent
                 .join("\n\n")}
 
 <!-- custom sizes: ${uniqueSizes.join(", ")} -->
-<vibe-icon name="${icon.filename.split(".svg")[0]}" size="16"></vibe-icon>
+<vibe-icon name="${icon.filename.split(".svg")[0]}" size="${icon.options.at(0)?.size}"></vibe-icon>
             `.trim()}
           ></code-snippet>
           <details>
