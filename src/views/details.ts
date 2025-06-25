@@ -2,9 +2,9 @@ import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
 import { BehaviorSubject, combineLatestWith, Subject, switchMap } from "rxjs";
 import packageJson from "../../package.json";
+import { displayNameToSourceAssetSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
 import { renderTemplate } from "../render-template"; // Added import
-import { generateSvgFromSymbol } from "../svg"; // Added import
 import codingAgentPrompt from "./coding-agent-prompt.md?raw";
 import { copyIconToClipboard } from "./copy-icon"; // Added import
 import "./details.css";
@@ -99,24 +99,38 @@ export async function renderDetailsInternal(icon: SearchResult, detailsContainer
       .catch(() => ({ options: [] })) as Promise<MetadataEntry>,
   ]);
 
-  const svgDoc = new DOMParser().parseFromString(svgText, "text/html");
-
-  const advancedInstallIconOptionsStrings = icon.options.map((option) => {
-    const symbol = svgDoc.querySelector(`symbol#${option.style}`);
-    const iconContent = symbol?.innerHTML.trim() || "<!-- Icon content not found -->";
-    return `  <symbol id="${iconIdPrefix}${icon.filename.split(".svg")[0]}-${option.style}">
-${iconContent
-  .split("\n")
-  .map((line) => `    ${line}`)
-  .join("\n")}
-  </symbol>`;
-  });
-
   const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
 
   /* use subject value, but if not compatible, fallback to auto */
   const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
   const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
+
+  const stylesForSize = metadata.options.filter((option) => option.size === preferredNumericSize).map((option) => option.style);
+  const remoteSVGs = await Promise.all(
+    stylesForSize.map(async (style) => {
+      const url = `https://esm.sh/@fluentui/svg-icons/icons/${displayNameToSourceAssetSVGFilename(metadata.name)}_${preferredNumericSize}_${style}.svg?raw`;
+      const svg = await fetch(url)
+        .then((res) => res.text())
+        .catch(() => `<!-- Error fetching SVG for style ${style} -->`);
+
+      return {
+        name: icon.name,
+        style,
+        preferredSize,
+        preferredNumericSize,
+        parsedSVG: parseSourceSVG(icon.name, preferredNumericSize, svg),
+      };
+    })
+  );
+
+  const advancedInstallIconOptionsStrings = remoteSVGs.map((icon) => {
+    return `  <symbol id="${iconIdPrefix}${icon.name}-${icon.preferredNumericSize}-${icon.style}" viewBox="${icon.parsedSVG.viewbox}">
+${icon.parsedSVG.svgInnerHTML
+  .split("\n")
+  .map((line) => `    ${line}`)
+  .join("\n")}
+  </symbol>`;
+  });
 
   render(
     html`
@@ -156,8 +170,9 @@ ${iconContent
         <section class="icon-option-list">
           ${icon.options.map((option) => {
             const fullSvgContent =
-              generateSvgFromSymbol(svgDoc, option.style, preferredNumericSize, preferredNumericSize) ||
-              `<!-- Error generating SVG for style ${option.style} -->`;
+              remoteSVGs.find((svg) => svg.style === option.style && svg.preferredNumericSize === preferredNumericSize)?.parsedSVG.displaySVG ||
+              "<!-- SVG not found -->";
+
             const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}${
               preferredSize === "auto" ? "" : ` size="${preferredSize}"`
             }></vibe-icon>`;
@@ -262,4 +277,33 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
     `,
     detailsContainer
   );
+}
+
+function parseSourceSVG(iconName: string, preferredNumericSize: number, code: string) {
+  const svgDom = new DOMParser().parseFromString(code, "text/html");
+  // set path fill to currentColor
+  svgDom.querySelectorAll("path").forEach((path) => {
+    path.setAttribute("fill", "currentColor");
+  });
+
+  const viewbox = svgDom.querySelector("svg")?.getAttribute("viewBox") ?? `0 0 ${preferredNumericSize} ${preferredNumericSize}`;
+
+  const displaySVG = `
+<svg xmlns="http://www.w3.org/2000/svg" data-icon="${iconName}" width="${preferredNumericSize}" height="${preferredNumericSize}" viewBox="${viewbox}">
+${svgDom.querySelector("svg")?.innerHTML || ""}
+</svg>
+`.trim();
+
+  const svgInnerHTML = (svgDom.querySelector("svg")?.innerHTML || "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join("\n");
+
+  return {
+    doc: svgDom,
+    viewbox,
+    displaySVG,
+    svgInnerHTML,
+  };
 }

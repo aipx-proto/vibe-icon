@@ -57,7 +57,7 @@ export class VibeIcon extends HTMLElement {
       // sample response
       // <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-5 9a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9.14 9.14 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.35 4.35 0 0 0 17 13a2 2 0 0 0-2-2H5Z"></path></svg>
 
-      const parsedsvg = new DOMParser().parseFromString(svgText, "image/svg+xml");
+      const parsedsvg = new DOMParser().parseFromString(svgText, "text/html");
       parsedsvg.querySelector("path")?.setAttribute("fill", "currentColor");
 
       this.shadowRoot!.innerHTML = `
@@ -79,7 +79,7 @@ export class VibeIcon extends HTMLElement {
       //   </symbol>
       // </svg>
 
-      const symbol = new DOMParser().parseFromString(svgText, "image/svg+xml").querySelector(`symbol#${style}`);
+      const symbol = new DOMParser().parseFromString(svgText, "text/html").querySelector(`symbol#${style}`);
       const viewBox = symbol?.getAttribute("viewBox") || "0 0 24 24";
 
       this.shadowRoot!.innerHTML = `
