@@ -97,7 +97,7 @@ export function renderDetailsStream(icon: SearchResult, detailsContainer: HTMLEl
     .then((res) => res.json())
     .catch(() => ({ options: [] }));
 
-  const metadata$ = from(metadataAsync);
+  const metadata$ = from(metadataAsync).pipe(startWith({ name: icon.name, options: icon.options }));
   const remoteSVG$ = metadata$.pipe(
     mergeMap(async (metadata) => {
       const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
