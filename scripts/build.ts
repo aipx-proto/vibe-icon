@@ -5,6 +5,7 @@ import { resolve } from "path";
 import { filter, from, lastValueFrom, mergeMap, toArray } from "rxjs";
 import { promisify } from "util";
 import type { IconIndex, IconOption } from "../typings/icon-index";
+import { getMostSensibleIconSize } from "./get-sensible-size";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
@@ -96,9 +97,7 @@ async function buildIconIndex(commitId: string): Promise<IconIndex> {
           })
           .filter((size): size is number => size !== null);
 
-        // Determine target size once: prefer 24, otherwise largest
-        const uniqueSizes = [...new Set(sizes)];
-        const targetSize = uniqueSizes.includes(24) ? 24 : Math.max(...uniqueSizes);
+        const targetSize = getMostSensibleIconSize(sizes);
 
         svgFiles
           .filter((file) => file.endsWith(".svg"))
@@ -167,9 +166,7 @@ async function compileIconSvgs(iconIndex: IconIndex) {
   const totalIcons = Object.keys(iconIndex.icons).length;
   const icons$ = from(Object.entries(iconIndex.icons)).pipe(
     mergeMap(async ([displayName, [metaphor, options]]) => {
-      // Find the most sensible size (prefer 20, then 16, otherwise smallest)
-      const sizes = [...new Set(options.map((opt) => opt.size))].sort((a, b) => a - b);
-      const targetSize = sizes.includes(20) ? 20 : sizes.includes(16) ? 16 : sizes[0];
+      const targetSize = getMostSensibleIconSize(options.map((opt) => opt.size));
 
       if (!targetSize) {
         progress++;
