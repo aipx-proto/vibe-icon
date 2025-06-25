@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
-import { BehaviorSubject, combineLatest, combineLatestWith, from, mergeMap, startWith, Subject, switchMap, take } from "rxjs";
+import { BehaviorSubject, combineLatest, combineLatestWith, from, mergeMap, startWith, Subject, switchMap } from "rxjs";
 import packageJson from "../../package.json";
 import { displayNameToSourceAssetSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
@@ -126,7 +126,6 @@ export function renderDetailsStream(icon: SearchResult, detailsContainer: HTMLEl
 
       return remoteSVGs;
     }),
-    take(1),
     startWith([]) // Start with an empty array to avoid issues with initial state
   );
 
@@ -142,9 +141,9 @@ export async function renderDetailsInternal(metadata: MetadataEntry, remoteSVGs:
   const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
   const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
 
-  const advancedInstallIconOptionsStrings = remoteSVGs.map((icon) => {
-    return `  <symbol id="${iconIdPrefix}${icon.name}-${icon.preferredNumericSize}-${icon.style}" viewBox="${icon.parsedSVG.viewbox}">
-${icon.parsedSVG.svgInnerHTML
+  const advancedInstallIconOptionsStrings = remoteSVGs.map((remoteIcon) => {
+    return `  <symbol id="${iconIdPrefix}${remoteIcon.name}-${remoteIcon.preferredNumericSize}-${remoteIcon.style}" viewBox="${remoteIcon.parsedSVG.viewbox}">
+${remoteIcon.parsedSVG.svgInnerHTML
   .split("\n")
   .map((line) => `    ${line}`)
   .join("\n")}
