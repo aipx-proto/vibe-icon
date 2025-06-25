@@ -29,9 +29,10 @@ async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
   }
 }
 
-async function handleSvgCopy(svgContent: string, button: HTMLButtonElement) {
+async function handleSvgCopy(svgUrl: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
   try {
+    const svgContent = await fetch(svgUrl).then((response) => response.text());
     await navigator.clipboard.writeText(svgContent);
     // Consider adding a user notification
     console.log("SVG copied to clipboard");
@@ -45,13 +46,15 @@ async function handleSvgCopy(svgContent: string, button: HTMLButtonElement) {
   }
 }
 
-async function handlePreviewCopy(svgContent: string, previewElement: HTMLElement) {
+async function handlePreviewCopy(svgUrl: string, previewElement: HTMLElement) {
+  const svgContent = await fetch(svgUrl).then((response) => response.text());
   await copyIconToClipboard(svgContent, previewElement);
 }
 
-function handleDownload(svgContent: string, fileName: string, button: HTMLButtonElement) {
+async function handleDownload(svgUrl: string, fileName: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
   try {
+    const svgContent = await fetch(svgUrl).then((response) => response.text());
     const blob = new Blob([svgContent], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -164,9 +167,7 @@ ${icon.parsedSVG.svgInnerHTML
 
         <section class="icon-option-list">
           ${icon.options.map((option) => {
-            const fullSvgContent =
-              remoteSVGs.find((svg) => svg.style === option.style && svg.preferredNumericSize === preferredNumericSize)?.parsedSVG.displaySVG ||
-              "<!-- SVG not found -->";
+            const svgUrl = `${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${option.style}.svg`;
 
             const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}${
               preferredSize === "auto" ? "" : ` size="${preferredSize}"`
@@ -177,7 +178,7 @@ ${icon.parsedSVG.svgInnerHTML
                 <h2>${option.style}</h2>
                 <button
                   class="icon-preview"
-                  @click=${(e: Event) => handlePreviewCopy(fullSvgContent, e.currentTarget as HTMLElement)}
+                  @click=${(e: Event) => handlePreviewCopy(svgUrl, e.currentTarget as HTMLElement)}
                   type="button"
                   title="Copy SVG code"
                   aria-label="Copy SVG code"
@@ -190,8 +191,8 @@ ${icon.parsedSVG.svgInnerHTML
                   <code-snippet .lang=${"html"} .code=${htmlCode}></code-snippet>
                   <menu>
                     <button @click=${(e: Event) => handleHtmlCopy(htmlCode, e.target as HTMLButtonElement)}>HTML</button>
-                    <button @click=${(e: Event) => handleSvgCopy(fullSvgContent, e.target as HTMLButtonElement)}>SVG</button>
-                    <button @click=${(e: Event) => handleDownload(fullSvgContent, downloadFileName, e.target as HTMLButtonElement)}>Download</button>
+                    <button @click=${(e: Event) => handleSvgCopy(svgUrl, e.target as HTMLButtonElement)}>SVG</button>
+                    <button @click=${(e: Event) => handleDownload(svgUrl, downloadFileName, e.target as HTMLButtonElement)}>Download</button>
                   </menu>
                 </div>
               </div>
