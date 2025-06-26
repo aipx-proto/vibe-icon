@@ -79,22 +79,8 @@ export function renderResults(results: SearchResult[], limit: number, context: R
                     if (buttonElement.querySelector(".copy-overlay")) {
                       return; // Prevent re-triggering if overlay is already shown
                     }
-                    try {
-                      const defaultOption = icon.options.at(0);
-                      if (!defaultOption) return;
-                      const svgUrl = `${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}-${defaultOption.size}-${defaultOption.style}.svg`;
-
-                      const response = await fetch(svgUrl);
-                      if (!response.ok) {
-                        throw new Error(`Failed to fetch SVG: ${response.statusText}`);
-                      }
-                      const svgText = await response.text();
-                      await copyIconToClipboard(svgText, buttonElement);
-                    } catch (err) {
-                      console.error("Failed to copy SVG from grid icon: ", err);
-                      // Ensure error overlay is handled by copyIconToClipboard by passing the buttonElement
-                      await copyIconToClipboard("", buttonElement, "", "❌ Error copying");
-                    }
+                    const html = `<vibe-icon name="${icon.filename.split(".svg")[0]}"></vibe-icon>`;
+                    await copyIconToClipboard(html, buttonElement, "✅ HTML copied");
                   } else {
                     context.selectedIcon$.next(icon);
                   }
