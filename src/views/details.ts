@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
-import { BehaviorSubject, combineLatestWith, from, mergeMap, startWith, Subject, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatestWith, distinctUntilChanged, from, Subject, switchMap, tap } from "rxjs";
 import packageJson from "../../package.json";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
@@ -77,11 +77,26 @@ async function handleDownload(svgUrl: string, fileName: string, button: HTMLButt
 
 const detailsData$ = new Subject<{ icon: SearchResult; detailsContainer: HTMLElement }>();
 const preferredSize$ = new BehaviorSubject<string>("auto");
+const metadataRequestUrl$ = new Subject<string>();
+
+const metadata$ = metadataRequestUrl$.pipe(
+  distinctUntilChanged(),
+  switchMap((url) =>
+    from(
+      fetch(url)
+        .then((res) => res.json())
+        .catch(() => ({ name: "", options: [] })) // Fallback in case of error
+    )
+  )
+);
+
+// fetch latest metadata
+detailsData$.pipe(tap(({ icon }) => metadataRequestUrl$.next(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`))).subscribe();
 
 detailsData$
   .pipe(
-    combineLatestWith(preferredSize$),
-    switchMap(([{ icon, detailsContainer }, size]) => renderDetailsStream(icon, detailsContainer, size))
+    combineLatestWith(preferredSize$, metadata$),
+    switchMap(([{ icon, detailsContainer }, size, metadata]) => renderDetailsStream(metadata, icon, detailsContainer, size))
   )
   .subscribe();
 
@@ -92,47 +107,36 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
   });
 }
 
-export function renderDetailsStream(icon: SearchResult, detailsContainer: HTMLElement, size: string) {
-  const metadataAsync: Promise<MetadataEntry> = fetch(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`)
-    .then((res) => res.json())
-    .catch(() => ({ options: [] }));
+export function renderDetailsStream(metadata: MetadataEntry, icon: SearchResult, detailsContainer: HTMLElement, size: string) {
+  const getRemoveSVGs = async () => {
+    const uniqueSizes = icon.sizes;
 
-  const metadata$ = from(metadataAsync).pipe(startWith({ name: icon.name, options: icon.options }));
-  // const sizes$ = metadata$.pipe(
-  //   map((metadata) => [...new Set(metadata.options.map((option) => option.size))]),
-  //   startWith(icon.sizes)
-  // );
-  const remoteSVG$ = metadata$.pipe(
-    mergeMap(async (metadata) => {
-      const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
+    /* use subject value, but if not compatible, fallback to auto */
+    const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
+    const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
+    const stylesForSize = metadata.options.filter((option) => option.size === preferredNumericSize).map((option) => option.style);
 
-      /* use subject value, but if not compatible, fallback to auto */
-      const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
-      const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
-      const stylesForSize = metadata.options.filter((option) => option.size === preferredNumericSize).map((option) => option.style);
+    const remoteSVGs = await Promise.all(
+      stylesForSize.map(async (style) => {
+        const url = `https://esm.sh/@fluentui/svg-icons/icons/${displayNameToSourceAssetSVGFilename(metadata.name)}_${preferredNumericSize}_${style}.svg?raw`;
+        const svg = await fetch(url)
+          .then((res) => res.text())
+          .catch(() => `<!-- Error fetching SVG for style ${style} -->`);
 
-      const remoteSVGs = await Promise.all(
-        stylesForSize.map(async (style) => {
-          const url = `https://esm.sh/@fluentui/svg-icons/icons/${displayNameToSourceAssetSVGFilename(metadata.name)}_${preferredNumericSize}_${style}.svg?raw`;
-          const svg = await fetch(url)
-            .then((res) => res.text())
-            .catch(() => `<!-- Error fetching SVG for style ${style} -->`);
+        return {
+          name: icon.name,
+          style,
+          preferredSize,
+          preferredNumericSize,
+          parsedSVG: parseSourceSVG(icon.name, preferredNumericSize, svg),
+        };
+      })
+    );
 
-          return {
-            name: icon.name,
-            style,
-            preferredSize,
-            preferredNumericSize,
-            parsedSVG: parseSourceSVG(icon.name, preferredNumericSize, svg),
-          };
-        })
-      );
+    return remoteSVGs;
+  };
 
-      return remoteSVGs;
-    })
-  );
-
-  return remoteSVG$.pipe(switchMap(async (remoteSVGs) => renderDetailsInternal(icon.sizes, remoteSVGs, icon, detailsContainer, size)));
+  return from(getRemoveSVGs()).pipe(switchMap(async (remoteSVGs) => renderDetailsInternal(icon.sizes, remoteSVGs, icon, detailsContainer, size)));
 }
 
 export async function renderDetailsInternal(sizes: number[], remoteSVGs: RemoteSVG[], icon: SearchResult, detailsContainer: HTMLElement, size: string) {
