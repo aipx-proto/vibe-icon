@@ -27,44 +27,60 @@ Use the `<vibe-icon>` component with these attributes:
 ## Icon Names (200 Most Common)
 
 ### Core Actions
-add, subtract, delete, edit, save, search, share, print, settings, filter, lock-closed, lock-open, heart, star, info, question-circle, alert, sign-out, sign-in, copy, cut, clipboard-paste
+
+add, subtract, delete, edit, save, search, share, print, settings, options, filter, lock-closed, lock-open, heart, star, info, question-circle, alert, sign-out, copy, cut
 
 ### Navigation
-arrow-up, arrow-down, arrow-left, arrow-right, chevron-up, chevron-down, chevron-left, chevron-right, arrow-previous, arrow-next, arrow-expand, arrow-collapse-all, home, navigation, dismiss, more-horizontal, more-vertical
+
+arrow-up, arrow-down, arrow-left, arrow-right, arrow-up-right, arrow-up-left, arrow-down-right, arrow-down-left, arrow-previous, arrow-next, arrow-expand, arrow-maximize, arrow-minimize,
+arrow-redo, arrow-undo, arrow-reply, arrow-reset, chevron-up, chevron-down, chevron-left, chevron-right, chevron-up-down, chevron-down-up,
+
+home, navigation, dismiss, more-horizontal, more-vertical,
 
 (hint: dismiss is "x" or close)
 
 ### Media Controls
-play, pause, stop, record, fast-forward, rewind, next, previous, speaker-2, speaker-1, speaker-mute, camera, image, video, music-note-1, mic
+
+play, pause, stop, record, fast-forward, rewind, next, previous, speaker-2, speaker-1, speaker-mute, camera, image, video, music-note-1, mic, mic-off
 
 ### Text Formatting
-text-bold, text-italic, text-underline, text-strikethrough, text-align-left, text-align-center, text-align-right, text-align-justify, text-bullet-list, text-number-list-rotate-90, text-quote, link, link-dismiss
+
+text-bold, text-italic, text-underline, text-strikethrough, text-align-left, text-align-center, text-align-right, text-align-justify, text-bullet-list, text-number-list, text-quote, link
 
 ### Communication
-chat, mail, phone, person, people, alert, calendar, attach, bot, chat-bubbles-question, send
+
+chat, mail, phone, person, people, alert, calendar, attach, bot, chat-help, chat-add, send
 
 ### Files & Data
+
 document, folder, document-add, folder-add, arrow-upload, arrow-download, archive, data-pie, data-bar-vertical
 
 ### Devices
-desktop, laptop, tablet, phone, smartwatch, print, battery-10, battery-0, battery-charge, wifi-4, bluetooth
+
+desktop, laptop, tablet, phone, smartwatch, print, battery-10, battery-0, wifi-1, bluetooth
 
 ### Status & Feedback
-checkmark, error-circle, spinner-ios, checkmark-circle, thumb-like, thumb-dislike, eye, eye-off
+
+checkmark, error-circle, checkmark-circle, thumb-like, thumb-dislike, eye, eye-off
 
 ### AI/Tech
+
 bot, brain-circuit, wand, code, sparkle, lightbulb, arrow-clockwise, shield, translate, read-aloud
 
 ### Weather
-weather-sunny, weather-moon, weather-cloudy, weather-partly-cloudy-day, weather-rain, weather-thunderstorm, weather-snowflake, temperature, umbrella
+
+weather-sunny, weather-moon, weather-cloudy, weather-partly-cloudy-day, weather-rain, weather-thunderstorm, weather-snowflake, temperature
 
 ### Business/Commerce
-cart, shopping-bag, tag, receipt, trophy, bookmark, flag, wallet, handshake, ticket-horizontal
+
+cart, shopping-bag, tag, receipt, trophy, bookmark, flag, ticket-horizontal
 
 ### Common UI Elements
-globe, cloud, fire, leaf-one, gift, key, rocket, compass-northwest, color, hourglass, glasses, crown, clipboard, recycle, plug-connected, luggage, balloon
+
+globe, map, location, location-arrow, cloud, fire, leaf-one, gift, key, rocket, compass-northwest, color, hourglass, glasses, crown, clipboard, recycle, plug-connected, luggage, balloon
 
 ## Notes
+
 - Icon names use lowercase with hyphens (e.g., "arrow-down", "mail-send")
 - For additional icons beyond these 200, visit: https://aipx-proto.github.io/vibe-icon/
 - Icons are Microsoft Fluent Design icons rendered as web components
