@@ -5,7 +5,7 @@
 Add this script tag to your HTML:
 
 ```html
-<script src="https://esm.sh/vibe-icon@0.0.5" type="module"></script>
+<script src="https://esm.sh/vibe-icon@latest" type="module"></script>
 ```
 
 ## Usage
