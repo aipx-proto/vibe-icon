@@ -145,7 +145,10 @@ export async function renderDetailsInternal(sizes: number[], remoteSVGs: RemoteS
   const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
   const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
 
-  const advancedInstallIconOptionsStrings = remoteSVGs.map((remoteIcon) => {
+  const prioritizeRegularStyle = (a: { style: string }) => (a.style === "regular" ? -1 : 1);
+  const sortedOptions = icon.options.toSorted(prioritizeRegularStyle);
+
+  const advancedInstallIconOptionsStrings = remoteSVGs.toSorted(prioritizeRegularStyle).map((remoteIcon) => {
     return `  <symbol id="${iconIdPrefix}${displayNameToVibeIconSVGFilename(remoteIcon.name)}-${remoteIcon.preferredNumericSize}-${
       remoteIcon.style
     }" viewBox="${remoteIcon.parsedSVG.viewbox}">
@@ -282,7 +285,7 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
           <p>Use SVG symbols in HTML</p>
           <code-snippet
             .lang=${"html"}
-            .code=${icon.options
+            .code=${sortedOptions
               .map(
                 (option) => `<svg width="${preferredNumericSize}" height="${preferredNumericSize}">
   <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${option.style}" />
