@@ -1,0 +1,205 @@
+Name,Metaphors,Emoji
+Menu,"navigation,hamburger,main menu",☰
+Home,"house,safety,location,space,wfh",🏠
+Search,"magnifying glass,zoom,inspect,review",🔍
+Settings,"gear,options,cog",⚙️
+User,"person,profile,account,avatar",👤
+Users,"group,team,organization,contact,guest",👥
+Add,"plus,addition,new",➕
+Remove,"minus,subtract,delete",➖
+Edit,"pencil,update,create,draw",✏️
+Delete,"trash,can,remove,edit,byee",🗑️
+Save,"floppy disk,device,old",💾
+Download,"arrow,down,save",⬇️
+Upload,"arrow,up,send",⬆️
+Close,"x,close,cancel,remove",❌
+Check,"approval,selected",✔️
+Cancel,"x,close,cancel,remove",❌
+Arrow Left,"back,previous",⬅️
+Arrow Right,"forward,next",➡️
+Arrow Up,"up,move",⬆️
+Arrow Down,"down,move",⬇️
+Expand,"maximize,open,show more",⤢
+Collapse,"minimize,close,show less",⤡
+Refresh,"reload,update,sync",🔄
+Sync,"reload,update,sync",🔄
+Info,"information,details,content",ℹ️
+Warning,"alert,exclamation,triangle,issue",⚠️
+Error,"alert,exclamation,triangle,issue",⚠️
+Success,"check,approved,done",✅
+Help,"question,unknown,text,type,did you know",❓
+Lock,"security,access,protected,safety",🔒
+Unlock,"security,access,protected,safety",🔓
+Eye,"show,view,visible",👁️
+Eye Off,"hide,view,not visible",🙈
+Filter,"dropdown,sort,line,3 lines",🔽
+Sort,"order,arrange,sort",↕️
+Calendar,"time,date,planning",📅
+Clock,"time,watch,analog",⏰
+Bell,"notification,alert",🔔
+Bell Off,"notification,alert,off",🔕
+Star,"favorite,rating,vote",⭐
+Star Off,"favorite,rating,vote,slash",🚫
+Heart,"like,favorite,love",❤️
+Heart Off,"like,favorite,love,off",💔
+Share,"arrow,square,forward,right,send",🔗
+Link,"link,share,web,internet",🔗
+Unlink,"link,remove,disconnect",❌
+Copy,"share,paste,clipboard",📋
+Paste,"clipboard,insert",📋
+Cut,"copy,paste,share,move",✂️
+Undo,"back,undo",↩️
+Redo,"forward,redo",↪️
+Download,"arrow,down,save",⬇️
+Upload,"arrow,up,send",⬆️
+Camera,"image,photography,picture",📷
+Image,"photo,picture,snapshot,content",🖼️
+Video,"video,film,clip,media,content",🎥
+Play,"control,playback,start,begin",▶️
+Pause,"control,playback,freeze",⏸️
+Stop,"control,playback,stop",⏹️
+Record,"control,playback,record",⏺️
+Microphone,"audio,sound,record",🎤
+Microphone Off,"audio,sound,record,off",🔇
+Volume Up,"audio,sound,volume",🔊
+Volume Down,"audio,sound,volume",🔉
+Volume Off,"audio,sound,volume,off",🔇
+Mute,"audio,sound,volume,off",🔇
+Speaker,"audio,sound,volume",🔊
+Headphones,"audio,sound,volume,device",🎧
+Phone,"device,mobile,cellular telephone",📱
+Tablet,"device,screen,tablet",📱
+Laptop,"device,computer,laptop",💻
+Desktop,"device,computer,desktop",🖥️
+Wifi,"wireless fidelity,connect,internet,web,connection",📶
+Wifi Off,"wireless fidelity,connect,internet,web,connection,off",🚫
+Bluetooth,"device,connection",🔵
+Location,"pin,marker,map,location,travel",📍
+Map,"travel,navigation",🗺️
+Pin,"save,share,post,favorite",📌
+Unpin,"save,share,post,favorite,remove",❌
+Folder,"analog,collection",📁
+Folder Open,"analog,collection,open",📂
+Folder Add,"analog,collection,plus,new",📁
+File,"document,paper,work,file",📄
+Files,"documents,paper,work,file,stack",📚
+Document,"paper,work,file,analog,vertical",📄
+Document Add,"paper,work,file,analog,new,plus,create,vertical",📄
+Document Edit,"paper,work,file,analog,vertical,edit",✏️
+Document Delete,"paper,work,file,analog,vertical,delete",🗑️
+Document Download,"paper,work,file,analog,download,vertical",⬇️
+Document Upload,"paper,work,file,analog,upload,vertical",⬆️
+Document Search,"paper,work,file,analog,horizontal,audit",🔍
+Document Copy,"paper,work,file,analog,share,paste,forward,vertical",📋
+Document Print,"paper,work,file,analog,horizontal,print,printer,decoration",🖨️
+Mail,"envelope,email,delivery,message",✉️
+Mail Add,"envelope,email,delivery,message,new,plus",✉️
+Mail Send,"envelope,email,delivery,message,send",🛩️
+Mail Open,"envelope,email,delivery,message,open",✉️
+Mail Unread,"envelope,email,delivery,message,badge,unread,notification",✉️
+Mail Read,"envelope,email,delivery,message,open,read",✉️
+Mail Delete,"envelope,email,delivery,message,delete",🗑️
+Mail Reply,"envelope,email,delivery,message,reply",↩️
+Mail Forward,"envelope,email,delivery,message,forward",➡️
+Mail Archive,"envelope,email,delivery,message,archive",📦
+Mail Inbox,"envelope,email,delivery,message,inbox",📥
+Mail Outbox,"envelope,email,delivery,message,outbox",📤
+Mail Draft,"envelope,email,delivery,message,draft",📝
+Mail Error,"envelope,email,delivery,message,alert,exclamation",⚠️
+Mail Settings,"envelope,email,delivery,message,settings",⚙️
+Mail Search,"envelope,email,delivery,message,search",🔍
+Mail Attachment,"envelope,email,delivery,message,attachment",📎
+Attachment,"paperclip,file,share,send",📎
+Tag,"price,information,detail,metadata,purchase,sort",🏷️
+Shopping Cart,"shopping,purchase,collection",🛒
+Credit Card,"payment,transaction,purchase",💳
+Money,"currency,retail,cash,purchase",💵
+Wallet,"physical,analog,money,cash,purchase,balance,payment",👛
+Barcode,"shopping,scan,purchase",🏷️
+Gift,"present,birthday,celebration,appreciation",🎁
+Download,"arrow,down,save",⬇️
+Upload,"arrow,up,send",⬆️
+Cloud,"storage,upload,download,save,sync",☁️
+Cloud Download,"storage,upload,download,save,sync,download",⬇️
+Cloud Upload,"storage,upload,download,save,sync,upload",⬆️
+Cloud Sync,"storage,upload,download,save,sync",🔄
+Cloud Off,"storage,upload,download,save,sync,off",🚫
+Battery,"charge,power",🔋
+Battery Charging,"charge,power,charging",🔋
+Battery Full,"charge,power,full",🔋
+Battery Low,"charge,power,low",🔋
+Power,"device,electricity,analog",🔌
+Logout,"door,arrow,right,logout",🚪
+Login,"door,arrow,left,login",⬅️
+Sign Out,"door,arrow,right,logout",🚪
+Sign In,"door,arrow,left,login",⬅️
+Chevron Down,"arrow,dropdown,direction,expand,contract",🔽
+Chevron Up,"arrow,dropdown,direction,expand,contract",🔼
+Chevron Left,"arrow,dropdown,direction,expand,contract",◀️
+Chevron Right,"arrow,dropdown,direction,expand,contract",▶️
+More,"overflow,menu,navigation",⋯
+More Vertical,"overflow,menu,navigation",⋮
+More Horizontal,"overflow,menu,navigation",⋯
+Dots,"overflow,menu,navigation",⋯
+Grid,"margins,collect,view",🔲
+List,"text,line,view",📋
+Table,"cell,row,column,information,chart",📊
+Chart,"pie chart,data,bar,graph",📊
+Pie Chart,"pie chart,data,bar,graph",🥧
+Bar Chart,"pie chart,data,bar,graph",📊
+Line Chart,"pie chart,data,bar,graph",📈
+Dashboard,"dashboard,overview,summary",📊
+Analytics,"data,chart,graph,analytics",📈
+Download,"arrow,down,save",⬇️
+Upload,"arrow,up,send",⬆️
+Printer,"printer,paper,copy,fax,analog,office,ink",🖨️
+Scan,"camera,aperture,image,picture,scan",🔍
+Camera,"image,photography,picture",📷
+Gallery,"photo,book,pictures,image",📔
+Album,"photo,book,pictures,image",📔
+Music,"concert,musician,art,event",🎵
+Playlists,"music,collection,playlist",🎶
+Bookmark,"read,placeholder",🔖
+Bookmark Add,"read,placeholder,add",🔖
+Bookmark Remove,"read,placeholder,remove",❌
+Book,"read,formulas",📖
+Library,"book,stack,knowledge,learning,information",📚
+Note,"sticky note,sketch,reminder",🗒️
+Notes,"sticky note,sketch,reminder",🗒️
+Clipboard,"copy,memory,analog",📋
+Clipboard Check,"copy,memory,analog,check",📋
+Clipboard Paste,"copy,memory,analog,paste",📋
+Clipboard List,"copy,memory,analog,list",📋
+Task List,"checklist,checkmark,check,goals,to do",📝
+Checklist,"checklist,checkmark,check,goals,to do",📝
+To Do,"checklist,checkmark,check,goals,to do",📝
+Chat,"discussion,message,post",💬
+Message,"discussion,message,post",💬
+Messages,"discussion,message,post",💬
+Comment,"chat,mention,discussion",💬
+Comments,"chat,mention,discussion",💬
+Send,"paper plane,mail,message",🛩️
+Reply,"arrow,direction,back,reply",↩️
+Forward,"arrow,point,direction",➡️
+Attachment,"paperclip,file,share,send",📎
+Download,"arrow,down,save",⬇️
+Upload,"arrow,up,send",⬆️
+Calendar,"time,date,planning",📅
+Event,"calendar,event,meeting",📅
+Meeting,"calendar,event,meeting",📅
+Call,"handset,audio",📞
+Video Call,"video,meeting,selfie,camera,clip,media,front facing,effects,call,chat",🎥
+Phone Call,"handset,audio",📞
+Contact,"person,profile,details,organization,people card",💳
+Contacts,"person,profile,details,organization,people card",💳
+Profile,"person,profile,account,avatar",👤
+Account,"person,profile,account,avatar",👤
+Avatar,"person,profile,account,avatar",👤
+Logout,"door,arrow,right,logout",🚪
+Login,"door,arrow,left,login",⬅️
+Settings,"gear,options,cog",⚙️
+Help,"question,unknown,text,type,did you know",❓
+Info,"information,details,content",ℹ️
+Warning,"alert,exclamation,triangle,issue",⚠️
+Error,"alert,exclamation,triangle,issue",⚠️
+Success,"check,approved,done",✅
