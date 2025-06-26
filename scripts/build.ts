@@ -140,7 +140,8 @@ async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; met
         throw new Error(`Failed to read SVG files for icon ${displayName}: ${error}`);
       }
 
-      return { name: displayName, data: [metaphor, options] as [string[], IconOption[]] };
+      const allSizes = [...new Set(metadataMap.get(displayName)?.options.map((opt) => opt.size) || [])];
+      return { name: displayName, data: [metaphor, options, allSizes] as [string[], IconOption[], number[]] };
     }, 8),
     filter((icon) => icon !== null && icon.data[1].length > 0), // Filter out null results
     toArray()
@@ -151,7 +152,13 @@ async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; met
   return {
     index: {
       commit: commitId,
-      icons: Object.fromEntries(iconEntries.filter((entry) => entry !== null).map(({ name, data }) => [name, data])),
+      icons: Object.fromEntries(
+        iconEntries
+          .filter((entry) => entry !== null)
+          .map(({ name, data }) => {
+            return [name, data];
+          })
+      ),
     },
     metadata: Object.fromEntries(Array.from(metadataMap.entries()).map(([name, { options }]) => [name, { options }])),
   };

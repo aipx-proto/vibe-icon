@@ -195,13 +195,14 @@ async function decompressIndex() {
   const iconsIndex = await fetch(`${basename}/index.json`).then((response) => response.json() as Promise<IconIndex>);
 
   const commit = iconsIndex.commit;
-  const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options]]) => {
+  const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options, sizes]]) => {
     return {
       name,
       filename: name.replace(/ /g, "-").toLowerCase() + ".svg",
       lowerName: name.toLowerCase(),
       metaphors,
       options,
+      sizes,
     };
   });
 

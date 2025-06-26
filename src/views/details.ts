@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
-import { BehaviorSubject, combineLatest, combineLatestWith, from, mergeMap, startWith, Subject, switchMap } from "rxjs";
+import { BehaviorSubject, combineLatestWith, from, mergeMap, startWith, Subject, switchMap } from "rxjs";
 import packageJson from "../../package.json";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
@@ -98,6 +98,10 @@ export function renderDetailsStream(icon: SearchResult, detailsContainer: HTMLEl
     .catch(() => ({ options: [] }));
 
   const metadata$ = from(metadataAsync).pipe(startWith({ name: icon.name, options: icon.options }));
+  // const sizes$ = metadata$.pipe(
+  //   map((metadata) => [...new Set(metadata.options.map((option) => option.size))]),
+  //   startWith(icon.sizes)
+  // );
   const remoteSVG$ = metadata$.pipe(
     mergeMap(async (metadata) => {
       const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
@@ -128,14 +132,11 @@ export function renderDetailsStream(icon: SearchResult, detailsContainer: HTMLEl
     })
   );
 
-  return combineLatest([metadata$, remoteSVG$]).pipe(
-    switchMap(async ([metadata, remoteSVGs]) => renderDetailsInternal(metadata, remoteSVGs, icon, detailsContainer, size))
-  );
+  return remoteSVG$.pipe(switchMap(async (remoteSVGs) => renderDetailsInternal(icon.sizes, remoteSVGs, icon, detailsContainer, size)));
 }
 
-export async function renderDetailsInternal(metadata: MetadataEntry, remoteSVGs: RemoteSVG[], icon: SearchResult, detailsContainer: HTMLElement, size: string) {
-  const uniqueSizes = Array.from(new Set(metadata.options.map((option) => option.size))).sort((a, b) => a - b);
-
+export async function renderDetailsInternal(sizes: number[], remoteSVGs: RemoteSVG[], icon: SearchResult, detailsContainer: HTMLElement, size: string) {
+  const uniqueSizes = sizes;
   /* use subject value, but if not compatible, fallback to auto */
   const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
   const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
