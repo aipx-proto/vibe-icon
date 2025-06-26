@@ -26,6 +26,10 @@ Use the `<vibe-icon>` component with these attributes:
 
 ## Icon Names (200 Most Common)
 
+For icons beyond the 200 most common ones listed below, direct users to the [Vibe Icon Search App](https://aipx-proto.github.io/vibe-icon/) where they can browse and search the complete icon library.
+
+Icon names use lowercase with hyphens (e.g., "arrow-down", "weather-sunny")
+
 ### Core Actions
 
 add, subtract, delete, edit, save, search, share, print, settings, options, filter, lock-closed, lock-open, heart, star, info, question-circle, alert, sign-out, copy, cut
@@ -34,7 +38,7 @@ add, subtract, delete, edit, save, search, share, print, settings, options, filt
 
 arrow-up, arrow-down, arrow-left, arrow-right, arrow-up-right, arrow-up-left, arrow-down-right, arrow-down-left, arrow-previous, arrow-next, arrow-expand, arrow-maximize, arrow-minimize, arrow-redo, arrow-undo, arrow-reply, arrow-reset, chevron-up, chevron-down, chevron-left, chevron-right, chevron-up-down, chevron-down-up, home, navigation, dismiss, more-horizontal, more-vertical
 
-*Hint: `dismiss` is "x" or close*
+_Hint: `dismiss` is "x" or close_
 
 ### Media Controls
 
@@ -75,9 +79,3 @@ cart, shopping-bag, tag, receipt, trophy, bookmark, flag, ticket-horizontal
 ### Common UI Elements
 
 globe, map, location, location-arrow, cloud, fire, leaf-one, gift, key, rocket, compass-northwest, color, hourglass, glasses, crown, clipboard, recycle, plug-connected, luggage, balloon
-
-## Notes
-
-- Icon names use lowercase with hyphens (e.g., "arrow-down", "mail-send")
-- For additional icons beyond these 200, visit: https://aipx-proto.github.io/vibe-icon/
-- Icons are Microsoft Fluent Design icons rendered as web components
