@@ -62,7 +62,7 @@ weather-sunny, weather-moon, weather-cloudy, weather-partly-cloudy-day, weather-
 cart, shopping-bag, tag, receipt, trophy, bookmark, flag, wallet, handshake, ticket-horizontal
 
 ### Common UI Elements
-globe, dark-theme, cloud, fire, leaf-one, gift, key, rocket, compass-northwest, color, hourglass, glasses, crown, clipboard, recycle, plug-connected, luggage, balloon
+globe, cloud, fire, leaf-one, gift, key, rocket, compass-northwest, color, hourglass, glasses, crown, clipboard, recycle, plug-connected, luggage, balloon
 
 ## Notes
 - Icon names use lowercase with hyphens (e.g., "arrow-down", "mail-send")
