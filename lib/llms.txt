@@ -1,0 +1,266 @@
+# Vibe Icon - Microsoft Fluent Icons Web Component
+
+## Installation
+
+Add this script tag to your HTML:
+
+```html
+<script src="https://esm.sh/vibe-icon@0.0.5" type="module"></script>
+```
+
+## Usage
+
+Use the `<vibe-icon>` component with these attributes:
+
+- `name` (required): Icon name from the list below
+- `filled` (optional): Shows filled variant when present
+- `size` (optional): Icon size (e.g., "20", "24")
+
+## Examples
+
+```html
+<vibe-icon name="home"></vibe-icon>
+<vibe-icon name="settings" filled></vibe-icon>
+<vibe-icon name="search" size="24"></vibe-icon>
+```
+
+## Available Icons (about 200 of the most common)
+
+**Icon name format**: Use lowercase with hyphens (e.g., "arrow-down", "mail-send", "video-call")
+
+## 1. **Actions**
+
+- add - add, plus
+- subtract - remove, minus
+- delete - delete, trash
+- edit - edit, pencil
+- save - save, disk
+- arrow-upload - upload
+- arrow-download - download
+- arrow-clockwise - refresh, reload
+- search - search, magnifier
+- share - share
+- print - print
+- settings - settings, gear
+- filter - filter
+- lock-closed - lock
+- lock-open - unlock
+- heart - favorite, heart
+- star - favorite, star
+- info - info
+- question-circle - help, question
+- alert - warning, alert
+- sign-out - logout, sign out
+- sign-in - login, sign in
+
+## 2. **Navigation / Arrows**
+
+- arrow-up - arrow up
+- arrow-down - arrow down
+- arrow-left - arrow left
+- arrow-right - arrow right
+- chevron-up - chevron up
+- chevron-down - chevron down
+- chevron-left - chevron left
+- chevron-right - chevron right
+- arrow-previous - back
+- arrow-next - forward
+- arrow-expand - expand
+- arrow-collapse-all - collapse
+- navigation - menu, hamburger
+- dismiss - close, x, times
+- more-horizontal - more, ellipsis horizontal
+- more-vertical - more, ellipsis vertical
+- home - home
+- location - location, pin
+- map - map
+
+## 3. **Media**
+
+- play - play
+- pause - pause
+- stop - stop
+- record - record
+- fast-forward - fast forward
+- rewind - rewind
+- next - next
+- previous - previous
+- speaker-2 - volume up
+- speaker-1 - volume down
+- speaker-mute - mute
+- camera - camera
+- image - image, photo
+- video - video
+- music-note-1 - music, audio, note
+- mic - microphone
+
+## 4. **Text & Alignment**
+
+- text-bold - bold
+- text-italic - italic
+- text-underline - underline
+- text-strikethrough - strikethrough
+- text-align-left - align left
+- text-align-center - align center
+- text-align-right - align right
+- text-align-justify - align justify
+- text-bullet-list - list, bullet
+- text-number-list-rotate-90 - list, numbered
+- text-quote - quote
+- link - link
+- link-dismiss - unlink
+- text-font-size - text size, font
+
+## 5. **Communication**
+
+- chat - chat, message, bubble
+- mail - email, envelope
+- phone - phone, call
+- person - contact, person, user
+- people - group, users
+- alert - notification, bell
+- calendar - calendar, date
+- attach - attachment, paperclip
+
+## 6. **Files & Folders**
+
+- document - file, document
+- folder - folder
+- document-add - new file
+- folder-add - new folder
+- arrow-upload - upload
+- arrow-download - download
+- archive - archive, zip
+- copy - copy
+- cut - cut
+- clipboard-paste - paste
+
+## 7. **Devices & Hardware**
+
+- desktop - computer, desktop
+- laptop - laptop
+- tablet - tablet
+- phone - smartphone, mobile
+- smartwatch - watch
+- print - printer
+- battery-10 - battery full
+- battery-0 - battery empty
+- battery-charge - battery charging
+- wifi-4 - wifi, signal
+- bluetooth - bluetooth
+
+## 8. **E-commerce**
+
+- cart - cart
+- shopping-bag - shopping bag
+- tag - tag, price
+- credit-card-clock - credit card, payment
+- receipt - receipt
+- heart - wishlist, heart
+
+## 9. **Status & Feedback**
+
+- checkmark - check, tick
+- dismiss - cross, x
+- error-circle - error
+- alert - warning, alert
+- info - info
+- spinner-ios - loading, spinner
+- checkmark-circle - success, done
+
+## 12. **AI & Language Model Interactions**
+
+- bot - chatbot, bot, robot
+- brain-circuit - AI, brain, neural network
+- wand - magic wand, sparkles
+- chat-bubbles-question - conversation, dialogue, speech bubbles
+- prompt - prompt, input
+- chat - response, output
+- autocomplete (not found, use "sparkle" for suggestion) - auto-complete, suggestion
+- translate - translate, language
+- mic - voice input, microphone
+- read-aloud - text-to-speech, speaker
+- code - code, brackets
+- document-one-page-sparkle - document with stars, AI-generated docs
+- lightbulb - lightbulb, suggestions, ideas
+- history - history, clock
+- arrow-clockwise - regenerate, refresh
+- thumb-like - thumbs up, feedback
+- thumb-dislike - thumbs down, feedback
+- shield - shield, privacy
+- person-bot (not found, use "bot-sparkle") - user with robot, human-AI collaboration
+- question-circle - question mark, ask AI
+- star - star, highlight
+- copy - copy
+
+## 13. **Weather**
+
+- weather-sunny - sun, sunny, clear
+- weather-moon - moon, night
+- weather-cloudy - cloud, cloudy
+- weather-partly-cloudy-day - partly cloudy, sun behind cloud
+- weather-rain - rain, rainy, drizzle
+- weather-thunderstorm - thunderstorm, lightning
+- weather-snowflake - snow, snowflake
+- weather-squalls - wind, windy
+- weather-fog - fog, mist
+- weather-duststorm - tornado, cyclone
+- temperature - thermometer, hot, cold
+- umbrella - umbrella
+- weather-sunny-high - sunrise
+- weather-sunny-low - sunset
+- temperature - temperature high, low
+- drop - humidity, droplet
+- gauge - barometer, pressure
+
+## 11. **Miscellaneous**
+
+- star - star, favorite
+- eye - eye, view
+- eye-off - hide
+- globe - globe, world
+- dark-theme - sun, moon, light, dark mode
+- trophy - trophy, award
+- bookmark - bookmark
+- flag - flag
+- bug - bug, issues, debugging
+- cloud - cloud
+- cloud-arrow-up - cloud upload
+- cloud-arrow-down - cloud download
+- fire - fire, trending, hot
+- leaf-one - leaf, eco, nature
+- gift - gift, present, reward
+- key - key, security, access
+- shield - shield, protection, security
+- rocket - rocket, launch, startup
+- lightbulb - lightbulb, idea, inspiration
+- compass-northwest - compass, navigation, explore
+- color - palette, design, color
+- hourglass - hourglass, time, waiting
+- thermometer (use "temperature") - thermometer, temperature, health
+- umbrella - umbrella, weather, protection
+- animal-paw-print - paw, pet, animal
+- barcode-scanner - barcode, scan, product
+- map - map, location, directions
+- glasses - glasses, view, preview, reading
+- ribbon - medal, achievement, award
+- crown - crown, leader, premium
+- alert - bell, notification, alert
+- calendar - calendar, date, schedule
+- clipboard - clipboard, copy, notes, tasks
+- data-pie - pie chart, analytics, stats
+- data-bar-vertical - bar chart, data, performance
+- wallet - wallet, money, finance
+- handshake - handshake, agreement, partnership
+- recycle - recycle, sustainability, eco
+- cut - scissors, cut, edit
+- wand - wand, magic, effects
+- plug-connected - plug, connect, power
+- luggage - suitcase, travel, business
+- ticket-horizontal - ticket, event, pass
+- balloon - balloon, celebration, party
+- weather-snowflake - snowflake, weather, cold, unique
+
+## Additional Icons
+
+For icons beyond the 200 most common ones listed above, direct users to the [Vibe Icon Search App](https://aipx-proto.github.io/vibe-icon/) where they can browse and search the complete icon library.
