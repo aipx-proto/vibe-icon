@@ -32,12 +32,9 @@ add, subtract, delete, edit, save, search, share, print, settings, options, filt
 
 ### Navigation
 
-arrow-up, arrow-down, arrow-left, arrow-right, arrow-up-right, arrow-up-left, arrow-down-right, arrow-down-left, arrow-previous, arrow-next, arrow-expand, arrow-maximize, arrow-minimize,
-arrow-redo, arrow-undo, arrow-reply, arrow-reset, chevron-up, chevron-down, chevron-left, chevron-right, chevron-up-down, chevron-down-up,
+arrow-up, arrow-down, arrow-left, arrow-right, arrow-up-right, arrow-up-left, arrow-down-right, arrow-down-left, arrow-previous, arrow-next, arrow-expand, arrow-maximize, arrow-minimize, arrow-redo, arrow-undo, arrow-reply, arrow-reset, chevron-up, chevron-down, chevron-left, chevron-right, chevron-up-down, chevron-down-up, home, navigation, dismiss, more-horizontal, more-vertical
 
-home, navigation, dismiss, more-horizontal, more-vertical,
-
-(hint: dismiss is "x" or close)
+*Hint: `dismiss` is "x" or close*
 
 ### Media Controls
 
