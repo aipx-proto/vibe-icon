@@ -4,7 +4,6 @@ import { unsafeHTML } from "lit-html/directives/unsafe-html.js";
 import type { BehaviorSubject } from "rxjs";
 import type { SearchResult } from "../../typings/icon-index";
 import { iconObserver, isIconLoaded } from "../icon-observer";
-import { generateSvgFromSymbol } from "../svg";
 import { copyIconToClipboard } from "./copy-icon";
 import "./results.css";
 
@@ -81,27 +80,16 @@ export function renderResults(results: SearchResult[], limit: number, context: R
                       return; // Prevent re-triggering if overlay is already shown
                     }
                     try {
-                      const response = await fetch(`${import.meta.env.BASE_URL}/${icon.filename}`);
+                      const defaultOption = icon.options.at(0);
+                      if (!defaultOption) return;
+                      const svgUrl = `${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}-${defaultOption.size}-${defaultOption.style}.svg`;
+
+                      const response = await fetch(svgUrl);
                       if (!response.ok) {
                         throw new Error(`Failed to fetch SVG: ${response.statusText}`);
                       }
                       const svgText = await response.text();
-                      const svgDoc = new DOMParser().parseFromString(svgText, "image/svg+xml");
-
-                      // Determine the style to use - default to 'regular' or the first option
-                      let styleToCopy = "regular";
-                      const regularOption = icon.options.find((opt) => opt.style === "regular");
-                      if (!regularOption && icon.options.length > 0) {
-                        styleToCopy = icon.options[0].style; // Fallback to the first available style
-                      }
-
-                      const inlinedSvgContent = generateSvgFromSymbol(svgDoc, styleToCopy);
-
-                      if (!inlinedSvgContent) {
-                        throw new Error(`Failed to generate SVG for style '${styleToCopy}' from ${icon.filename}`);
-                      }
-
-                      await copyIconToClipboard(inlinedSvgContent, buttonElement);
+                      await copyIconToClipboard(svgText, buttonElement);
                     } catch (err) {
                       console.error("Failed to copy SVG from grid icon: ", err);
                       // Ensure error overlay is handled by copyIconToClipboard by passing the buttonElement

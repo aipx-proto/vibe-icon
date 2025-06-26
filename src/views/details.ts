@@ -1,6 +1,6 @@
 import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
-import { BehaviorSubject, combineLatestWith, distinctUntilChanged, from, Subject, switchMap, tap } from "rxjs";
+import { combineLatestWith, distinctUntilChanged, from, Subject, switchMap, tap } from "rxjs";
 import packageJson from "../../package.json";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
@@ -8,6 +8,7 @@ import { renderTemplate } from "../render-template"; // Added import
 import codingAgentPrompt from "./coding-agent-prompt.md?raw";
 import { copyIconToClipboard } from "./copy-icon"; // Added import
 import "./details.css";
+import { preferredSize$ } from "./size";
 
 const iconIdPrefix = "icon-";
 
@@ -76,7 +77,6 @@ async function handleDownload(svgUrl: string, fileName: string, button: HTMLButt
 }
 
 const detailsData$ = new Subject<{ icon: SearchResult; detailsContainer: HTMLElement }>();
-const preferredSize$ = new BehaviorSubject<string>("auto");
 const metadataRequestUrl$ = new Subject<string>();
 
 const metadata$ = metadataRequestUrl$.pipe(
