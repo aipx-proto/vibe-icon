@@ -19,4 +19,4 @@ The library provides a `<vibe-icon>` component that requires a `name` prop and o
 <vibe-icon name="{{ iconName }}" size="{{ preferredNumericSize }}"></vibe-icon>
 ```
 
-I specifically want to use the `{{ iconName }}` icon. If other icons are needed, I can either manually find them with a [search tool]({{ searchToolUrl }}) or have an LLM coding assistant follow the documentation at https://esm.sh/gh/aipx-proto/vibe-icon/lib/llms.txt to find an icon programmatically.
+I specifically want to use the `{{ iconName }}` icon. If other icons are needed, I can either manually find them with a [search tool]({{ searchToolUrl }}) or have an LLM coding assistant follow [the documentation](https://esm.sh/gh/aipx-proto/vibe-icon/lib/llms.txt) to find an icon programmatically.
