@@ -32,7 +32,7 @@ Icon names use lowercase with hyphens (e.g., "arrow-down", "weather-sunny")
 
 ### Core Actions
 
-add, subtract, delete, edit, save, search, share, print, settings, options, filter, lock-closed, lock-open, heart, star, info, question-circle, alert, sign-out, copy, cut
+add, subtract, delete, edit, save, search, share, print, settings, options, filter, lock-closed, lock-open, heart, star, info, question-circle, alert, sign-out, copy, cut, pen
 
 ### Navigation
 
@@ -58,7 +58,7 @@ document, folder, document-add, folder-add, arrow-upload, arrow-download, archiv
 
 ### Devices
 
-desktop, laptop, tablet, phone, smartwatch, print, battery-10, battery-0, wifi-1, bluetooth
+desktop, laptop, tablet, phone, smartwatch, print, battery-10, battery-0, wifi-1, bluetooth, fingerprint, qr-code, window-console
 
 ### Status & Feedback
 
@@ -66,7 +66,7 @@ checkmark, error-circle, checkmark-circle, thumb-like, thumb-dislike, eye, eye-o
 
 ### AI/Tech
 
-bot, brain-circuit, wand, code, sparkle, lightbulb, arrow-clockwise, shield, translate, read-aloud
+bot, brain-circuit, wand, code, sparkle, lightbulb, arrow-clockwise, shield, translate, read-aloud, beaker, database, flash
 
 ### Weather
 
@@ -79,3 +79,7 @@ cart, shopping-bag, tag, receipt, trophy, bookmark, flag, ticket-horizontal
 ### Common UI Elements
 
 globe, map, location, location-arrow, cloud, fire, leaf-one, gift, key, rocket, compass-northwest, color, hourglass, glasses, crown, clipboard, recycle, plug-connected, luggage, balloon
+
+### Shapes
+
+circle, triangle, square, rectangle-landscape, diamond, pentagon, hexagon, cube, shapes
