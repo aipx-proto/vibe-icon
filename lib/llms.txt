@@ -14,14 +14,14 @@ Use the `<vibe-icon>` component with these attributes:
 
 - `name` (required): Icon name from the list below
 - `filled` (optional): Shows filled variant when present
-- `size` (optional): Icon size (e.g., "20", "24")
+- `size` (optional): Icon size (e.g., "16", "20", "24")
 
 ## Examples
 
 ```html
 <vibe-icon name="home"></vibe-icon>
 <vibe-icon name="settings" filled></vibe-icon>
-<vibe-icon name="search" size="24"></vibe-icon>
+<vibe-icon name="search" size="20"></vibe-icon>
 ```
 
 ## Icon Names (200 Most Common)
