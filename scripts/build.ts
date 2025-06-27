@@ -18,8 +18,8 @@ main();
 
 async function main() {
   const commitId = await fetchRepoAssets();
-  const { index: iconIndex, metadata } = await buildIconIndex(commitId);
-  await compileIconSvgs(iconIndex, metadata);
+  const { index: iconIndex, metadata, iconDirMap } = await buildIconIndex(commitId);
+  await compileIconSvgs(iconIndex, metadata, iconDirMap);
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
@@ -58,11 +58,15 @@ async function fetchRepoAssets(): Promise<string> {
   return commitId;
 }
 
-async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; metadata: Record<string, { options: IconOption[] }> }> {
+async function buildIconIndex(
+  commitId: string
+): Promise<{ index: IconIndex; metadata: Record<string, { options: IconOption[] }>; iconDirMap: Map<string, string> }> {
   const assetsDir = resolve(outDir, "assets");
   const assetFolders = await readdir(assetsDir);
   const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
   const metadataMap = new Map<string, { name: string; options: IconOption[] }>();
+  // Given an icon's display name, what is the full path of the dir that contains the metadata.json?
+  const iconDirMap = new Map<string, string>();
 
   let progress = 0;
 
@@ -79,6 +83,9 @@ async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; met
         const metadata = JSON.parse(metadataContent);
         displayName = metadata.name.replace(/\s+/g, " ").trim(); // Normalize display name
         metaphor = metadata.metaphor || [];
+
+        // Map display name to its directory path
+        iconDirMap.set(displayName, folderPath);
       } catch {
         // metadata.json doesn't exist or is invalid - skip this folder
         console.log(`Skipping folder ${folder}: no metadata.json found`);
@@ -161,10 +168,11 @@ async function buildIconIndex(commitId: string): Promise<{ index: IconIndex; met
       ),
     },
     metadata: Object.fromEntries(Array.from(metadataMap.entries()).map(([name, { options }]) => [name, { options }])),
+    iconDirMap,
   };
 }
 
-async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
+async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, iconDirMap: Map<string, string>) {
   // We only select a single most sensible icon size with this order:
   // For each style (filled, regular) under the selected size, we will convert it to a symbol inside a single svg that contains all the styles for this icon
   // e.g. if the most sensible icon size is 20:
@@ -180,7 +188,6 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
   // - /public/add_circle_24_filled.svg
   // - /public/add_circle_24_regular.svg
 
-  const assetsDir = resolve(outDir, "assets");
   const publicDir = resolve("public");
 
   // Ensure public directory exists
@@ -211,9 +218,13 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
 
       let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg">\n';
 
+      if (!iconDirMap.has(displayName)) throw new Error(`Icon directory not found for ${displayName}`);
+
       for (const style of stylesForSize) {
         const svgFileName = `ic_fluent_${codeNameUnderscore}_${targetSize}_${style}.svg`;
-        const svgPath = resolve(assetsDir, displayName, "SVG", svgFileName);
+        // We must use iconDirMap to determine the folder that contains the SVG files
+        // There is NO guarantee that the icon name matches the folder name, for example "USB Stick" icons are in "Usb Stick" folder.
+        const svgPath = resolve(iconDirMap.get(displayName)!, "SVG", svgFileName);
 
         try {
           let content = await readFile(svgPath, "utf-8");
@@ -245,7 +256,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap) {
 
         for (const { size, style } of allOptions) {
           const svgFileName = `ic_fluent_${codeNameUnderscore}_${size}_${style}.svg`;
-          const svgPath = resolve(assetsDir, displayName, "SVG", svgFileName);
+          const svgPath = resolve(iconDirMap.get(displayName)!, "SVG", svgFileName);
           const outputFileName = `${iconName}-${size}-${style}.svg`;
           const outputFilePath = resolve(publicDir, outputFileName);
 
