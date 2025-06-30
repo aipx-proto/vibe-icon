@@ -43,8 +43,8 @@ async function fetchRepoAssets(): Promise<string> {
   console.log("Fetching repository assets...");
   await execAsync(`git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`);
   console.log("Filtering repository assets...");
-  await execAsync(`cd ${outDir} && git sparse-checkout set --no-cone`);
-  await execAsync(`cd ${outDir} && git sparse-checkout set 'assets/**/*.svg' 'assets/**/*.json'`);
+  await execAsync(`cd ${outDir} && git sparse-checkout init --cone`);
+  await execAsync(`cd ${outDir} && git sparse-checkout set assets`);
 
   // Get the commit ID
   const { stdout } = await execAsync(`cd ${outDir} && git rev-parse HEAD`);
