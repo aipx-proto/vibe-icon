@@ -198,7 +198,10 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
   mkdirSync(publicDir, { recursive: true });
 
   let progress = 0;
-  let sizeFrequency: Record<number, number> = {};
+  let sizeFrequency: { allSizes: Record<number, number>; targetSize: Record<number, number> } = {
+    allSizes: {},
+    targetSize: {},
+  };
   const totalIcons = Object.keys(iconIndex.icons).length;
   const icons$ = from(Object.entries(iconIndex.icons)).pipe(
     mergeMap(async ([displayName, [_metaphor, options]]) => {
@@ -267,15 +270,17 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             content = content.replaceAll(/fill="#\d+"/g, 'fill="currentColor"');
 
             await writeFile(outputFilePath, content, "utf-8");
+            sizeFrequency.allSizes[size] ??= 0;
+            sizeFrequency.allSizes[size]++;
           } catch (error) {
             console.error(`Failed to process ${svgFileName}: ${error}`);
           }
         }
       }
 
-      console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
-      sizeFrequency[targetSize] ??= 0;
-      sizeFrequency[targetSize]++;
+      // console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
+      sizeFrequency.targetSize[targetSize] ??= 0;
+      sizeFrequency.targetSize[targetSize]++;
     }, 8)
   );
 
@@ -316,7 +321,7 @@ async function saveMetadata(metadata: MetadataMap) {
       const fileName = displayNameToVibeIconSVGFilename(name);
       const filePath = resolve(publicDir, `${fileName}.metadata.json`);
       await writeFile(filePath, JSON.stringify({ name, options }, null, 2), "utf-8");
-      console.log(`Metadata saved ${++progress}/${totalMetadata}: ${name}`);
+      // console.log(`Metadata saved ${++progress}/${totalMetadata}: ${name}`);
     }, 8)
   );
 
