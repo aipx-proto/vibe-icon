@@ -35,51 +35,16 @@ async function fetchRepoAssets(): Promise<string> {
   // Create temp directory if it doesn't exist
   try {
     await rm(outDir, { recursive: true });
-    console.log("✓ Removed existing dist-icons directory");
-  } catch {
-    console.log("✓ No existing dist-icons directory to remove");
-  }
+  } catch {}
 
   await mkdirSync(outDir, { recursive: true });
-  console.log("✓ Created dist-icons directory");
 
   // Clone the repository with sparse checkout to get only the assets folder
   console.log("Fetching repository assets...");
   await execAsync(`git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`);
-  console.log("✓ Git clone completed");
-
-  // Check what's in the directory after clone
-  try {
-    const clonedContents = await readdir(outDir);
-    console.log(`✓ Contents after clone: ${clonedContents.join(', ')}`);
-  } catch (error) {
-    console.log(`✗ Error reading cloned directory: ${error}`);
-  }
-
   console.log("Filtering repository assets...");
   await execAsync(`cd ${outDir} && git sparse-checkout init --cone`);
-  console.log("✓ Sparse checkout initialized");
-  
   await execAsync(`cd ${outDir} && git sparse-checkout set assets`);
-  console.log("✓ Sparse checkout patterns set");
-
-  // Check what's in the directory after sparse checkout
-  try {
-    const contentsAfterSparse = await readdir(outDir);
-    console.log(`✓ Contents after sparse checkout: ${contentsAfterSparse.join(', ')}`);
-    
-    // Check if assets directory exists
-    const assetsPath = resolve(outDir, "assets");
-    try {
-      const assetsContents = await readdir(assetsPath);
-      console.log(`✓ Assets directory found with ${assetsContents.length} items`);
-      console.log(`✓ First few assets: ${assetsContents.slice(0, 5).join(', ')}`);
-    } catch (assetsError) {
-      console.log(`✗ Assets directory not found: ${assetsError}`);
-    }
-  } catch (error) {
-    console.log(`✗ Error reading directory after sparse checkout: ${error}`);
-  }
 
   // Get the commit ID
   const { stdout } = await execAsync(`cd ${outDir} && git rev-parse HEAD`);
@@ -89,7 +54,6 @@ async function fetchRepoAssets(): Promise<string> {
 
   // remove the .git directory to clean up
   await rm(resolve(outDir, ".git"), { recursive: true });
-  console.log("✓ Cleaned up .git directory");
 
   return commitId;
 }
@@ -98,17 +62,6 @@ async function buildIconIndex(
   commitId: string
 ): Promise<{ index: IconIndex; metadata: Record<string, { options: IconOption[] }>; iconDirMap: Map<string, string> }> {
   const assetsDir = resolve(outDir, "assets");
-  console.log(`📁 Attempting to read assets directory: ${assetsDir}`);
-  
-  // Debug: Check if the directory exists and what's in the parent directory
-  try {
-    const parentDir = resolve(outDir);
-    const parentContents = await readdir(parentDir);
-    console.log(`📁 Parent directory (${parentDir}) contents: ${parentContents.join(', ')}`);
-  } catch (error) {
-    console.log(`✗ Error reading parent directory: ${error}`);
-  }
-  
   const assetFolders = await readdir(assetsDir);
   const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
   const metadataMap = new Map<string, { name: string; options: IconOption[] }>();
@@ -135,7 +88,7 @@ async function buildIconIndex(
         iconDirMap.set(displayName, folderPath);
       } catch {
         // metadata.json doesn't exist or is invalid - skip this folder
-        // console.log(`Skipping folder ${folder}: no metadata.json found`);
+        console.log(`Skipping folder ${folder}: no metadata.json found`);
         return null;
       }
 
@@ -189,7 +142,7 @@ async function buildIconIndex(
           return 0;
         });
 
-        // console.log(`Processed icon ${++progress}/${assetFolders.length}: ${displayName}`);
+        console.log(`Processed icon ${++progress}/${assetFolders.length}: ${displayName}`);
       } catch (error) {
         throw new Error(`Failed to read SVG files for icon ${displayName}: ${error}`);
       }
@@ -320,7 +273,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
         }
       }
 
-      // console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
+      console.log(`Compiled icon ${++progress}/${totalIcons}: ${displayName} (size: ${targetSize})`);
       sizeFrequency[targetSize] ??= 0;
       sizeFrequency[targetSize]++;
     }, 8)
@@ -363,7 +316,7 @@ async function saveMetadata(metadata: MetadataMap) {
       const fileName = displayNameToVibeIconSVGFilename(name);
       const filePath = resolve(publicDir, `${fileName}.metadata.json`);
       await writeFile(filePath, JSON.stringify({ name, options }, null, 2), "utf-8");
-      // console.log(`Metadata saved ${++progress}/${totalMetadata}: ${name}`);
+      console.log(`Metadata saved ${++progress}/${totalMetadata}: ${name}`);
     }, 8)
   );
 
