@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { OpenAI } from "openai";
 import { from, mergeMap, lastValueFrom } from "rxjs";
 import { updateProgress } from "../utils/progress-bar";
+import type { MetadataEntry } from "../../typings/icon-index";
 
 // Load environment variables from specific file
 const envFile = process.argv[2] || ".env.aoai";
@@ -12,7 +13,7 @@ config({ path: resolve(envFile) });
 
 const pngDir = resolve("pngs");
 const publicDir = resolve("public");
-const outputFile = resolve("emoji-assignments.json");
+const outputFile = resolve("scripts", "icon-to-emoji-llm", "emoji-assignments.json");
 
 // Azure OpenAI configuration
 const azureOpenAI = new OpenAI({
@@ -23,11 +24,6 @@ const azureOpenAI = new OpenAI({
     "api-key": process.env.AZURE_OPENAI_API_KEY,
   },
 });
-
-interface IconMetadata {
-  name: string;
-  metaphor?: string[];
-}
 
 interface EmojiAssignmentResponse {
   emoji: string;
@@ -127,7 +123,7 @@ async function readIconMetadata(iconName: string): Promise<{ name: string; metap
 
   try {
     const metadataContent = await readFile(metadataPath, "utf-8");
-    const metadata: IconMetadata = JSON.parse(metadataContent);
+    const metadata: MetadataEntry = JSON.parse(metadataContent);
 
     return {
       name: metadata.name || iconName,
@@ -246,9 +242,12 @@ You will be given an icon and a list of metaphors that it represents.
 
 You will need to assign an emoji that best represents the icon.
 
+This emoji map will be used to create icons in UI code. So map icons as you would use them to communicate in UI.
+
 Analyze this icon image and suggest the emoji that most closely matches it visually.
 
 Consider:
+
 - The main visual elements and shapes
 - The overall style and appearance
 - What concept or object the icon represents
@@ -256,10 +255,12 @@ Consider:
 - The icon name and metaphorical concepts if provided
 
 Respond with a JSON object containing:
+
 - "emoji": the single best matching emoji character
 - "similarity": similarity score from 0-1 - how similar the icon is to the emoji
-- "subEmoji": some icons have a secondary icon in the corner of the layout that modifies the primary icon's meaning. Please skip this if it is not present.
-- "alternativeEmojis": other emojis that are similar to the icon (this can be empty)
+- "subEmoji": some icons have a secondary icon in the corner of the layout that modifies the primary icon's meaning. If not present write empty string.
+- "alternativeEmojis": other emojis that are similar to the icon (this array can be empty)
+
 
 Example response format:
 \`\`\`json

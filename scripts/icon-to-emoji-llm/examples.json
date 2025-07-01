@@ -25,7 +25,7 @@
       "emoji": "🔕",
       "subEmoji": "",
       "similarity": 0.98,
-      "alternativeEmojis": ["🔇", "🚫🔔"]
+      "alternativeEmojis": ["🔇", "🚫"]
     },
     {
       "filename": "alert-on",
@@ -87,10 +87,10 @@
       "filename": "accessibility-more",
       "iconName": "Accessibility More",
       "metaphor": [],
-      "emoji": "🧑‍🦽",
+      "emoji": "♿️",
+      "subEmoji": "⋯",
       "alternativeEmojis": ["♿", "🧑‍🦯", "🚶"],
-      "similarity": 0.7,
-      "subEmoji": ""
+      "similarity": 0.7
     },
     {
       "filename": "accessibility-question-mark",
