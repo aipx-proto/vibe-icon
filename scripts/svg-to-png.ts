@@ -62,9 +62,11 @@ async function getSvgFiles(): Promise<string[]> {
       // Exclude files ending with pattern like *-00-filled.svg or *-00-regular.svg
       const excludePattern = /-(filled|regular)\.svg$/;
       if (excludePattern.test(file)) return false;
+
+      return true;
       
       // TEMP: Only process icons that start with "a" for testing
-      return file.toLowerCase().startsWith('a');
+      // return file.toLowerCase().startsWith('a');
     });
     
     return svgFiles.map(file => resolve(publicDir, file));
