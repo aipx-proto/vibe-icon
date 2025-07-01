@@ -1,11 +1,12 @@
 import { readdir, readFile, writeFile } from "fs/promises";
 import { resolve, extname, basename } from "path";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { config } from "dotenv";
 import { OpenAI } from "openai";
 import { from, mergeMap, lastValueFrom } from "rxjs";
 import { updateProgress } from "../utils/progress-bar";
 import type { MetadataEntry } from "../../typings/icon-index";
+const systemPrompt = readFileSync(resolve("scripts", "icon-to-emoji-llm", "systemPrompt.md"), "utf-8");
 
 // Load environment variables from specific file
 const envFile = process.argv[2] || ".env.aoai";
@@ -111,7 +112,11 @@ async function getPngFiles(): Promise<string[]> {
     const files = await readdir(pngDir);
     const pngFiles = files.filter((file) => extname(file) === ".png").map((file) => resolve(pngDir, file));
 
-    return pngFiles;
+    return pngFiles; /* .filter(
+      (file) =>
+        file.includes("arrow") &&
+        (file.includes("left") || file.includes("right") || file.includes("up") || file.includes("down"))
+    ); // For testing */
   } catch (error) {
     console.error("Failed to read PNG directory:", error);
     return [];
@@ -154,32 +159,42 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
       : "";
 
   try {
-    const response = await azureOpenAI.chat.completions.create({
-      model: process.env.AZURE_OPENAI_MODEL!,
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `Icon name: ${iconName}${metaphorContext}`,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/png;base64,${base64Image}`,
+    const response = await azureOpenAI.chat.completions.create(
+      {
+        model: process.env.AZURE_OPENAI_MODEL!,
+        messages: [
+          {
+            role: "system",
+            content:
+              systemPrompt +
+              "\n\nExample response format:\n\n" +
+              "```json\n" +
+              JSON.stringify(exampleResponse, null, 2) +
+              "\n```",
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Icon name: ${iconName}${metaphorContext}`,
               },
-            },
-          ],
-        },
-      ],
-      max_tokens: 1000,
-      temperature: 0.9,
-    });
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/png;base64,${base64Image}`,
+                },
+              },
+            ],
+          },
+        ],
+        max_tokens: 1000,
+        temperature: 0.9,
+      },
+      {
+        timeout: 10000, // 10 seconds timeout
+      }
+    );
 
     const content = response.choices[0]?.message?.content;
     if (!content) {
@@ -232,38 +247,5 @@ const exampleResponse: EmojiAssignmentResponse = {
   emoji: "📄",
   subEmoji: "➕",
   alternativeEmojis: ["📃"],
-  similarity: 0.9,
+  similarity: 0.89,
 };
-
-const systemPrompt = `
-You are a helpful assistant that assigns emojis to icons.
-
-You will be given an icon and a list of metaphors that it represents.
-
-You will need to assign an emoji that best represents the icon.
-
-This emoji map will be used to create icons in UI code. So map icons as you would use them to communicate in UI.
-
-Analyze this icon image and suggest the emoji that most closely matches it visually.
-
-Consider:
-
-- The main visual elements and shapes
-- The overall style and appearance
-- What concept or object the icon represents
-- Color schemes and visual patterns
-- The icon name and metaphorical concepts if provided
-
-Respond with a JSON object containing:
-
-- "emoji": the single best matching emoji character
-- "similarity": similarity score from 0-1 - how similar the icon is to the emoji
-- "subEmoji": some icons have a secondary icon in the corner of the layout that modifies the primary icon's meaning. If not present write empty string.
-- "alternativeEmojis": other emojis that are similar to the icon (this array can be empty)
-
-
-Example response format:
-\`\`\`json
-${JSON.stringify(exampleResponse, null, 2)}
-\`\`\`
-`;

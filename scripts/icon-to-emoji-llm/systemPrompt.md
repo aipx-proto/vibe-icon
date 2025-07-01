@@ -6,7 +6,11 @@ You will need to assign an emoji that best represents the icon.
 
 This emoji map will be used to create icons in UI code. So map icons as you would use them to communicate in UI.
 
-Analyze this icon image and suggest the emoji that most closely matches it visually.
+Analyze this icon image and suggest the emoji that most closely matches it visually. 
+If there is not a visual approximation, chose an option that matches conceptually.
+If an icon's meaning does not match its emoji meaning, give it a lower similarly score.
+
+The icons come in sets. Please keep the emoji use consistent within sets.
 
 Consider:
 
@@ -20,5 +24,5 @@ Respond with a JSON object containing:
 
 - "emoji": the single best matching emoji character
 - "similarity": similarity score from 0-1 - how similar the icon is to the emoji
-- "subEmoji": some icons have a secondary icon in the corner of the layout that modifies the primary icon's meaning. If not present write empty string.
+- "subEmoji": some icons have a secondary icon in the corner or extra adornment from the original that modifies the primary icon's meaning. If not present write empty string.
 - "alternativeEmojis": other emojis that are similar to the icon (this array can be empty)
