@@ -3,7 +3,7 @@ dist
 dist-icons
 dist-site
 public/**/*
-pngs
+pngs/
 .env.aoai
 
 # negate

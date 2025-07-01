@@ -110,13 +110,13 @@ async function fetchRepoAssets(): Promise<string> {
 
 async function buildIconIndex(commitId: string): Promise<{
   iconIndex: IconIndex;
-  metadata: Record<string, { options: IconOption[] }>;
+  metadata: MetadataMap;
   iconDirMap: Map<string, string>;
 }> {
   const assetsDir = resolve(outDir, "assets");
   const assetFolders = await readdir(assetsDir);
   const filenamePattern = /(.+)_(\d+)_(filled|regular)\.svg/;
-  const metadataMap = new Map<string, { name: string; options: IconOption[] }>();
+  const metadataMap = new Map<string, { name: string; metaphor: string[]; options: IconOption[] }>();
   // Given an icon's display name, what is the full path of the dir that contains the metadata.json?
   const iconDirMap = new Map<string, string>();
 
@@ -125,12 +125,14 @@ async function buildIconIndex(commitId: string): Promise<{
 
   const icons$ = from(assetFolders).pipe(
     mergeMap(async (folder) => {
-      const folderPath = resolve(assetsDir, folder);
 
-      // DEV: Only process icons starting with "a" for faster testing
-      // if (!folder.toLowerCase().startsWith("a")) {
-      //   return null;
-      // }
+      // throw out the rtl, ltr, and temp icons - the are duplicates and don't parse the same as the regular icons
+      if (folder.includes(" RTL") || folder.includes(" LTR") || folder.includes(" Temp ")) {
+        logEntry('processing', 'warn', `Skipping folder ${folder}: contains RTL, LTR, or Temp`);
+        return null;
+      }
+
+      const folderPath = resolve(assetsDir, folder);
 
       // First, scan SVG files to get actual available options
       let actualOptions: IconOption[] = [];
@@ -210,7 +212,7 @@ async function buildIconIndex(commitId: string): Promise<{
           return 0;
         });
 
-      metadataMap.set(displayName, { name: displayName, options: actualOptions });
+      metadataMap.set(displayName, { name: displayName, metaphor: metaphor, options: actualOptions });
 
       const allSizes = [...new Set(actualOptions.map((opt) => opt.size))];
       updateProgress(++progress, assetFolders.length, "Processing icons", errors);
@@ -234,7 +236,7 @@ async function buildIconIndex(commitId: string): Promise<{
           })
       ),
     },
-    metadata: Object.fromEntries(Array.from(metadataMap.entries()).map(([name, { options }]) => [name, { options }])),
+    metadata: Object.fromEntries(Array.from(metadataMap.entries()).map(([name, { metaphor, options }]) => [name, { metaphor, options }])),
     iconDirMap,
   };
 }
@@ -422,11 +424,11 @@ async function saveMetadata(metadata: MetadataMap) {
   let errors = 0;
 
   const metadata$ = from(Object.entries(metadata)).pipe(
-    mergeMap(async ([name, { options }]) => {
+    mergeMap(async ([name, { metaphor, options }]) => {
       const fileName = displayNameToVibeIconSVGFilename(name);
       const filePath = resolve(publicDir, `${fileName}.metadata.json`);
       try {
-        await writeFile(filePath, JSON.stringify({ name, options }, null, 2), "utf-8");
+        await writeFile(filePath, JSON.stringify({ name, metaphor, options }, null, 2), "utf-8");
       } catch (error) {
         logEntry("metadata", "warn", `Failed to save metadata for ${name}`, { error: String(error) });
         errors++;
