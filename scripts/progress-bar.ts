@@ -20,17 +20,17 @@ export function progressSpinner(stage: string) {
   const spinnerFrames = ['|', '/', '-', '\\'];
   
   spinnerIndex = 0;
-  process.stdout.write(`${stage}: ${spinnerFrames[spinnerIndex]}`);
+  process.stdout.write(`${spinnerFrames[spinnerIndex]} > ${stage}`);
   spinnerInterval = setInterval(() => {
     spinnerIndex = (spinnerIndex + 1) % spinnerFrames.length;
-    process.stdout.write(`\r${stage}: ${spinnerFrames[spinnerIndex]}`);
+    process.stdout.write(`\r${spinnerFrames[spinnerIndex]} > ${stage}`);
   }, 100);
   
   return function stopSpinner() {
     if (spinnerInterval) {
       clearInterval(spinnerInterval);
       spinnerInterval = null;
-      process.stdout.write(`\r${stage ? stage + ': ' : ''}Done\n`);
+      process.stdout.write(`\rDone > ${stage}\n`);
     }
   }
 }

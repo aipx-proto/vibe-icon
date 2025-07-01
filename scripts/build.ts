@@ -8,7 +8,7 @@ import type { IconIndex, IconOption, MetadataMap } from "../typings/icon-index";
 import { getMostSensibleIconSize } from "./get-sensible-size";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
 import { buildLog, logEntry } from "./build-log";
-import { updateProgress } from "./progress-bar";
+import { progressSpinner, updateProgress } from "./progress-bar";
 
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
@@ -20,7 +20,7 @@ main();
 // Only support fill/regular per size
 
 async function main() {
-  console.log("Starting icon build process...\n");
+  console.log("Starting icon build process...");
   logEntry('main', 'info', 'Build process started');
   
   console.log("Fetching repository assets...");
@@ -63,12 +63,12 @@ async function main() {
   await writeFile(resolve("public", "build-log.json"), JSON.stringify(buildLog, null, 2));
   console.log("Build log saved to ./public/build-log.json");
   
-  console.log("\nBuild process completed successfully!");
+  console.log("Build process completed successfully!");
   if (buildLog.summary.totalErrors > 0) {
     console.log(`${buildLog.summary.totalErrors} warnings/errors occurred. Check build-log.json for details.`);
   }
 
-  console.log(`Size stats:\n${JSON.stringify(sizeStats, null, 2)}`);
+  console.log(`Size stats: ${JSON.stringify(sizeStats, null, 2)}`);
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -83,14 +83,21 @@ async function fetchRepoAssets(): Promise<string> {
   await mkdirSync(outDir, { recursive: true });
 
   // Clone the repository with sparse checkout to get only the assets folder
-  await execAsync(
-    `git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`
-  );
-  await execAsync(`cd ${outDir} && git sparse-checkout init --cone`);
-  await execAsync(`cd ${outDir} && git sparse-checkout set assets`);
+  const commands = [
+    `git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`,
+    `cd ${outDir} && git sparse-checkout init --cone`,
+    `cd ${outDir} && git sparse-checkout set assets`,
+    `cd ${outDir} && git rev-parse HEAD`,
+  ]
+  
+  let stdout = "";
+  for (const command of commands) {
+    const spinner = progressSpinner(command);
+    const { stdout: commandStdout } = await execAsync(command);
+    stdout = commandStdout;
+    spinner();
+  }
 
-  // Get the commit ID
-  const { stdout } = await execAsync(`cd ${outDir} && git rev-parse HEAD`);
   const commitId = stdout.trim();
 
   console.log(`Repository assets fetched successfully. Commit: ${commitId}`);
