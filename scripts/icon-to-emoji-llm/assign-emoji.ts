@@ -47,12 +47,17 @@ function groupIconsIntoSets(pngFiles: string[], maxGroupSize: number = 20, minSu
 
   for (const group of firstWordGroups.values()) {
     if (group.length > maxGroupSize) {
-      // Step 2: Subgroup by second word
+      // Step 2: Subgroup by second word, with special case for "up", "down", "left", "right", "bidirectional"
+      const directionWords = new Set(["up", "down", "left", "right", "bidirectional"]);
       const secondWordGroups = new Map<string, string[]>();
       for (const pngFile of group) {
         const filename = basename(pngFile, ".png");
         const parts = filename.split(/[-_]/);
-        const secondWord = parts[1] ? parts[1].toLowerCase() : "__none__";
+        let secondWord = parts[1] ? parts[1].toLowerCase() : "__none__";
+        // Special case: treat "up", "down", "left", "right" as the same group
+        if (directionWords.has(secondWord)) {
+          secondWord = "__direction__";
+        }
         if (!secondWordGroups.has(secondWord)) {
           secondWordGroups.set(secondWord, []);
         }
