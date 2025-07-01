@@ -1,583 +1,456 @@
 {
-  "generated": "2025-07-01T16:59:46.331Z",
+  "generated": "2025-07-01T18:32:25.428Z",
   "total": 50,
   "assignments": [
     {
-      "filename": "add",
-      "iconName": "Add",
-      "metaphors": [],
-      "emoji": "➕",
-      "alternativeEmojis": [
-        "✚",
-        "➕",
-        "＋"
-      ],
-      "similarity": 1
-    },
-    {
-      "filename": "airplane",
-      "iconName": "Airplane",
-      "metaphors": [],
-      "emoji": "✈️",
-      "similarity": 1,
-      "alternativeEmojis": [
-        "🛫",
-        "🛬"
-      ]
-    },
-    {
-      "filename": "airplane-landing",
-      "iconName": "Airplane Landing",
-      "metaphors": [],
-      "emoji": "🛬",
-      "alternativeEmojis": [
-        "✈️",
-        "🛫"
-      ],
-      "similarity": 0.98
-    },
-    {
-      "filename": "airplane-take-off",
-      "iconName": "Airplane Take Off",
-      "metaphors": [],
-      "emoji": "🛫",
-      "similarity": 0.98,
-      "alternativeEmojis": [
-        "✈️",
-        "🛬"
-      ]
-    },
-    {
-      "filename": "alert",
-      "iconName": "Alert",
-      "metaphors": [],
-      "emoji": "🔔",
-      "similarity": 0.98,
-      "alternativeEmojis": [
-        "🔕",
-        "🛎️"
-      ]
-    },
-    {
-      "filename": "alert-off",
-      "iconName": "Alert Off",
-      "metaphors": [],
-      "emoji": "🔕",
-      "alternativeEmojis": [
-        "🔔",
-        "🚫"
-      ],
-      "similarity": 0.98
-    },
-    {
-      "filename": "alert-on",
-      "iconName": "Alert On",
-      "metaphors": [],
-      "emoji": "🔔",
-      "similarity": 0.98,
-      "alternativeEmojis": [
-        "🔕",
-        "🔊"
-      ]
-    },
-    {
-      "filename": "alert-urgent",
-      "iconName": "Alert Urgent",
-      "metaphors": [],
-      "emoji": "🔔",
-      "similarity": 0.98,
-      "alternativeEmojis": [
-        "🚨",
-        "📢"
-      ]
-    },
-    {
-      "filename": "add-circle",
-      "iconName": "Add Circle",
-      "metaphors": [],
-      "emoji": "➕",
-      "similarity": 0.95,
-      "alternativeEmojis": [
-        "⊕",
-        "⨁",
-        "✚"
-      ]
-    },
-    {
-      "filename": "alert-badge",
-      "iconName": "Alert Badge",
-      "metaphors": [],
-      "emoji": "🔔",
-      "subEmoji": "🔴",
-      "alternativeEmojis": [
-        "🔕",
-        "🛎️"
-      ],
-      "similarity": 0.95
-    },
-    {
-      "filename": "animal-cat",
-      "iconName": "Animal Cat",
-      "metaphors": [],
-      "emoji": "🐈",
-      "similarity": 0.95,
-      "alternativeEmojis": [
-        "🐱"
-      ]
-    },
-    {
-      "filename": "album",
-      "iconName": "Album",
-      "metaphors": [],
-      "emoji": "📔",
-      "alternativeEmojis": [
-        "📓",
-        "📕",
-        "📒"
-      ],
-      "similarity": 0.93
-    },
-    {
-      "filename": "album-add",
-      "iconName": "Album Add",
-      "metaphors": [],
-      "emoji": "🖼️",
-      "subEmoji": "➕",
-      "alternativeEmojis": [
-        "📁",
-        "➕"
-      ],
-      "similarity": 0.92
-    },
-    {
-      "filename": "align-space-evenly-vertical",
-      "iconName": "Align Space Evenly Vertical",
-      "metaphors": [],
-      "emoji": "☰",
-      "alternativeEmojis": [
-        "🍔",
-        "📊"
-      ],
-      "similarity": 0.92
+      "filename": "access-time",
+      "iconName": "Access Time",
+      "metaphor": [],
+      "emoji": "🕑",
+      "alternativeEmojis": ["🕘", "🕛", "⏰"],
+      "similarity": 0.7,
+      "subEmoji": ""
     },
     {
       "filename": "accessibility",
       "iconName": "Accessibility",
-      "metaphors": [],
-      "emoji": "🧍",
-      "alternativeEmojis": [
-        "🚶",
-        "🕴️",
-        "🙆"
-      ],
-      "similarity": 0.85
+      "metaphor": [],
+      "emoji": "♿",
+      "alternativeEmojis": ["🧑‍🦽", "🧑‍🦯", "🧍"],
+      "similarity": 0.8,
+      "subEmoji": ""
     },
     {
       "filename": "accessibility-checkmark",
       "iconName": "Accessibility Checkmark",
-      "metaphors": [],
+      "metaphor": [],
       "emoji": "♿️",
       "subEmoji": "✔️",
-      "alternativeEmojis": [
-        "✅",
-        "🧑‍🦽"
-      ],
+      "alternativeEmojis": ["✅", "🧑‍🦽"],
       "similarity": 0.85
     },
     {
       "filename": "accessibility-error",
       "iconName": "Accessibility Error",
-      "metaphors": [],
+      "metaphor": [],
       "emoji": "♿️",
-      "subEmoji": "⚠️",
-      "alternativeEmojis": [
-        "🚫",
-        "❗"
-      ],
-      "similarity": 0.85
-    },
-    {
-      "filename": "accessibility-question-mark",
-      "iconName": "Accessibility Question Mark",
-      "metaphors": [],
-      "emoji": "🧑‍🦽",
-      "subEmoji": "❓",
-      "alternativeEmojis": [
-        "♿",
-        "❓",
-        "🦽"
-      ],
-      "similarity": 0.85
-    },
-    {
-      "filename": "add-square",
-      "iconName": "Add Square",
-      "metaphors": [],
-      "emoji": "➕",
-      "alternativeEmojis": [
-        "🟦",
-        "🆙"
-      ],
-      "similarity": 0.85
-    },
-    {
-      "filename": "add-square-multiple",
-      "iconName": "Add Square Multiple",
-      "metaphors": [],
-      "emoji": "➕",
-      "subEmoji": "🗂️",
-      "alternativeEmojis": [
-        "🗃️",
-        "📦"
-      ],
-      "similarity": 0.85
-    },
-    {
-      "filename": "add-subtract-circle",
-      "iconName": "Add Subtract Circle",
-      "metaphors": [],
-      "emoji": "➕",
-      "subEmoji": "➖",
-      "alternativeEmojis": [
-        "⚪",
-        "➗"
-      ],
-      "similarity": 0.85
-    },
-    {
-      "filename": "alert-snooze",
-      "iconName": "Alert Snooze",
-      "metaphors": [],
-      "emoji": "🔕",
-      "subEmoji": "💤",
-      "alternativeEmojis": [
-        "🔔",
-        "😴"
-      ],
-      "similarity": 0.85
-    },
-    {
-      "filename": "align-space-around-vertical",
-      "iconName": "Align Space Around Vertical",
-      "metaphors": [],
-      "emoji": "⏸️",
-      "alternativeEmojis": [
-        "🛑",
-        "⏯️"
-      ],
-      "similarity": 0.85
+      "subEmoji": "❗️",
+      "alternativeEmojis": ["🚫", "⚠️"],
+      "similarity": 0.8
     },
     {
       "filename": "accessibility-more",
       "iconName": "Accessibility More",
-      "metaphors": [],
-      "emoji": "♿",
-      "alternativeEmojis": [
-        "🧑‍🦽",
-        "🧑‍🦯",
-        "🦽",
-        "🦯"
-      ],
-      "similarity": 0.8
+      "metaphor": [],
+      "emoji": "🧑‍🦽",
+      "alternativeEmojis": ["♿", "🧑‍🦯", "🚶"],
+      "similarity": 0.7,
+      "subEmoji": ""
     },
     {
-      "filename": "agents-add",
-      "iconName": "Agents Add",
-      "metaphors": [],
+      "filename": "accessibility-question-mark",
+      "iconName": "Accessibility Question Mark",
+      "metaphor": [],
+      "emoji": "♿️",
+      "subEmoji": "❓",
+      "alternativeEmojis": ["🧑‍🦽", "🧑‍🦯", "❔"],
+      "similarity": 0.85
+    },
+    {
+      "filename": "add",
+      "iconName": "Add",
+      "metaphor": [],
       "emoji": "➕",
-      "subEmoji": "",
-      "alternativeEmojis": [
-        "👤",
-        "➕",
-        "🆕"
-      ],
-      "similarity": 0.75
+      "similarity": 1,
+      "alternativeEmojis": ["✚", "✙"],
+      "subEmoji": ""
     },
     {
-      "filename": "align-distribute-left",
-      "iconName": "Align Distribute Left",
-      "metaphors": [],
-      "emoji": "📊",
-      "alternativeEmojis": [
-        "📈",
-        "🟫"
-      ],
-      "similarity": 0.75
+      "filename": "add-circle",
+      "iconName": "Add Circle",
+      "metaphor": [],
+      "emoji": "➕",
+      "alternativeEmojis": ["⭕", "✚"],
+      "similarity": 0.95,
+      "subEmoji": ""
     },
     {
-      "filename": "access-time",
-      "iconName": "Access Time",
-      "metaphors": [],
-      "emoji": "🕒",
-      "alternativeEmojis": [
-        "🕰️",
-        "⏰",
-        "🕑"
-      ],
-      "similarity": 0.7
+      "filename": "add-square",
+      "iconName": "Add Square",
+      "metaphor": [],
+      "emoji": "➕",
+      "alternativeEmojis": ["✚", "➕", "🞧"],
+      "similarity": 0.95,
+      "subEmoji": ""
+    },
+    {
+      "filename": "add-square-multiple",
+      "iconName": "Add Square Multiple",
+      "metaphor": [],
+      "emoji": "➕",
+      "subEmoji": "🗂️",
+      "alternativeEmojis": ["🆕", "🗃️"],
+      "similarity": 0.85
     },
     {
       "filename": "add-starburst",
       "iconName": "Add Starburst",
-      "metaphors": [],
+      "metaphor": [],
       "emoji": "➕",
-      "subEmoji": null,
-      "alternativeEmojis": [
-        "✴️",
-        "🌟",
-        "✨"
-      ],
-      "similarity": 0.7
+      "subEmoji": "✴️",
+      "alternativeEmojis": ["🌟", "✨", "⭐"],
+      "similarity": 0.8
+    },
+    {
+      "filename": "add-subtract-circle",
+      "iconName": "Add Subtract Circle",
+      "metaphor": [],
+      "emoji": "➕",
+      "subEmoji": "➖",
+      "alternativeEmojis": ["⚪", "➗"],
+      "similarity": 0.8
     },
     {
       "filename": "agents",
       "iconName": "Agents",
-      "metaphors": [],
+      "metaphor": [],
       "emoji": "🧬",
-      "alternativeEmojis": [
-        "🔗",
-        "♾️"
-      ],
+      "alternativeEmojis": ["🔗", "♾️", "🌀"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "agents-add",
+      "iconName": "Agents Add",
+      "metaphor": [],
+      "emoji": "➕",
+      "subEmoji": "",
+      "alternativeEmojis": ["🧑‍💼", "👤", "➕"],
       "similarity": 0.7
+    },
+    {
+      "filename": "airplane",
+      "iconName": "Airplane",
+      "metaphor": [],
+      "emoji": "✈️",
+      "alternativeEmojis": ["🛩️", "🛫", "🛬"],
+      "similarity": 1,
+      "subEmoji": ""
+    },
+    {
+      "filename": "airplane-landing",
+      "iconName": "Airplane Landing",
+      "metaphor": [],
+      "emoji": "🛬",
+      "similarity": 1,
+      "alternativeEmojis": ["✈️"],
+      "subEmoji": ""
+    },
+    {
+      "filename": "airplane-take-off",
+      "iconName": "Airplane Take Off",
+      "metaphor": [],
+      "emoji": "🛫",
+      "alternativeEmojis": ["✈️", "🛬"],
+      "similarity": 0.98,
+      "subEmoji": ""
+    },
+    {
+      "filename": "album",
+      "iconName": "Album",
+      "metaphor": [],
+      "emoji": "📔",
+      "alternativeEmojis": ["📓", "📕"],
+      "similarity": 0.93,
+      "subEmoji": ""
+    },
+    {
+      "filename": "album-add",
+      "iconName": "Album Add",
+      "metaphor": [],
+      "emoji": "🖼️",
+      "subEmoji": "➕",
+      "alternativeEmojis": ["📁", "➕"],
+      "similarity": 0.85
+    },
+    {
+      "filename": "alert",
+      "iconName": "Alert",
+      "metaphor": [],
+      "emoji": "🔔",
+      "similarity": 0.98,
+      "alternativeEmojis": ["🔕", "🛎️"],
+      "subEmoji": ""
+    },
+    {
+      "filename": "alert-badge",
+      "iconName": "Alert Badge",
+      "metaphor": [],
+      "emoji": "🔔",
+      "subEmoji": "🔴",
+      "alternativeEmojis": ["📢", "🚨"],
+      "similarity": 0.93
+    },
+    {
+      "filename": "alert-off",
+      "iconName": "Alert Off",
+      "metaphor": [],
+      "emoji": "🔕",
+      "similarity": 0.98,
+      "alternativeEmojis": ["🔇", "🚫🔔"],
+      "subEmoji": ""
+    },
+    {
+      "filename": "alert-on",
+      "iconName": "Alert On",
+      "metaphor": [],
+      "emoji": "🔔",
+      "subEmoji": "🚨",
+      "alternativeEmojis": ["🔕", "🚨,"],
+      "similarity": 0.98
+    },
+    {
+      "filename": "alert-snooze",
+      "iconName": "Alert Snooze",
+      "metaphor": [],
+      "emoji": "🔕",
+      "subEmoji": "💤",
+      "alternativeEmojis": ["🔔", "🛎️", "💤"],
+      "similarity": 0.85
+    },
+    {
+      "filename": "alert-urgent",
+      "iconName": "Alert Urgent",
+      "metaphor": [],
+      "emoji": "🔔",
+      "alternativeEmojis": ["🚨", "🔕"],
+      "similarity": 0.93,
+      "subEmoji": ""
     },
     {
       "filename": "align-bottom",
       "iconName": "Align Bottom",
-      "metaphors": [],
+      "metaphor": [],
       "emoji": "📊",
-      "alternativeEmojis": [
-        "📉",
-        "📈"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-center-vertical",
-      "iconName": "Align Center Vertical",
-      "metaphors": [],
-      "emoji": "🛤️",
-      "alternativeEmojis": [
-        "🛣️",
-        "↕️"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-distribute-bottom",
-      "iconName": "Align Distribute Bottom",
-      "metaphors": [],
-      "emoji": "📊",
-      "alternativeEmojis": [
-        "📉",
-        "⬇️",
-        "🪟"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-distribute-right",
-      "iconName": "Align Distribute Right",
-      "metaphors": [],
-      "emoji": "📊",
-      "alternativeEmojis": [
-        "📉",
-        "📈",
-        "🪟"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-distribute-top",
-      "iconName": "Align Distribute Top",
-      "metaphors": [],
-      "emoji": "🪢",
-      "alternativeEmojis": [
-        "☰",
-        "🔳"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-end-horizontal",
-      "iconName": "Align End Horizontal",
-      "metaphors": [],
-      "emoji": "🟫",
-      "alternativeEmojis": [
-        "⬛",
-        "▭",
-        "⏹️"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-left",
-      "iconName": "Align Left",
-      "metaphors": [],
-      "emoji": "📑",
-      "alternativeEmojis": [
-        "📋",
-        "📝"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-right",
-      "iconName": "Align Right",
-      "metaphors": [],
-      "emoji": "📑",
-      "alternativeEmojis": [
-        "📋",
-        "📃"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-space-around-horizontal",
-      "iconName": "Align Space Around Horizontal",
-      "metaphors": [],
-      "emoji": "🟫",
-      "alternativeEmojis": [
-        "🔲",
-        "➖",
-        "⏸️"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-space-between-horizontal",
-      "iconName": "Align Space Between Horizontal",
-      "metaphors": [],
-      "emoji": "➖",
-      "alternativeEmojis": [
-        "⏸️",
-        "☰"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-space-between-vertical",
-      "iconName": "Align Space Between Vertical",
-      "metaphors": [],
-      "emoji": "⏸️",
-      "alternativeEmojis": [
-        "🟫",
-        "➖"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-space-fit-vertical",
-      "iconName": "Align Space Fit Vertical",
-      "metaphors": [],
-      "emoji": "⬛",
-      "alternativeEmojis": [
-        "▫️",
-        "⬜",
-        "🟦",
-        "🗂️"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-start-vertical",
-      "iconName": "Align Start Vertical",
-      "metaphors": [],
-      "emoji": "⏏️",
-      "alternativeEmojis": [
-        "⬆️",
-        "🆙"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-straighten",
-      "iconName": "Align Straighten",
-      "metaphors": [],
-      "emoji": "📏",
-      "alternativeEmojis": [
-        "➖",
-        "🟰"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-stretch-horizontal",
-      "iconName": "Align Stretch Horizontal",
-      "metaphors": [],
-      "emoji": "🥢",
-      "alternativeEmojis": [
-        "〰️",
-        "🟫",
-        "🪟"
-      ],
-      "similarity": 0.7
-    },
-    {
-      "filename": "align-top",
-      "iconName": "Align Top",
-      "metaphors": [],
-      "emoji": "⬆️",
-      "alternativeEmojis": [
-        "🔝"
-      ],
-      "similarity": 0.7
+      "alternativeEmojis": ["📉", "🟫"],
+      "similarity": 0.7,
+      "subEmoji": ""
     },
     {
       "filename": "align-center-horizontal",
       "iconName": "Align Center Horizontal",
-      "metaphors": [],
-      "emoji": "📊",
-      "alternativeEmojis": [
-        "📉",
-        "🪄"
-      ],
-      "similarity": 0.65
+      "metaphor": [],
+      "emoji": "🛤️",
+      "alternativeEmojis": ["➖", "➗", "🔀"],
+      "similarity": 0.6,
+      "subEmoji": ""
     },
     {
-      "filename": "align-start-horizontal",
-      "iconName": "Align Start Horizontal",
-      "metaphors": [],
-      "emoji": "🄫",
-      "alternativeEmojis": [
-        "🄧",
-        "⎸"
-      ],
-      "similarity": 0.65
+      "filename": "align-center-vertical",
+      "iconName": "Align Center Vertical",
+      "metaphor": [],
+      "emoji": "🪧",
+      "alternativeEmojis": ["➖", "➕"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-distribute-bottom",
+      "iconName": "Align Distribute Bottom",
+      "metaphor": [],
+      "emoji": "📏",
+      "alternativeEmojis": ["🪟", "🔲"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-distribute-left",
+      "iconName": "Align Distribute Left",
+      "metaphor": [],
+      "emoji": "📊",
+      "alternativeEmojis": ["⬛", "▪️"],
+      "similarity": 0.65,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-distribute-right",
+      "iconName": "Align Distribute Right",
+      "metaphor": [],
+      "emoji": "📊",
+      "alternativeEmojis": ["📈", "📉", "🟫"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-distribute-top",
+      "iconName": "Align Distribute Top",
+      "metaphor": [],
+      "emoji": "☰",
+      "alternativeEmojis": ["≡", "🪟"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-end-horizontal",
+      "iconName": "Align End Horizontal",
+      "metaphor": [],
+      "emoji": "📏",
+      "alternativeEmojis": ["⬛", "🟫"],
+      "similarity": 0.7,
+      "subEmoji": ""
     },
     {
       "filename": "align-end-vertical",
       "iconName": "Align End Vertical",
-      "metaphors": [],
-      "emoji": "🔲",
-      "alternativeEmojis": [
-        "⬛",
-        "⬜"
-      ],
-      "similarity": 0.6
+      "metaphor": [],
+      "emoji": "🛋️",
+      "alternativeEmojis": ["⬛", "⬇️"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-left",
+      "iconName": "Align Left",
+      "metaphor": [],
+      "emoji": "📑",
+      "alternativeEmojis": ["📋", "☰"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-right",
+      "iconName": "Align Right",
+      "metaphor": [],
+      "emoji": "📏",
+      "alternativeEmojis": ["📐", "➡️"],
+      "similarity": 0.8,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-space-around-horizontal",
+      "iconName": "Align Space Around Horizontal",
+      "metaphor": [],
+      "emoji": "➖",
+      "alternativeEmojis": ["⏸️", "🥪"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-space-around-vertical",
+      "iconName": "Align Space Around Vertical",
+      "metaphor": [],
+      "emoji": "⏸️",
+      "alternativeEmojis": ["〰️", "🟦🟦"],
+      "similarity": 0.85,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-space-between-horizontal",
+      "iconName": "Align Space Between Horizontal",
+      "metaphor": [],
+      "emoji": "➖",
+      "alternativeEmojis": ["☰", "〰️"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-space-between-vertical",
+      "iconName": "Align Space Between Vertical",
+      "metaphor": [],
+      "emoji": "⏸️",
+      "alternativeEmojis": ["〰️", "🟪🟪"],
+      "similarity": 0.7,
+      "subEmoji": ""
     },
     {
       "filename": "align-space-evenly-horizontal",
       "iconName": "Align Space Evenly Horizontal",
-      "metaphors": [],
-      "emoji": "〰️",
-      "alternativeEmojis": [
-        "➖",
-        "🟫",
-        "⬛"
-      ],
-      "similarity": 0.6
+      "metaphor": [],
+      "emoji": "🔲",
+      "alternativeEmojis": ["♻️", "🟦", "🟥"],
+      "similarity": 0.65,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-space-evenly-vertical",
+      "iconName": "Align Space Evenly Vertical",
+      "metaphor": [],
+      "emoji": "🍔",
+      "alternativeEmojis": ["☰", "📋"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-space-fit-vertical",
+      "iconName": "Align Space Fit Vertical",
+      "metaphor": [],
+      "emoji": "➖",
+      "alternativeEmojis": ["⏸️", "☰"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-start-horizontal",
+      "iconName": "Align Start Horizontal",
+      "metaphor": [],
+      "emoji": "🫔",
+      "alternativeEmojis": ["🗄️", "🪟"],
+      "similarity": 0.65,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-start-vertical",
+      "iconName": "Align Start Vertical",
+      "metaphor": [],
+      "emoji": "🛑",
+      "alternativeEmojis": ["🔲", "⬛", "⬜"],
+      "similarity": 0.5,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-straighten",
+      "iconName": "Align Straighten",
+      "metaphor": [],
+      "emoji": "📏",
+      "alternativeEmojis": ["🟫", "➖"],
+      "similarity": 0.8,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-stretch-horizontal",
+      "iconName": "Align Stretch Horizontal",
+      "metaphor": [],
+      "emoji": "🥪",
+      "alternativeEmojis": ["🧃", "🗄️"],
+      "similarity": 0.65,
+      "subEmoji": ""
     },
     {
       "filename": "align-stretch-vertical",
       "iconName": "Align Stretch Vertical",
-      "metaphors": [],
-      "emoji": "🛑",
-      "alternativeEmojis": [
-        "⏸️",
-        "🟫",
-        "🔲"
-      ],
-      "similarity": 0.6
+      "metaphor": [],
+      "emoji": "🛹",
+      "alternativeEmojis": ["🚪", "🗃️"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "align-top",
+      "iconName": "Align Top",
+      "metaphor": [],
+      "emoji": "🛫",
+      "alternativeEmojis": ["⬆️", "☝️"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "animal-cat",
+      "iconName": "Animal Cat",
+      "metaphor": [],
+      "emoji": "🐈",
+      "alternativeEmojis": ["🐱", "😺"],
+      "similarity": 0.95,
+      "subEmoji": ""
     }
   ]
 }

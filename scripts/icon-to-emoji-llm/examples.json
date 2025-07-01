@@ -1,0 +1,105 @@
+{
+  "alert": [
+    {
+      "filename": "alert",
+      "iconName": "Alert",
+      "metaphor": [],
+      "emoji": "🔔",
+      "similarity": 0.98,
+      "alternativeEmojis": ["🔕", "🛎️"],
+      "subEmoji": ""
+    },
+    {
+      "filename": "alert-badge",
+      "iconName": "Alert Badge",
+      "metaphor": [],
+      "emoji": "🔔",
+      "subEmoji": "🔴",
+      "alternativeEmojis": ["📢", "🚨"],
+      "similarity": 0.93
+    },
+    {
+      "filename": "alert-off",
+      "iconName": "Alert Off",
+      "metaphor": [],
+      "emoji": "🔕",
+      "subEmoji": "",
+      "similarity": 0.98,
+      "alternativeEmojis": ["🔇", "🚫🔔"]
+    },
+    {
+      "filename": "alert-on",
+      "iconName": "Alert On",
+      "metaphor": [],
+      "emoji": "🔔",
+      "subEmoji": "🚨",
+      "alternativeEmojis": ["🔕", "🚨"],
+      "similarity": 0.98
+    },
+    {
+      "filename": "alert-snooze",
+      "iconName": "Alert Snooze",
+      "metaphor": [],
+      "emoji": "🔕",
+      "subEmoji": "💤",
+      "alternativeEmojis": ["🔔", "🛎️", "💤"],
+      "similarity": 0.85
+    },
+    {
+      "filename": "alert-urgent",
+      "iconName": "Alert Urgent",
+      "metaphor": [],
+      "emoji": "🔔",
+      "alternativeEmojis": ["🚨", "🔕"],
+      "similarity": 0.93,
+      "subEmoji": ""
+    }
+  ],
+  "accessibility": [
+    {
+      "filename": "accessibility",
+      "iconName": "Accessibility",
+      "metaphor": [],
+      "emoji": "♿",
+      "alternativeEmojis": ["🧑‍🦽", "🧑‍🦯", "🧍"],
+      "similarity": 0.8,
+      "subEmoji": ""
+    },
+    {
+      "filename": "accessibility-checkmark",
+      "iconName": "Accessibility Checkmark",
+      "metaphor": [],
+      "emoji": "♿️",
+      "subEmoji": "✔️",
+      "alternativeEmojis": ["✅", "🧑‍🦽"],
+      "similarity": 0.85
+    },
+    {
+      "filename": "accessibility-error",
+      "iconName": "Accessibility Error",
+      "metaphor": [],
+      "emoji": "♿️",
+      "subEmoji": "❗️",
+      "alternativeEmojis": ["🚫", "⚠️"],
+      "similarity": 0.8
+    },
+    {
+      "filename": "accessibility-more",
+      "iconName": "Accessibility More",
+      "metaphor": [],
+      "emoji": "🧑‍🦽",
+      "alternativeEmojis": ["♿", "🧑‍🦯", "🚶"],
+      "similarity": 0.7,
+      "subEmoji": ""
+    },
+    {
+      "filename": "accessibility-question-mark",
+      "iconName": "Accessibility Question Mark",
+      "metaphor": [],
+      "emoji": "♿️",
+      "subEmoji": "❓",
+      "alternativeEmojis": ["🧑‍🦽", "🧑‍🦯", "❔"],
+      "similarity": 0.85
+    }
+  ]
+}

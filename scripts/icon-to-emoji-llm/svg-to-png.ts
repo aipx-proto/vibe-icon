@@ -64,9 +64,6 @@ async function getSvgFiles(): Promise<string[]> {
       if (excludePattern.test(file)) return false;
 
       return true;
-
-      // TEMP: Only process icons that start with "a" for testing
-      // return file.toLowerCase().startsWith('a');
     });
 
     return svgFiles.map((file) => resolve(publicDir, file));

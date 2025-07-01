@@ -27,10 +27,6 @@ const azureOpenAI = new OpenAI({
 interface IconMetadata {
   name: string;
   metaphor?: string[];
-  options: Array<{
-    size: number;
-    style: string;
-  }>;
 }
 
 interface EmojiAssignmentResponse {
@@ -43,7 +39,7 @@ interface EmojiAssignmentResponse {
 interface EmojiAssignment extends EmojiAssignmentResponse {
   filename: string;
   iconName: string;
-  metaphors: string[];
+  metaphor: string[];
 }
 
 main();
@@ -126,7 +122,7 @@ async function getPngFiles(): Promise<string[]> {
   }
 }
 
-async function readIconMetadata(iconName: string): Promise<{ name: string; metaphors: string[] }> {
+async function readIconMetadata(iconName: string): Promise<{ name: string; metaphor: string[] }> {
   const metadataPath = resolve(publicDir, `${iconName}.metadata.json`);
 
   try {
@@ -135,13 +131,13 @@ async function readIconMetadata(iconName: string): Promise<{ name: string; metap
 
     return {
       name: metadata.name || iconName,
-      metaphors: metadata.metaphor || [],
+      metaphor: metadata.metaphor || [],
     };
   } catch (error) {
     console.warn(`Could not read metadata for ${iconName}, using filename as name`);
     return {
       name: iconName,
-      metaphors: [],
+      metaphor: [],
     };
   }
 }
@@ -150,15 +146,15 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
   const filename = basename(pngFilePath, ".png");
 
   // Read icon metadata
-  const { name: iconName, metaphors } = await readIconMetadata(filename);
+  const { name: iconName, metaphor } = await readIconMetadata(filename);
 
   // Read the PNG file and convert to base64
   const imageBuffer = await readFile(pngFilePath);
   const base64Image = imageBuffer.toString("base64");
 
   const metaphorContext =
-    metaphors.length > 0
-      ? `\n\nAdditional context - this icon represents concepts related to: ${metaphors.join(", ")}`
+    metaphor.length > 0
+      ? `\n\nAdditional context - this icon represents concepts related to: ${metaphor.join(", ")}`
       : "";
 
   try {
@@ -205,17 +201,18 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
     return {
       filename,
       iconName,
-      metaphors,
+      metaphor,
       ...parsed,
+      subEmoji: parsed.subEmoji || "",
     };
   } catch (error) {
     console.warn(`Failed to get AI response for ${filename}, using fallback`);
     return {
       filename,
       iconName: filename,
-      metaphors: [],
+      metaphor: [],
       emoji: "n/a",
-      subEmoji: undefined,
+      subEmoji: "",
       alternativeEmojis: [],
       similarity: 0,
     };
@@ -223,13 +220,8 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
 }
 
 async function saveAssignments(assignments: EmojiAssignment[]): Promise<void> {
-  // Sort by confidence (highest first) and then by filename
-  const sortedAssignments = assignments.sort((a, b) => {
-    if (b.similarity !== a.similarity) {
-      return b.similarity - a.similarity;
-    }
-    return a.filename?.localeCompare(b.filename) || 0;
-  });
+  // Sort by filename only
+  const sortedAssignments = assignments.sort((a, b) => a.filename?.localeCompare(b.filename) || 0);
 
   const output = {
     generated: new Date().toISOString(),
