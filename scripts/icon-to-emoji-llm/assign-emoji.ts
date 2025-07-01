@@ -31,20 +31,52 @@ const azureOpenAI = new OpenAI({
   },
 });
 
-function groupIconsByFirstWord(pngFiles: string[]): string[][] {
-  const groups = new Map<string, string[]>();
-
+function groupIconsIntoSets(pngFiles: string[], maxGroupSize: number = 20, minSubgroupSize: number = 4): string[][] {
+  // Step 1: Group by first word
+  const firstWordGroups = new Map<string, string[]>();
   for (const pngFile of pngFiles) {
     const filename = basename(pngFile, ".png");
     const firstWord = filename.split(/[-_]/)[0].toLowerCase();
-
-    if (!groups.has(firstWord)) {
-      groups.set(firstWord, []);
+    if (!firstWordGroups.has(firstWord)) {
+      firstWordGroups.set(firstWord, []);
     }
-    groups.get(firstWord)!.push(pngFile);
+    firstWordGroups.get(firstWord)!.push(pngFile);
   }
 
-  return Array.from(groups.values());
+  const finalGroups: string[][] = [];
+
+  for (const group of firstWordGroups.values()) {
+    if (group.length > maxGroupSize) {
+      // Step 2: Subgroup by second word
+      const secondWordGroups = new Map<string, string[]>();
+      for (const pngFile of group) {
+        const filename = basename(pngFile, ".png");
+        const parts = filename.split(/[-_]/);
+        const secondWord = parts[1] ? parts[1].toLowerCase() : "__none__";
+        if (!secondWordGroups.has(secondWord)) {
+          secondWordGroups.set(secondWord, []);
+        }
+        secondWordGroups.get(secondWord)!.push(pngFile);
+      }
+
+      // Step 3: Collect small subgroups into extrasGroup
+      const extrasGroup: string[] = [];
+      for (const subgroup of secondWordGroups.values()) {
+        if (subgroup.length < minSubgroupSize) {
+          extrasGroup.push(...subgroup);
+        } else {
+          finalGroups.push(subgroup);
+        }
+      }
+      if (extrasGroup.length > 0) {
+        finalGroups.push(extrasGroup);
+      }
+    } else {
+      finalGroups.push(group);
+    }
+  }
+
+  return finalGroups;
 }
 
 async function assignEmojiToGroup(iconGroup: string[]): Promise<EmojiAssignment[]> {
@@ -151,9 +183,14 @@ async function main() {
     return;
   }
 
+  const filteredPngFiles = allPngFiles.filter((file) => file.includes("arrow"));
   // Group icons by the first word of their filename
-  const allIconGroups = groupIconsByFirstWord(allPngFiles);
-  
+  const allIconGroups = groupIconsIntoSets(filteredPngFiles);
+
+  console.log(allIconGroups);
+
+  return;
+
   // TEMP: Limit to first 5 groups for testing
   const iconGroups = allIconGroups.slice(0, 5);
   const totalIcons = iconGroups.flat().length;
@@ -176,7 +213,7 @@ async function main() {
         errors += iconGroup.length;
         progress += iconGroup.length;
       }
-             updateProgress(progress, totalIcons, "Analyzing icon groups for emoji assignment", errors);
+      updateProgress(progress, totalIcons, "Analyzing icon groups for emoji assignment", errors);
     }, 2) // Process 2 groups concurrently to avoid rate limits
   );
 
