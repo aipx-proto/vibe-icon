@@ -6,7 +6,9 @@ import { OpenAI } from "openai";
 import { from, mergeMap, lastValueFrom } from "rxjs";
 import { updateProgress } from "../utils/progress-bar";
 import type { MetadataEntry } from "../../typings/icon-index";
-const systemPrompt = readFileSync(resolve("scripts", "icon-to-emoji-llm", "systemPrompt.md"), "utf-8");
+import { createFewShotExamples, createUserMessage } from "./create-examples";
+
+const systemPromptMd = readFileSync(resolve("scripts", "icon-to-emoji-llm", "systemPrompt.md"), "utf-8");
 
 // Load environment variables from specific file
 const envFile = process.argv[2] || ".env.aoai";
@@ -15,6 +17,8 @@ config({ path: resolve(envFile) });
 const pngDir = resolve("pngs");
 const publicDir = resolve("public");
 const outputFile = resolve("scripts", "icon-to-emoji-llm", "emoji-assignments.json");
+
+const fewShotExamples = await createFewShotExamples(pngDir);
 
 // Azure OpenAI configuration
 const azureOpenAI = new OpenAI({
@@ -25,19 +29,6 @@ const azureOpenAI = new OpenAI({
     "api-key": process.env.AZURE_OPENAI_API_KEY,
   },
 });
-
-interface EmojiAssignmentResponse {
-  emoji: string;
-  subEmoji?: string;
-  alternativeEmojis: string[];
-  similarity: number;
-}
-
-interface EmojiAssignment extends EmojiAssignmentResponse {
-  filename: string;
-  iconName: string;
-  metaphor: string[];
-}
 
 main();
 
@@ -72,7 +63,7 @@ async function main() {
   }
 
   // TEMP: Limit to first 50 files for testing
-  const pngFiles = allPngFiles.slice(0, 50);
+  const pngFiles = allPngFiles.slice(0, 10);
 
   console.log(`Found ${allPngFiles.length} PNG files total`);
   console.log(`Processing first ${pngFiles.length} files (TEMP LIMIT)`);
@@ -123,21 +114,21 @@ async function getPngFiles(): Promise<string[]> {
   }
 }
 
-async function readIconMetadata(iconName: string): Promise<{ name: string; metaphor: string[] }> {
-  const metadataPath = resolve(publicDir, `${iconName}.metadata.json`);
+async function readIconMetadata(name: string): Promise<{ name: string; metaphor: string[] }> {
+  const metadataPath = resolve(publicDir, `${name}.metadata.json`);
 
   try {
     const metadataContent = await readFile(metadataPath, "utf-8");
     const metadata: MetadataEntry = JSON.parse(metadataContent);
 
     return {
-      name: metadata.name || iconName,
+      name: metadata.name || name,
       metaphor: metadata.metaphor || [],
     };
   } catch (error) {
-    console.warn(`Could not read metadata for ${iconName}, using filename as name`);
+    console.warn(`Could not read metadata for ${name}, using filename as name`);
     return {
-      name: iconName,
+      name,
       metaphor: [],
     };
   }
@@ -147,16 +138,9 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
   const filename = basename(pngFilePath, ".png");
 
   // Read icon metadata
-  const { name: iconName, metaphor } = await readIconMetadata(filename);
+  const { name, metaphor } = await readIconMetadata(filename);
 
-  // Read the PNG file and convert to base64
-  const imageBuffer = await readFile(pngFilePath);
-  const base64Image = imageBuffer.toString("base64");
-
-  const metaphorContext =
-    metaphor.length > 0
-      ? `\n\nAdditional context - this icon represents concepts related to: ${metaphor.join(", ")}`
-      : "";
+  const userMessage = await createUserMessage({ filename, name, metaphor }, pngDir);
 
   try {
     const response = await azureOpenAI.chat.completions.create(
@@ -165,34 +149,16 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
         messages: [
           {
             role: "system",
-            content:
-              systemPrompt +
-              "\n\nExample response format:\n\n" +
-              "```json\n" +
-              JSON.stringify(exampleResponse, null, 2) +
-              "\n```",
+            content: systemPrompt,
           },
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: `Icon name: ${iconName}${metaphorContext}`,
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:image/png;base64,${base64Image}`,
-                },
-              },
-            ],
-          },
+          ...fewShotExamples,
+          userMessage,
         ],
         max_tokens: 1000,
         temperature: 0.9,
       },
       {
-        timeout: 10000, // 10 seconds timeout
+        // timeout: 10000, // 10 seconds timeout
       }
     );
 
@@ -211,7 +177,7 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
 
     return {
       filename,
-      iconName,
+      name,
       metaphor,
       ...parsed,
       subEmoji: parsed.subEmoji || "",
@@ -220,7 +186,7 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
     console.warn(`Failed to get AI response for ${filename}, using fallback`);
     return {
       filename,
-      iconName: filename,
+      name: filename,
       metaphor: [],
       emoji: "n/a",
       subEmoji: "",
@@ -249,3 +215,12 @@ const exampleResponse: EmojiAssignmentResponse = {
   alternativeEmojis: ["📃"],
   similarity: 0.89,
 };
+
+const systemPrompt =
+  systemPromptMd +
+  "\n\nExample response format:\n\n" +
+  "```json\n" +
+  "[\n" +
+  JSON.stringify(exampleResponse, null, 2) +
+  "\n]" +
+  "\n```";
