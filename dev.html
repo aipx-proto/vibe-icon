@@ -3,21 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="/lib/index.ts"></script>
     <link rel="stylesheet" href="https://esm.sh/gh/aipx-proto/mirai-css/styles/mirai.build.css?raw" />
     <title>Vibe Icon</title>
+    <style>
+      body {
+        padding: 32px;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+      }
+    </style>
   </head>
-  <body class="app-layout">
+
+  <body>
     <vibe-icon name="add"></vibe-icon>
     <vibe-icon name="add circle"></vibe-icon>
     <vibe-icon name="person"></vibe-icon>
     <vibe-icon name="person" filled></vibe-icon>
+    <vibe-icon name="person" size="12"></vibe-icon>
     <vibe-icon name="person" size="16"></vibe-icon>
     <vibe-icon name="person" size="20"></vibe-icon>
     <vibe-icon name="person" size="24"></vibe-icon>
     <vibe-icon name="person" style="color: red"></vibe-icon>
     <vibe-icon></vibe-icon>
+    <vibe-icon name="yreuwoqyuroewq"></vibe-icon>
+    <vibe-icon name="yreuwoqyuroewq" size="24"></vibe-icon>
     <vibe-icon name="Emoji    sParkle"></vibe-icon>
-    <script type="module" src="/lib/index.ts"></script>
+    <button>
+      <vibe-icon name="add"></vibe-icon>
+      <span>Add</span>
+    </button>
     <!-- <script type="module" src="https://esm.sh/vibe-icon@0.0.3"></script> -->
   </body>
 </html>
