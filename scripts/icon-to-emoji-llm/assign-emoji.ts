@@ -8,6 +8,7 @@ import { updateProgress } from "../utils/progress-bar";
 import type { MetadataEntry } from "../../typings/icon-index";
 import { createFewShotExamples, createUserMessage } from "./create-examples";
 import type { EmojiAssignmentResponse, EmojiAssignment } from "./types";
+import { groupIconSets } from "./group-icon-sets";
 
 const systemPromptMd = readFileSync(resolve("scripts", "icon-to-emoji-llm", "systemPrompt.md"), "utf-8");
 
@@ -30,59 +31,6 @@ const azureOpenAI = new OpenAI({
     "api-key": process.env.AZURE_OPENAI_API_KEY,
   },
 });
-
-function groupIconsIntoSets(pngFiles: string[], maxGroupSize: number = 20, minSubgroupSize: number = 4): string[][] {
-  // Step 1: Group by first word
-  const firstWordGroups = new Map<string, string[]>();
-  for (const pngFile of pngFiles) {
-    const filename = basename(pngFile, ".png");
-    const firstWord = filename.split(/[-_]/)[0].toLowerCase();
-    if (!firstWordGroups.has(firstWord)) {
-      firstWordGroups.set(firstWord, []);
-    }
-    firstWordGroups.get(firstWord)!.push(pngFile);
-  }
-
-  const finalGroups: string[][] = [];
-
-  for (const group of firstWordGroups.values()) {
-    if (group.length > maxGroupSize) {
-      // Step 2: Subgroup by second word, with special case for "up", "down", "left", "right", "bidirectional"
-      const directionWords = new Set(["up", "down", "left", "right", "bidirectional"]);
-      const secondWordGroups = new Map<string, string[]>();
-      for (const pngFile of group) {
-        const filename = basename(pngFile, ".png");
-        const parts = filename.split(/[-_]/);
-        let secondWord = parts[1] ? parts[1].toLowerCase() : "__none__";
-        // Special case: treat "up", "down", "left", "right" as the same group
-        if (directionWords.has(secondWord)) {
-          secondWord = "__direction__";
-        }
-        if (!secondWordGroups.has(secondWord)) {
-          secondWordGroups.set(secondWord, []);
-        }
-        secondWordGroups.get(secondWord)!.push(pngFile);
-      }
-
-      // Step 3: Collect small subgroups into extrasGroup
-      const extrasGroup: string[] = [];
-      for (const subgroup of secondWordGroups.values()) {
-        if (subgroup.length < minSubgroupSize) {
-          extrasGroup.push(...subgroup);
-        } else {
-          finalGroups.push(subgroup);
-        }
-      }
-      if (extrasGroup.length > 0) {
-        finalGroups.push(extrasGroup);
-      }
-    } else {
-      finalGroups.push(group);
-    }
-  }
-
-  return finalGroups;
-}
 
 async function assignEmojiToGroup(iconGroup: string[]): Promise<EmojiAssignment[]> {
   // Create user messages for each icon in the group
@@ -188,16 +136,11 @@ async function main() {
     return;
   }
 
-  const filteredPngFiles = allPngFiles.filter((file) => file.includes("arrow"));
   // Group icons by the first word of their filename
-  const allIconGroups = groupIconsIntoSets(filteredPngFiles);
-
-  console.log(allIconGroups);
-
-  return;
+  const allIconGroups = groupIconSets(allPngFiles);
 
   // TEMP: Limit to first 5 groups for testing
-  const iconGroups = allIconGroups.slice(0, 5);
+  const iconGroups = allIconGroups.slice(0, 1);
   const totalIcons = iconGroups.flat().length;
 
   console.log(`Found ${allPngFiles.length} PNG files total, grouped into ${allIconGroups.length} groups`);

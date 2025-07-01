@@ -31,8 +31,8 @@ export const createFewShotExamples = async function (pngDir: string) {
   );
   const fewShotExamples =
     assignmentExamples.flat() as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming["messages"];
-  await writeFile(
-    resolve("scripts", "icon-to-emoji-llm", "few-shot-example-chat-messages.json"),
+  writeFile(
+    resolve("scripts", "build-logs", "few-shot-example-chat-messages.json"),
     JSON.stringify(fewShotExamples, null, 2)
   );
   return fewShotExamples;
