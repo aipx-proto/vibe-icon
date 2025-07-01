@@ -3,7 +3,7 @@ import { resolve, extname, basename } from "path";
 import { mkdirSync, existsSync } from "fs";
 import sharp from "sharp";
 import { from, mergeMap, lastValueFrom } from "rxjs";
-import { updateProgress } from "./progress-bar";
+import { updateProgress } from "../utils/progress-bar";
 
 const publicDir = resolve("public");
 const outputDir = resolve("pngs");

@@ -1,5 +1,5 @@
 import { Subject, Subscription, switchMap } from "rxjs";
-import { displayNameToVibeIconSVGFilename } from "../scripts/normalize-name";
+import { displayNameToVibeIconSVGFilename } from "../scripts/utils/normalize-name";
 
 export class VibeIcon extends HTMLElement {
   static define() {

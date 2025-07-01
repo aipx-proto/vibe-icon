@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "vite --config vite-site.config.ts",
     "setup": "rm -rf dist-icons && tsx scripts/build.ts",
-    "svg-to-png": "rm -rf pngs && tsx scripts/svg-to-png.ts",
-    "assign-emoji": "tsx scripts/assign-emoji.ts",
+    "emoji:png": "rm -rf pngs && tsx scripts/icon-to-emoji-llm/svg-to-png.ts",
+    "emoji:assign": "tsx scripts/icon-to-emoji-llm/assign-emoji.ts",
     "build": "rm -rf dist && rm -rf dist-site && tsc && npm run build:lib && npm run build:site && npm run build:types",
     "build:site": "vite build --config vite-site.config.ts",
     "build:lib": "vite build --config vite.config.ts",

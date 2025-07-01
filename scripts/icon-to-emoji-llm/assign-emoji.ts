@@ -4,7 +4,7 @@ import { existsSync } from "fs";
 import { config } from "dotenv";
 import { OpenAI } from "openai";
 import { from, mergeMap, lastValueFrom } from "rxjs";
-import { updateProgress } from "./progress-bar";
+import { updateProgress } from "../utils/progress-bar";
 
 // Load environment variables from specific file
 const envFile = process.argv[2] || ".env.aoai";

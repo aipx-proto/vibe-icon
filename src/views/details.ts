@@ -2,7 +2,7 @@ import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
 import { combineLatestWith, distinctUntilChanged, from, Subject, switchMap, tap } from "rxjs";
 import packageJson from "../../package.json";
-import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../../scripts/normalize-name";
+import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../../scripts/utils/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
 import { renderTemplate } from "../render-template"; // Added import
 import codingAgentPrompt from "./coding-agent-prompt.md?raw";
