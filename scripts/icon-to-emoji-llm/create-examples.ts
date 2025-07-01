@@ -2,10 +2,11 @@ import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { OpenAI } from "openai";
 import examples from "./examples.json";
+import type { EmojiAssignment, EmojiAssignmentResponse, PngMetadata } from "./types";
 
 export const createFewShotExamples = async function (pngDir: string) {
   const assignmentExamples = await Promise.all(
-    Object.entries(examples as Record<string, EmojiAssignment[]>).map(async ([key, value]) => {
+    Object.entries(examples as Record<string, EmojiAssignment[]>).map(async ([_, value]) => {
       const assistantResponse: EmojiAssignmentResponse[] = value.map((assignment) => {
         return {
           emoji: assignment.emoji,
@@ -28,8 +29,12 @@ export const createFewShotExamples = async function (pngDir: string) {
       return [...userMessages, assistantMessage];
     })
   );
-  const fewShotExamples = assignmentExamples.flat() as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming["messages"];
-  await writeFile(resolve("scripts", "icon-to-emoji-llm", "few-shot-examples.json"), JSON.stringify(fewShotExamples, null, 2));
+  const fewShotExamples =
+    assignmentExamples.flat() as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming["messages"];
+  await writeFile(
+    resolve("scripts", "icon-to-emoji-llm", "few-shot-example-chat-messages.json"),
+    JSON.stringify(fewShotExamples, null, 2)
+  );
   return fewShotExamples;
 };
 

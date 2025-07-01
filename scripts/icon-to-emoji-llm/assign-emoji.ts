@@ -7,6 +7,7 @@ import { from, mergeMap, lastValueFrom } from "rxjs";
 import { updateProgress } from "../utils/progress-bar";
 import type { MetadataEntry } from "../../typings/icon-index";
 import { createFewShotExamples, createUserMessage } from "./create-examples";
+import type { EmojiAssignmentResponse, EmojiAssignment } from "./types";
 
 const systemPromptMd = readFileSync(resolve("scripts", "icon-to-emoji-llm", "systemPrompt.md"), "utf-8");
 
@@ -29,6 +30,94 @@ const azureOpenAI = new OpenAI({
     "api-key": process.env.AZURE_OPENAI_API_KEY,
   },
 });
+
+function groupIconsByFirstWord(pngFiles: string[]): string[][] {
+  const groups = new Map<string, string[]>();
+
+  for (const pngFile of pngFiles) {
+    const filename = basename(pngFile, ".png");
+    const firstWord = filename.split(/[-_]/)[0].toLowerCase();
+
+    if (!groups.has(firstWord)) {
+      groups.set(firstWord, []);
+    }
+    groups.get(firstWord)!.push(pngFile);
+  }
+
+  return Array.from(groups.values());
+}
+
+async function assignEmojiToGroup(iconGroup: string[]): Promise<EmojiAssignment[]> {
+  // Create user messages for each icon in the group
+  const userMessages = [];
+  const iconMetadata: { filename: string; name: string; metaphor: string[] }[] = [];
+
+  for (const pngFilePath of iconGroup) {
+    const filename = basename(pngFilePath, ".png");
+    const { name, metaphor } = await readIconMetadata(filename);
+
+    iconMetadata.push({ filename, name, metaphor });
+    const userMessage = await createUserMessage({ filename, name, metaphor }, pngDir);
+    userMessages.push(userMessage);
+  }
+
+  try {
+    const response = await azureOpenAI.chat.completions.create(
+      {
+        model: process.env.AZURE_OPENAI_MODEL!,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          ...fewShotExamples,
+          ...userMessages,
+        ],
+        max_tokens: 2000, // Increased for multiple icons
+        temperature: 0.9,
+      },
+      {
+        timeout: 30000, // 30 seconds timeout for groups
+      }
+    );
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error("No response content received");
+    }
+
+    // Parse the JSON response - expecting an array of assignments
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error("No JSON array found in response");
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]) as EmojiAssignmentResponse[];
+
+    if (parsed.length !== userMessages.length) {
+      throw new Error(
+        `Parsed response length (${parsed.length}) does not match user message length (${userMessages.length})`
+      );
+    }
+
+    // Combine the parsed responses with metadata
+    return parsed.map((assignment, index) => ({
+      ...iconMetadata[index],
+      ...assignment,
+      subEmoji: assignment.subEmoji || "",
+    }));
+  } catch (error) {
+    console.warn(`Failed to get AI response for group, using fallback`);
+    // Return fallback assignments for all icons in the group
+    return iconMetadata.map((meta) => ({
+      ...meta,
+      emoji: "n/a",
+      subEmoji: "",
+      alternativeEmojis: [],
+      similarity: 0,
+    }));
+  }
+}
 
 main();
 
@@ -62,27 +151,33 @@ async function main() {
     return;
   }
 
-  // TEMP: Limit to first 50 files for testing
-  const pngFiles = allPngFiles.slice(0, 10);
+  // Group icons by the first word of their filename
+  const allIconGroups = groupIconsByFirstWord(allPngFiles);
+  
+  // TEMP: Limit to first 5 groups for testing
+  const iconGroups = allIconGroups.slice(0, 5);
+  const totalIcons = iconGroups.flat().length;
 
-  console.log(`Found ${allPngFiles.length} PNG files total`);
-  console.log(`Processing first ${pngFiles.length} files (TEMP LIMIT)`);
+  console.log(`Found ${allPngFiles.length} PNG files total, grouped into ${allIconGroups.length} groups`);
+  console.log(`Processing first ${iconGroups.length} groups (${totalIcons} icons) (TEMP LIMIT)`);
 
   let progress = 0;
   let errors = 0;
   const assignments: EmojiAssignment[] = [];
 
-  const analysis$ = from(pngFiles).pipe(
-    mergeMap(async (pngFile) => {
+  const analysis$ = from(iconGroups).pipe(
+    mergeMap(async (iconGroup) => {
       try {
-        const assignment = await assignEmoji(pngFile);
-        assignments.push(assignment);
+        const groupAssignments = await assignEmojiToGroup(iconGroup);
+        assignments.push(...groupAssignments);
+        progress += iconGroup.length;
       } catch (error) {
-        console.error(`Failed to assign emoji for ${pngFile}:`, error);
-        errors++;
+        console.error(`Failed to assign emojis for group ${iconGroup[0]}:`, error);
+        errors += iconGroup.length;
+        progress += iconGroup.length;
       }
-      updateProgress(++progress, pngFiles.length, "Analyzing icons for emoji assignment", errors);
-    }, 3) // Process 3 files concurrently to avoid rate limits
+             updateProgress(progress, totalIcons, "Analyzing icon groups for emoji assignment", errors);
+    }, 2) // Process 2 groups concurrently to avoid rate limits
   );
 
   await lastValueFrom(analysis$);
@@ -130,68 +225,6 @@ async function readIconMetadata(name: string): Promise<{ name: string; metaphor:
     return {
       name,
       metaphor: [],
-    };
-  }
-}
-
-async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
-  const filename = basename(pngFilePath, ".png");
-
-  // Read icon metadata
-  const { name, metaphor } = await readIconMetadata(filename);
-
-  const userMessage = await createUserMessage({ filename, name, metaphor }, pngDir);
-
-  try {
-    const response = await azureOpenAI.chat.completions.create(
-      {
-        model: process.env.AZURE_OPENAI_MODEL!,
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt,
-          },
-          ...fewShotExamples,
-          userMessage,
-        ],
-        max_tokens: 1000,
-        temperature: 0.9,
-      },
-      {
-        // timeout: 10000, // 10 seconds timeout
-      }
-    );
-
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error("No response content received");
-    }
-
-    // Parse the JSON response
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("No JSON found in response");
-    }
-
-    const parsed = JSON.parse(jsonMatch[0]) as EmojiAssignmentResponse;
-
-    return {
-      filename,
-      name,
-      metaphor,
-      ...parsed,
-      subEmoji: parsed.subEmoji || "",
-    };
-  } catch (error) {
-    console.warn(`Failed to get AI response for ${filename}, using fallback`);
-    return {
-      filename,
-      name: filename,
-      metaphor: [],
-      emoji: "n/a",
-      subEmoji: "",
-      alternativeEmojis: [],
-      similarity: 0,
     };
   }
 }

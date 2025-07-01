@@ -12,6 +12,8 @@ If an icon's meaning does not match its emoji meaning, give it a lower similarly
 
 The icons come in sets. Please keep the emoji use consistent within sets.
 
+You will receive an emoji set as a long chain of user messages, please respond with one array of json objects describing all the user inputs. 
+
 Consider:
 
 - The main visual elements and shapes

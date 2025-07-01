@@ -63,7 +63,7 @@
       "emoji": "♿",
       "subEmoji": "",
       "alternativeEmojis": ["🧑‍🦽", "🚶", "🙆"],
-      "similarity": 0.8
+      "similarity": 0.81
     },
     {
       "filename": "accessibility-checkmark",
@@ -81,7 +81,7 @@
       "emoji": "♿",
       "subEmoji": "❗",
       "alternativeEmojis": ["🧑‍🦽", "❗", "🚫"],
-      "similarity": 0.8
+      "similarity": 0.81
     },
     {
       "filename": "accessibility-more",
@@ -90,7 +90,7 @@
       "emoji": "♿",
       "subEmoji": "⋯",
       "alternativeEmojis": ["🧑‍🦽", "🧑‍🦯", "🧑‍🦼"],
-      "similarity": 0.8
+      "similarity": 0.82
     },
     {
       "filename": "accessibility-question-mark",
@@ -99,7 +99,7 @@
       "emoji": "♿",
       "subEmoji": "❓",
       "alternativeEmojis": ["🧑‍🦽", "❔", "🙋"],
-      "similarity": 0.8
+      "similarity": 0.82  
     }
   ],
   "airplane": [
@@ -193,7 +193,7 @@
       "emoji": "⬇️",
       "subEmoji": "",
       "alternativeEmojis": ["🔽", "👇"],
-      "similarity": 0.85
+      "similarity": 0.73
     }
   ],
   "align": [
@@ -204,7 +204,7 @@
       "emoji": "🥪",
       "subEmoji": "",
       "alternativeEmojis": ["🔲", "➖"],
-      "similarity": 0.1
+      "similarity": 0.11
     },
     {
       "filename": "align-space-between-vertical",
@@ -213,7 +213,7 @@
       "emoji": "⏸️",
       "subEmoji": "",
       "alternativeEmojis": ["〰️", "⎸⎸"],
-      "similarity": 0.3
+      "similarity": 0.32
     }
   ]
 }

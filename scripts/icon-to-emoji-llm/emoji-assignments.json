@@ -1,6 +1,6 @@
 {
-  "generated": "2025-07-01T21:29:57.035Z",
-  "total": 10,
+  "generated": "2025-07-01T21:55:00.981Z",
+  "total": 17,
   "assignments": [
     {
       "filename": "access-time",
@@ -8,17 +8,17 @@
       "metaphor": ["number", "24", "Circle"],
       "emoji": "🕛",
       "subEmoji": "",
-      "alternativeEmojis": ["⏰", "🕓", "🕒"],
-      "similarity": 0.7
+      "alternativeEmojis": ["🕓", "⏰"],
+      "similarity": 0.6
     },
     {
       "filename": "accessibility",
       "name": "Accessibility",
       "metaphor": ["person", "inclusive"],
-      "emoji": "🧍",
+      "emoji": "♿",
       "subEmoji": "",
-      "alternativeEmojis": ["🚶", "🙆"],
-      "similarity": 0.85
+      "alternativeEmojis": ["🧑‍🦽", "🚶"],
+      "similarity": 0.8
     },
     {
       "filename": "accessibility-checkmark",
@@ -26,7 +26,7 @@
       "metaphor": ["person", "inclusive", "plus"],
       "emoji": "♿",
       "subEmoji": "✔️",
-      "alternativeEmojis": ["♿️", "✅", "🧑‍🦼"],
+      "alternativeEmojis": ["✅", "🆗"],
       "similarity": 0.85
     },
     {
@@ -35,7 +35,7 @@
       "metaphor": ["person", "inclusive", "error"],
       "emoji": "♿",
       "subEmoji": "❗",
-      "alternativeEmojis": ["🧑‍🦽", "❗", "🚫"],
+      "alternativeEmojis": ["❗", "⚠️"],
       "similarity": 0.8
     },
     {
@@ -44,7 +44,7 @@
       "metaphor": ["person", "inclusive"],
       "emoji": "♿",
       "subEmoji": "⋯",
-      "alternativeEmojis": ["🧑‍🦽", "🧑‍🦼"],
+      "alternativeEmojis": ["⋯", "…"],
       "similarity": 0.8
     },
     {
@@ -53,8 +53,17 @@
       "metaphor": ["person", "inclusive", "question", "unknown"],
       "emoji": "♿",
       "subEmoji": "❓",
-      "alternativeEmojis": ["🧑‍🦽", "❔", "🙋"],
+      "alternativeEmojis": ["❓", "❔"],
       "similarity": 0.8
+    },
+    {
+      "filename": "add",
+      "name": "Add",
+      "metaphor": ["plus", "addition", "new"],
+      "emoji": "➕",
+      "subEmoji": "",
+      "alternativeEmojis": ["✚", "⊕"],
+      "similarity": 0.99
     },
     {
       "filename": "add-circle",
@@ -63,34 +72,88 @@
       "emoji": "➕",
       "subEmoji": "",
       "alternativeEmojis": ["✚", "⊕"],
-      "similarity": 0.98
+      "similarity": 0.99
     },
     {
       "filename": "add-square",
       "name": "Add Square",
       "metaphor": ["plus", "addition", "new", "square"],
       "emoji": "➕",
-      "subEmoji": "",
-      "alternativeEmojis": ["✚", "🞧"],
-      "similarity": 0.98
+      "subEmoji": "⬛",
+      "alternativeEmojis": ["☑️", "🗂️"],
+      "similarity": 0.92
     },
     {
       "filename": "add-square-multiple",
       "name": "Add Square Multiple",
       "metaphor": ["plus", "addition", "new", "circle", "stack", "library"],
       "emoji": "➕",
-      "subEmoji": "📄",
-      "alternativeEmojis": ["📄", "🗂️"],
-      "similarity": 0.85
+      "subEmoji": "🗂️",
+      "alternativeEmojis": ["☑️", "🗃️", "📄"],
+      "similarity": 0.9
     },
     {
       "filename": "add-starburst",
       "name": "Add Starburst",
       "metaphor": [],
-      "emoji": "✳️",
+      "emoji": "➕",
+      "subEmoji": "🌟",
+      "alternativeEmojis": ["✳️", "✴️"],
+      "similarity": 0.88
+    },
+    {
+      "filename": "add-subtract-circle",
+      "name": "Add Subtract Circle",
+      "metaphor": ["plus", "subtract", "minus", "new", "addition", "circle", "exposure"],
+      "emoji": "➕",
+      "subEmoji": "➖",
+      "alternativeEmojis": ["➗", "✖️"],
+      "similarity": 0.93
+    },
+    {
+      "filename": "agents",
+      "name": "Agents",
+      "metaphor": [],
+      "emoji": "⧉",
+      "subEmoji": "",
+      "alternativeEmojis": ["🔀", "🔄"],
+      "similarity": 0.88
+    },
+    {
+      "filename": "agents-add",
+      "name": "Agents Add",
+      "metaphor": [],
+      "emoji": "⧉",
       "subEmoji": "➕",
-      "alternativeEmojis": ["✴️", "🌟"],
-      "similarity": 0.85
+      "alternativeEmojis": ["➕", "🔀"],
+      "similarity": 0.8
+    },
+    {
+      "filename": "airplane",
+      "name": "Airplane",
+      "metaphor": ["flight", "vehicle", "travel"],
+      "emoji": "✈️",
+      "subEmoji": "",
+      "alternativeEmojis": ["🛩️"],
+      "similarity": 0.99
+    },
+    {
+      "filename": "airplane-landing",
+      "name": "Airplane Landing",
+      "metaphor": ["flight", "vehicle", "travel", "take off"],
+      "emoji": "🛬",
+      "subEmoji": "",
+      "alternativeEmojis": ["✈️", "🛫"],
+      "similarity": 0.99
+    },
+    {
+      "filename": "airplane-take-off",
+      "name": "Airplane Take Off",
+      "metaphor": ["flight", "vehicle", "travel", "take off"],
+      "emoji": "🛫",
+      "subEmoji": "",
+      "alternativeEmojis": ["✈️", "🛬"],
+      "similarity": 0.99
     }
   ]
 }
