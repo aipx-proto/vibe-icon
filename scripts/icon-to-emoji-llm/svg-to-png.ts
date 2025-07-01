@@ -1,4 +1,4 @@
-import { readdir, readFile } from "fs/promises";
+import { readdir, readFile, writeFile } from "fs/promises";
 import { resolve, extname, basename } from "path";
 import { mkdirSync, existsSync } from "fs";
 import sharp from "sharp";
@@ -7,26 +7,62 @@ import { updateProgress } from "../utils/progress-bar";
 
 const publicDir = resolve("public");
 const outputDir = resolve("pngs");
+const logDir = resolve("scripts/build-logs");
+const logFile = resolve(logDir, "svg-to-png.log");
+
+// Simple logging system
+let logMessages: string[] = [];
+
+function log(message: string) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}`;
+  logMessages.push(logEntry);
+  console.log(message); // Keep console output for immediate feedback
+}
+
+function logError(message: string, error?: any) {
+  const timestamp = new Date().toISOString();
+  const errorDetails = error ? ` - ${error.message || error}` : '';
+  const logEntry = `[${timestamp}] ERROR: ${message}${errorDetails}`;
+  logMessages.push(logEntry);
+  console.error(message, error); // Keep console output for immediate feedback
+}
+
+async function saveLogToFile() {
+  try {
+    // Ensure log directory exists
+    if (!existsSync(logDir)) {
+      mkdirSync(logDir, { recursive: true });
+    }
+    
+    const logContent = logMessages.join('\n') + '\n';
+    await writeFile(logFile, logContent, 'utf-8');
+    console.log(`Build log saved to: ${logFile}`);
+  } catch (error) {
+    console.error('Failed to save log file:', error);
+  }
+}
 
 main();
 
 async function main() {
-  console.log("Starting SVG to PNG conversion process...");
+  log("Starting SVG to PNG conversion process...");
 
   // Ensure output directory exists
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true });
   }
 
-  console.log("Scanning for SVG files...");
+  log("Scanning for SVG files...");
   const svgFiles = await getSvgFiles();
 
   if (svgFiles.length === 0) {
-    console.log("No SVG files found for conversion.");
+    log("No SVG files found for conversion.");
+    await saveLogToFile();
     return;
   }
 
-  console.log(`Found ${svgFiles.length} SVG files to convert`);
+  log(`Found ${svgFiles.length} SVG files to convert`);
 
   let progress = 0;
   let errors = 0;
@@ -36,7 +72,7 @@ async function main() {
       try {
         await convertSvgToPng(svgFile);
       } catch (error) {
-        console.error(`Failed to convert ${svgFile}:`, error);
+        logError(`Failed to convert ${svgFile}`, error);
         errors++;
       }
       updateProgress(++progress, svgFiles.length, "Converting SVGs to PNG", errors);
@@ -45,10 +81,12 @@ async function main() {
 
   await lastValueFrom(conversion$);
 
-  console.log(`Conversion completed! ${svgFiles.length - errors} files converted successfully.`);
+  log(`Conversion completed! ${svgFiles.length - errors} files converted successfully.`);
   if (errors > 0) {
-    console.log(`${errors} files failed to convert.`);
+    log(`${errors} files failed to convert.`);
   }
+  
+  await saveLogToFile();
 }
 
 async function getSvgFiles(): Promise<string[]> {
@@ -68,7 +106,7 @@ async function getSvgFiles(): Promise<string[]> {
 
     return svgFiles.map((file) => resolve(publicDir, file));
   } catch (error) {
-    console.error("Failed to read public directory:", error);
+    logError("Failed to read public directory", error);
     return [];
   }
 }
@@ -78,6 +116,11 @@ async function convertSvgToPng(svgFilePath: string): Promise<void> {
 
   // Optional: Modify SVG content here if needed
   const modifiedSvgContent = modifySvgContent(svgContent);
+
+  if (!modifiedSvgContent) {
+    logError(`No valid SVG content found for ${svgFilePath}`);
+    return;
+  }
 
   // Create PNG filename
   const fileName = basename(svgFilePath, ".svg");
@@ -94,23 +137,40 @@ async function convertSvgToPng(svgFilePath: string): Promise<void> {
     .toFile(pngFilePath);
 }
 
-function modifySvgContent(svgContent: string): string {
-  // Extract the "regular" symbol and convert to standalone SVG
+function modifySvgContent(svgContent: string): string | null {
+  // Match all <symbol ...>...</symbol> blocks and extract id, viewBox, and content
+  const symbolRegex = /<symbol\s+id="([^"]+)"[^>]*viewBox="([^"]*)"[^>]*>([\s\S]*?)<\/symbol>/g;
+  const symbols: { id: string; viewBox: string; content: string }[] = [];
+  let match: RegExpExecArray | null;
 
-  // Find the regular symbol
-  const regularSymbolMatch = svgContent.match(/<symbol id="regular"[^>]*viewBox="([^"]*)"[^>]*>([\s\S]*?)<\/symbol>/);
-
-  if (!regularSymbolMatch) {
-    // If no regular symbol found, try to return the content as-is or throw error
-    console.warn("No 'regular' symbol found in SVG content");
-    return svgContent;
+  while ((match = symbolRegex.exec(svgContent)) !== null) {
+    symbols.push({
+      id: match[1],
+      viewBox: match[2],
+      content: match[3],
+    });
   }
 
-  const [, viewBox, symbolContent] = regularSymbolMatch;
+  if (symbols.length === 0) {
+    console.error("No <symbol> found in SVG content");
+    return null;
+  }
 
-  // Create a standalone SVG with the regular symbol content
-  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${ICON_SIZE}" height="${ICON_SIZE}" >
-${symbolContent.trim()}
+  // Try to find "regular", then "filled", then any
+  let chosen = symbols.find((s) => s.id === "regular");
+  if (!chosen) {
+    chosen = symbols.find((s) => s.id === "filled");
+  }
+  if (!chosen) {
+    chosen = symbols[0];
+    console.error(
+      `No 'regular' or 'filled' symbol found in SVG content, using first symbol with id="${chosen.id}"`
+    );
+  }
+
+  // Create a standalone SVG with the chosen symbol content
+  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${chosen.viewBox}" width="${ICON_SIZE}" height="${ICON_SIZE}">
+${chosen.content.trim()}
 </svg>`;
 
   return standaloneSvg;
