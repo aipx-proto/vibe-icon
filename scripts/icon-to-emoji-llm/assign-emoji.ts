@@ -181,13 +181,7 @@ async function assignEmojiToIcons(iconGroup: string[]): Promise<EmojiAssignment[
 async function getPngFiles(): Promise<string[]> {
   try {
     const files = await readdir(pngDir);
-    const pngFiles = files.filter((file) => extname(file) === ".png").map((file) => resolve(pngDir, file));
-
-    return pngFiles; /* .filter(
-      (file) =>
-        file.includes("arrow") &&
-        (file.includes("left") || file.includes("right") || file.includes("up") || file.includes("down"))
-    ); // For testing */
+    return files.filter((file) => extname(file) === ".png").map((file) => resolve(pngDir, file));
   } catch (error) {
     console.error("Failed to read PNG directory:", error);
     return [];
