@@ -128,20 +128,20 @@ async function getPngFiles(): Promise<string[]> {
 
 async function readIconMetadata(iconName: string): Promise<{ name: string; metaphors: string[] }> {
   const metadataPath = resolve(publicDir, `${iconName}.metadata.json`);
-  
+
   try {
     const metadataContent = await readFile(metadataPath, "utf-8");
     const metadata: IconMetadata = JSON.parse(metadataContent);
-    
+
     return {
       name: metadata.name || iconName,
-      metaphors: metadata.metaphor || []
+      metaphors: metadata.metaphor || [],
     };
   } catch (error) {
     console.warn(`Could not read metadata for ${iconName}, using filename as name`);
     return {
       name: iconName,
-      metaphors: []
+      metaphors: [],
     };
   }
 }
@@ -156,11 +156,10 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
   const imageBuffer = await readFile(pngFilePath);
   const base64Image = imageBuffer.toString("base64");
 
-
-
-  const metaphorContext = metaphors.length > 0 
-    ? `\n\nAdditional context - this icon represents concepts related to: ${metaphors.join(", ")}` 
-    : "";
+  const metaphorContext =
+    metaphors.length > 0
+      ? `\n\nAdditional context - this icon represents concepts related to: ${metaphors.join(", ")}`
+      : "";
 
   try {
     const response = await azureOpenAI.chat.completions.create({
@@ -218,7 +217,7 @@ async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
       emoji: "n/a",
       subEmoji: undefined,
       alternativeEmojis: [],
-      similarity: 0,  
+      similarity: 0,
     };
   }
 }
@@ -274,4 +273,4 @@ Example response format:
 \`\`\`json
 ${JSON.stringify(exampleResponse, null, 2)}
 \`\`\`
-`
+`;
