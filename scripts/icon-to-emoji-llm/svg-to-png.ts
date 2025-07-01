@@ -85,7 +85,7 @@ async function convertSvgToPng(svgFilePath: string): Promise<void> {
 
   // Convert SVG to PNG using Sharp
   await sharp(Buffer.from(modifiedSvgContent))
-    .resize(256, 256) // Set desired PNG size
+    .resize(ICON_SIZE, ICON_SIZE) // Set desired PNG size
     .flatten({ background: "#ffffff" }) // Add white background
     .png({
       quality: 90,
@@ -109,9 +109,16 @@ function modifySvgContent(svgContent: string): string {
   const [, viewBox, symbolContent] = regularSymbolMatch;
 
   // Create a standalone SVG with the regular symbol content
-  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="256" height="256" >
+  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}" width="${ICON_SIZE}" height="${ICON_SIZE}" >
 ${symbolContent.trim()}
 </svg>`;
 
   return standaloneSvg;
 }
+
+/* 
+ * the most common icon sizes are 20px and 16px, 20 is by far the most common with 2646 icons (other rare sizes are 12, 24, 32, 48)
+ * we want to choose an icon size that is a multiple of the source so the png anti-aliasing is well (crispy)
+ * 80 is the smallest size that factors into 16 and 20
+ */
+const ICON_SIZE = 80;
