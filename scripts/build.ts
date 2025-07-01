@@ -125,12 +125,14 @@ async function buildIconIndex(commitId: string): Promise<{
 
   const icons$ = from(assetFolders).pipe(
     mergeMap(async (folder) => {
-      const folderPath = resolve(assetsDir, folder);
 
-      // DEV: Only process icons starting with "a" for faster testing
-      // if (!folder.toLowerCase().startsWith("a")) {
-      //   return null;
-      // }
+      // throw out the rtl, ltr, and temp icons - the are duplicates and don't parse the same as the regular icons
+      if (folder.includes(" RTL") || folder.includes(" LTR") || folder.includes(" Temp ")) {
+        logEntry('processing', 'warn', `Skipping folder ${folder}: contains RTL, LTR, or Temp`);
+        return null;
+      }
+
+      const folderPath = resolve(assetsDir, folder);
 
       // First, scan SVG files to get actual available options
       let actualOptions: IconOption[] = [];
