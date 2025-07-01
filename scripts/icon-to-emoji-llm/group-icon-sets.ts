@@ -55,10 +55,12 @@ export function groupIconSets(pngFiles: string[], maxGroupSize: number = 20, min
   const finalGroupsFilenames = finalGroups.map(group =>
     group.map(pngFile => basename(pngFile, ".png"))
   );
+
   writeFile (
     resolve("scripts", "build-logs", "icon-groups.json"),
     JSON.stringify(finalGroupsFilenames, null, 2),
     "utf-8"
   );
+  
   return finalGroups;
 }

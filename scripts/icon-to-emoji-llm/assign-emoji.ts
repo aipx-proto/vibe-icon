@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { OpenAI } from "openai";
 import { from, mergeMap, lastValueFrom } from "rxjs";
 import { updateProgress } from "../utils/progress-bar";
+import { logError, saveLogToFile } from "../utils/simple-build-log";
 import type { MetadataEntry } from "../../typings/icon-index";
 import { createFewShotExamples, createUserMessage } from "./create-examples";
 import type { EmojiAssignmentResponse, EmojiAssignment } from "./types";
@@ -35,6 +36,8 @@ const azureOpenAI = new OpenAI({
 main();
 
 async function main() {
+  const startTime = Date.now();
+
   console.log("Starting emoji assignment process...");
   console.log(`Loading credentials from: ${envFile}`);
 
@@ -67,12 +70,11 @@ async function main() {
   // Group icons by the first word of their filename
   const allIconGroups = groupIconSets(allPngFiles);
 
-  // TEMP: Limit to first 5 groups for testing
-  const iconGroups = allIconGroups.slice(0, 1);
+  // TEMP: Limit to first N groups for testing
+  const iconGroups = allIconGroups; // .slice(0, 1);
   const totalIcons = iconGroups.flat().length;
 
   console.log(`Found ${allPngFiles.length} PNG files total, grouped into ${allIconGroups.length} groups`);
-  console.log(`Processing first ${iconGroups.length} groups (${totalIcons} icons) (TEMP LIMIT)`);
 
   let progress = 0;
   let errors = 0;
@@ -85,7 +87,7 @@ async function main() {
         assignments.push(...groupAssignments);
         progress += iconGroup.length;
       } catch (error) {
-        console.error(`Failed to assign emojis for group ${iconGroup[0]}:`, error);
+        logError(`Failed to assign emojis for group ${iconGroup[0]}`, error);
         errors += iconGroup.length;
         progress += iconGroup.length;
       }
@@ -104,6 +106,13 @@ async function main() {
     console.log(`${errors} files failed to process.`);
   }
   console.log(`Results saved to: ${outputFile}`);
+
+  // Save the build log
+  saveLogToFile("emoji-assignment");
+
+  const endTime = Date.now();
+  const elapsedSeconds = ((endTime - startTime) / 1000).toFixed(2);
+  console.log(`Total time elapsed: ${elapsedSeconds} seconds`);
 }
 
 async function assignEmojiToIcons(iconGroup: string[]): Promise<EmojiAssignment[]> {
@@ -166,7 +175,10 @@ async function assignEmojiToIcons(iconGroup: string[]): Promise<EmojiAssignment[
       subEmoji: assignment.subEmoji || "",
     }));
   } catch (error) {
-    console.warn(`Failed to get AI response for group, using fallback`);
+    logError(
+      `Failed to get AI response for group that includes: ${iconGroup.map((f) => basename(f, ".png")).join(", ")}`,
+      error
+    );
     // Return fallback assignments for all icons in the group
     return iconMetadata.map((meta) => ({
       ...meta,
@@ -200,7 +212,7 @@ async function readIconMetadata(name: string): Promise<{ name: string; metaphor:
       metaphor: metadata.metaphor || [],
     };
   } catch (error) {
-    console.warn(`Could not read metadata for ${name}, using filename as name`);
+    logError(`Could not read metadata for ${name}, using filename as name`);
     return {
       name,
       metaphor: [],
