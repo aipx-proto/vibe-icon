@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite --config vite-site.config.ts",
     "setup": "rm -rf dist-icons && tsx scripts/build.ts",
+    "svg-to-png": "rm -rf pngs && tsx scripts/svg-to-png.ts",
     "build": "rm -rf dist && rm -rf dist-site && tsc && npm run build:lib && npm run build:site && npm run build:types",
     "build:site": "vite build --config vite-site.config.ts",
     "build:lib": "vite build --config vite.config.ts",
@@ -26,6 +27,7 @@
   "module": "./dist/index.js",
   "devDependencies": {
     "@types/node": "^24.0.1",
+    "sharp": "^0.33.5",
     "tsx": "^4.20.3",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"
