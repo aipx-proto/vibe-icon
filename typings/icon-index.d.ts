@@ -3,10 +3,11 @@ export interface IconIndex {
   icons: Record<string, [metaphors: string[], options: IconOption[], sizes: number[]]>;
 }
 
-export type MetadataMap = Record<string, { options: IconOption[] }>;
+export type MetadataMap = Record<string, { metaphor: string[]; options: IconOption[] }>;
 
 export interface MetadataEntry {
   name: string;
+  metaphor: string[];
   options: IconOption[];
 }
 

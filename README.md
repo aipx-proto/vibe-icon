@@ -15,9 +15,6 @@
 > Five out of vibe stars  
 > —Vibecon Awards
 
-
-
-
 ## Keyboard Shortcuts
 
 | Key                                                 | Action                   | When              |
@@ -32,3 +29,15 @@
 | Double click a tile                                 | Copy SVG                 |                   |
 
 \*Search with AI requires a valid Azure OpenAI connection. Click the AI Foundry button in the corner of the screen to set it up.
+
+## Development
+
+1. `npm install`
+2. `npm run setup`
+
+- clones the [Fluent Icons](https://github.com/microsoft/fluentui-system-icons/) repo assets folder
+- builds the public folder icons.svg
+
+3. `npm run dev`
+
+http://localhost:5173/vibe-icon/dev.html for development of vibe-icon web component

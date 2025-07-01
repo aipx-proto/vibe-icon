@@ -3,6 +3,8 @@ dist
 dist-icons
 dist-site
 public/**/*
+pngs/
+.env.aoai
 
 # negate
 !public/.gitkeep
