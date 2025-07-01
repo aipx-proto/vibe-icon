@@ -1,68 +1,34 @@
-import { readdir, readFile, writeFile } from "fs/promises";
+import { readdir, readFile } from "fs/promises";
 import { resolve, extname, basename } from "path";
 import { mkdirSync, existsSync } from "fs";
 import sharp from "sharp";
 import { from, mergeMap, lastValueFrom } from "rxjs";
 import { updateProgress } from "../utils/progress-bar";
+import { logInfo, logError, saveLogToFile } from "../utils/simple-build-log";
 
 const publicDir = resolve("public");
 const outputDir = resolve("pngs");
-const logDir = resolve("scripts/build-logs");
-const logFile = resolve(logDir, "svg-to-png.log");
-
-// Simple logging system
-let logMessages: string[] = [];
-
-function log(message: string) {
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${message}`;
-  logMessages.push(logEntry);
-  console.log(message); // Keep console output for immediate feedback
-}
-
-function logError(message: string, error?: any) {
-  const timestamp = new Date().toISOString();
-  const errorDetails = error ? ` - ${error.message || error}` : '';
-  const logEntry = `[${timestamp}] ERROR: ${message}${errorDetails}`;
-  logMessages.push(logEntry);
-  console.error(message, error); // Keep console output for immediate feedback
-}
-
-async function saveLogToFile() {
-  try {
-    // Ensure log directory exists
-    if (!existsSync(logDir)) {
-      mkdirSync(logDir, { recursive: true });
-    }
-    
-    const logContent = logMessages.join('\n') + '\n';
-    await writeFile(logFile, logContent, 'utf-8');
-    console.log(`Build log saved to: ${logFile}`);
-  } catch (error) {
-    console.error('Failed to save log file:', error);
-  }
-}
 
 main();
 
 async function main() {
-  log("Starting SVG to PNG conversion process...");
+  logInfo("Starting SVG to PNG conversion process...");
 
   // Ensure output directory exists
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true });
   }
 
-  log("Scanning for SVG files...");
+  logInfo("Scanning for SVG files...");
   const svgFiles = await getSvgFiles();
 
   if (svgFiles.length === 0) {
-    log("No SVG files found for conversion.");
-    await saveLogToFile();
+    logInfo("No SVG files found for conversion.");
+    await saveLogToFile("svg-to-png");
     return;
   }
 
-  log(`Found ${svgFiles.length} SVG files to convert`);
+  logInfo(`Found ${svgFiles.length} SVG files to convert`);
 
   let progress = 0;
   let errors = 0;
@@ -81,12 +47,14 @@ async function main() {
 
   await lastValueFrom(conversion$);
 
-  log(`Conversion completed! ${svgFiles.length - errors} files converted successfully.`);
+  logInfo(`Conversion completed! ${svgFiles.length - errors} files converted successfully.`);
   if (errors > 0) {
-    log(`${errors} files failed to convert.`);
+    logInfo(`${errors} files failed to convert.`);
   }
-  
-  await saveLogToFile();
+
+  logInfo("Saving log to file...");
+  await saveLogToFile("svg-to-png");
+  logInfo("log file saved to ./scripts/build-logs/svg-to-png.log");
 }
 
 async function getSvgFiles(): Promise<string[]> {
@@ -163,20 +131,20 @@ function modifySvgContent(svgContent: string): string | null {
   }
   if (!chosen) {
     chosen = symbols[0];
-    console.error(
-      `No 'regular' or 'filled' symbol found in SVG content, using first symbol with id="${chosen.id}"`
-    );
+    console.error(`No 'regular' or 'filled' symbol found in SVG content, using first symbol with id="${chosen.id}"`);
   }
 
   // Create a standalone SVG with the chosen symbol content
-  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${chosen.viewBox}" width="${ICON_SIZE}" height="${ICON_SIZE}">
+  const standaloneSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${
+    chosen.viewBox
+  }" width="${ICON_SIZE}" height="${ICON_SIZE}">
 ${chosen.content.trim()}
 </svg>`;
 
   return standaloneSvg;
 }
 
-/* 
+/*
  * the most common icon sizes are 20px and 16px, 20 is by far the most common with 2646 icons (other rare sizes are 12, 24, 32, 48)
  * we want to choose an icon size that is a multiple of the source so the png anti-aliasing is well (crispy)
  * 80 is the smallest size that factors into 16 and 20
