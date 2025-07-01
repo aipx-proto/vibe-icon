@@ -7,6 +7,8 @@ import { promisify } from "util";
 import type { IconIndex, IconOption, MetadataMap } from "../typings/icon-index";
 import { getMostSensibleIconSize } from "./get-sensible-size";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
+import { buildLog, logEntry } from "./build-log";
+import { updateProgress } from "./progress-bar";
 
 const execAsync = promisify(exec);
 const outDir = resolve("dist-icons");
@@ -18,29 +20,55 @@ main();
 // Only support fill/regular per size
 
 async function main() {
-  console.log("🚀 Starting icon build process...\n");
+  console.log("Starting icon build process...\n");
+  logEntry('main', 'info', 'Build process started');
   
-  console.log("📥 Fetching repository assets...");
+  console.log("Fetching repository assets...");
   const commitId = await fetchRepoAssets();
   // const commitId = "1234567890"; // to test locally
+  buildLog.commit = commitId;
+  logEntry('fetch', 'info', `Repository assets fetched successfully. Commit: ${commitId}`);
   
-  console.log("🔍 Building icon index...");
+  console.log("Building icon index...");
   const { iconIndex, metadata, iconDirMap } = await buildIconIndex(commitId);
+  buildLog.summary.totalIcons = Object.keys(iconIndex.icons).length;
+  buildLog.summary.processedIcons = Object.keys(iconIndex.icons).length;
   
-  console.log("⚙️  Compiling icon SVGs...");
-  await compileIconSvgs(iconIndex, metadata, iconDirMap);
+  console.log("Compiling icon SVGs...");
+  const sizeStats = await compileIconSvgs(iconIndex, metadata, iconDirMap);
+  buildLog.sizeStats = sizeStats;
   
-  console.log("💾 Creating index files...");
+  console.log("Creating index files...");
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
     createCsvIndex(iconIndex),
   ]);
   
-  console.log("📄 Saving metadata files...");
+  console.log("Saving metadata files...");
   await saveMetadata(metadata);
   
-  console.log("\n✅ Build process completed successfully!");
+  buildLog.endTime = new Date().toISOString();
+  
+  // Add final summary
+  const duration = new Date(buildLog.endTime).getTime() - new Date(buildLog.startTime).getTime();
+  logEntry('main', 'info', 'Build process completed successfully', {
+    duration: `${Math.round(duration / 1000)}s`,
+    totalIcons: buildLog.summary.totalIcons,
+    totalErrors: buildLog.summary.totalErrors,
+    errorBreakdown: buildLog.summary.stageErrors
+  });
+  
+  // Save build log
+  await writeFile(resolve("public", "build-log.json"), JSON.stringify(buildLog, null, 2));
+  console.log("Build log saved to ./public/build-log.json");
+  
+  console.log("\nBuild process completed successfully!");
+  if (buildLog.summary.totalErrors > 0) {
+    console.log(`${buildLog.summary.totalErrors} warnings/errors occurred. Check build-log.json for details.`);
+  }
+
+  console.log(`Size stats:\n${JSON.stringify(sizeStats, null, 2)}`);
 }
 
 async function fetchRepoAssets(): Promise<string> {
@@ -65,7 +93,7 @@ async function fetchRepoAssets(): Promise<string> {
   const { stdout } = await execAsync(`cd ${outDir} && git rev-parse HEAD`);
   const commitId = stdout.trim();
 
-  console.log(`✅ Repository assets fetched successfully. Commit: ${commitId}`);
+  console.log(`Repository assets fetched successfully. Commit: ${commitId}`);
 
   // remove the .git directory to clean up
   await rm(resolve(outDir, ".git"), { recursive: true });
@@ -117,13 +145,13 @@ async function buildIconIndex(commitId: string): Promise<{
 
         // If no valid SVG files found, skip this folder
         if (actualOptions.length === 0) {
-          // // console.warn(`Skipping folder ${folder}: no valid SVG files found`);
+          logEntry('processing', 'warn', `Skipping folder ${folder}: no valid SVG files found`);
           errors++;
           updateProgress(++progress, assetFolders.length, "Processing icons", errors);
           return null;
         }
       } catch (error) {
-        // // console.warn(`Skipping folder ${folder}: cannot read SVG directory - ${error}`);
+        logEntry('processing', 'warn', `Skipping folder ${folder}: cannot read SVG directory`, { error: String(error) });
         errors++;
         updateProgress(++progress, assetFolders.length, "Processing icons", errors);
         return null;
@@ -141,7 +169,7 @@ async function buildIconIndex(commitId: string): Promise<{
         metaphor = metadata.metaphor || [];
       } catch {
         // metadata.json doesn't exist or is invalid - we'll create it
-        // console.warn(`Creating metadata for folder ${folder}: no valid metadata.json found`);
+        logEntry('processing', 'info', `Creating metadata for folder ${folder}: no valid metadata.json found`);
       }
 
       // Create/update metadata with actual SVG options
@@ -155,7 +183,7 @@ async function buildIconIndex(commitId: string): Promise<{
       try {
         await writeFile(metadataPath, JSON.stringify(updatedMetadata, null, 2), "utf-8");
       } catch (error) {
-        // // console.warn(`Failed to write metadata for ${folder}: ${error}`);
+        logEntry('processing', 'warn', `Failed to write metadata for ${folder}`, { error: String(error) });
         errors++;
       }
 
@@ -231,10 +259,12 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
 
   let progress = 0;
   let errors = 0;
-  let sizeFrequency: { allSizes: Record<number, number>; targetSize: Record<number, number>; total: number } = {
+  let stats: { allSizes: Record<number, number>; targetSize: Record<number, number>; styles: Record<string, number>; totalIcons: number; totalSVGs: number } = {
     allSizes: {},
     targetSize: {},
-    total: 0,
+    styles: {},
+    totalIcons: 0,
+    totalSVGs: 0,
   };
   const totalIcons = Object.keys(iconIndex.icons).length;
   const icons$ = from(Object.entries(iconIndex.icons)).pipe(
@@ -255,7 +285,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
       let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg">\n';
 
       if (!iconDirMap.has(displayName)) {
-        // console.warn(`Icon directory not found for ${displayName}`);
+        logEntry('compiling', 'error', `Icon directory not found for ${displayName}`);
         errors++;
         updateProgress(++progress, totalIcons, "Compiling SVGs", errors);
         return;
@@ -281,7 +311,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             combinedSvg += `  </symbol>\n`;
           }
         } catch (error) {
-          // console.warn(`Failed to read ${svgFileName}: ${error}`);
+          logEntry('compiling', 'warn', `Failed to read ${svgFileName}`, { error: String(error), displayName });
           errors++;
         }
       }
@@ -293,7 +323,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
       try {
         await writeFile(outputPath, combinedSvg, "utf-8");
       } catch (error) {
-        // console.warn(`Failed to write combined SVG for ${displayName}: ${error}`);
+        logEntry('compiling', 'warn', `Failed to write combined SVG for ${displayName}`, { error: String(error) });
         errors++;
       }
 
@@ -314,25 +344,28 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             content = content.replaceAll(/fill="#\d+"/g, 'fill="currentColor"');
 
             await writeFile(outputFilePath, content, "utf-8");
-            sizeFrequency.allSizes[size] ??= 0;
-            sizeFrequency.allSizes[size]++;
+            stats.styles[style] ??= 0;
+            stats.styles[style]++;
+            stats.allSizes[size] ??= 0;
+            stats.allSizes[size]++;
+            stats.totalSVGs++;
           } catch (error) {
-            // console.warn(`Failed to process ${svgFileName}: ${error}`);
+            logEntry('compiling', 'warn', `Failed to process ${svgFileName}`, { error: String(error), displayName, size, style });
             errors++;
           }
         }
       }
 
       updateProgress(++progress, totalIcons, "Compiling SVGs", errors);
-      sizeFrequency.targetSize[targetSize] ??= 0;
-      sizeFrequency.targetSize[targetSize]++;
-      sizeFrequency.total++;
+      stats.targetSize[targetSize] ??= 0;
+      stats.targetSize[targetSize]++;
+      stats.totalIcons++;
     }, 8)
   );
 
   await lastValueFrom(icons$);
 
-  console.log(`Size stats:\n${JSON.stringify(sizeFrequency, null, 2)}`);
+  return stats;
 }
 
 async function createCsvIndex(iconIndex: IconIndex) {
@@ -356,7 +389,8 @@ async function createCsvIndex(iconIndex: IconIndex) {
   }
 
   await writeFile(resolve("public", "index.csv"), csvContent);
-  console.log("✅ CSV index created successfully");
+  console.log("CSV index created successfully");
+  logEntry('csv', 'info', `CSV index created with ${Object.keys(iconIndex.icons).length} icons`);
 }
 
 async function saveMetadata(metadata: MetadataMap) {
@@ -374,7 +408,7 @@ async function saveMetadata(metadata: MetadataMap) {
       try {
         await writeFile(filePath, JSON.stringify({ name, options }, null, 2), "utf-8");
       } catch (error) {
-        // console.warn(`Failed to save metadata for ${name}: ${error}`);
+        logEntry('metadata', 'warn', `Failed to save metadata for ${name}`, { error: String(error) });
         errors++;
       }
       updateProgress(++progress, totalMetadata, "Saving metadata", errors);
@@ -382,18 +416,4 @@ async function saveMetadata(metadata: MetadataMap) {
   );
 
   await lastValueFrom(metadata$);
-}
-
-// Simple progress bar function
-function updateProgress(current: number, total: number, stage: string, errors: number = 0) {
-  const percentage = Math.round((current / total) * 100);
-  const barLength = 30;
-  const filledLength = Math.round((barLength * current) / total);
-  const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
-  
-  const errorText = errors > 0 ? ` | ${errors} errors` : '';
-  process.stdout.write(`\r${stage}: [${bar}] ${percentage}% (${current}/${total})${errorText}`);
-  if (current === total) {
-    process.stdout.write('\n');
-  }
 }
