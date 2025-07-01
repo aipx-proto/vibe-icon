@@ -11,6 +11,7 @@ const envFile = process.argv[2] || ".env.aoai";
 config({ path: resolve(envFile) });
 
 const pngDir = resolve("pngs");
+const publicDir = resolve("public");
 const outputFile = resolve("emoji-assignments.json");
 
 // Azure OpenAI configuration
@@ -23,6 +24,15 @@ const azureOpenAI = new OpenAI({
   },
 });
 
+interface IconMetadata {
+  name: string;
+  metaphor?: string[];
+  options: Array<{
+    size: number;
+    style: string;
+  }>;
+}
+
 interface EmojiAssignmentResponse {
   emoji: string;
   subEmoji?: string;
@@ -32,6 +42,8 @@ interface EmojiAssignmentResponse {
 
 interface EmojiAssignment extends EmojiAssignmentResponse {
   filename: string;
+  iconName: string;
+  metaphors: string[];
 }
 
 main();
@@ -114,53 +126,56 @@ async function getPngFiles(): Promise<string[]> {
   }
 }
 
+async function readIconMetadata(iconName: string): Promise<{ name: string; metaphors: string[] }> {
+  const metadataPath = resolve(publicDir, `${iconName}.metadata.json`);
+  
+  try {
+    const metadataContent = await readFile(metadataPath, "utf-8");
+    const metadata: IconMetadata = JSON.parse(metadataContent);
+    
+    return {
+      name: metadata.name || iconName,
+      metaphors: metadata.metaphor || []
+    };
+  } catch (error) {
+    console.warn(`Could not read metadata for ${iconName}, using filename as name`);
+    return {
+      name: iconName,
+      metaphors: []
+    };
+  }
+}
+
 async function assignEmoji(pngFilePath: string): Promise<EmojiAssignment> {
   const filename = basename(pngFilePath, ".png");
+
+  // Read icon metadata
+  const { name: iconName, metaphors } = await readIconMetadata(filename);
 
   // Read the PNG file and convert to base64
   const imageBuffer = await readFile(pngFilePath);
   const base64Image = imageBuffer.toString("base64");
 
-  const exampleResponse = {
-    emoji: "📄",
-    subEmoji: "➕",
-    alternativeEmojis: ["📃"],
-    similarity: 0.9,
-  };
 
-  const prompt = `
-Analyze this icon image and suggest the emoji that most closely matches it visually.
 
-Suggest 
-
-Consider:
-- The main visual elements and shapes
-- The overall style and appearance
-- What concept or object the icon represents
-- Color schemes and visual patterns
-
-Respond with a JSON object containing:
-- "emoji": the single best matching emoji character
-- "similarity": similarity score from 0-1 - how similar the icon is to the emoji
-- "subEmoji": some icons have a secondary icon in the corner of the layout that modifies the primary icon's meaning. Please skip this if it is not present.
-- "alternativeEmojis": other emojis that are similar to the icon (this can be empty)
-
-Example response format:
-\`\`\`json
-${JSON.stringify(exampleResponse, null, 2)}
-\`\`\`
-}`;
+  const metaphorContext = metaphors.length > 0 
+    ? `\n\nAdditional context - this icon represents concepts related to: ${metaphors.join(", ")}` 
+    : "";
 
   try {
     const response = await azureOpenAI.chat.completions.create({
       model: process.env.AZURE_OPENAI_MODEL!,
       messages: [
         {
+          role: "system",
+          content: systemPrompt,
+        },
+        {
           role: "user",
           content: [
             {
               type: "text",
-              text: prompt,
+              text: `Icon name: ${iconName}${metaphorContext}`,
             },
             {
               type: "image_url",
@@ -190,12 +205,16 @@ ${JSON.stringify(exampleResponse, null, 2)}
 
     return {
       filename,
+      iconName,
+      metaphors,
       ...parsed,
     };
   } catch (error) {
     console.warn(`Failed to get AI response for ${filename}, using fallback`);
     return {
       filename,
+      iconName: filename,
+      metaphors: [],
       emoji: "n/a",
       subEmoji: undefined,
       alternativeEmojis: [],
@@ -221,3 +240,38 @@ async function saveAssignments(assignments: EmojiAssignment[]): Promise<void> {
 
   await writeFile(outputFile, JSON.stringify(output, null, 2), "utf-8");
 }
+
+const exampleResponse: EmojiAssignmentResponse = {
+  emoji: "📄",
+  subEmoji: "➕",
+  alternativeEmojis: ["📃"],
+  similarity: 0.9,
+};
+
+const systemPrompt = `
+You are a helpful assistant that assigns emojis to icons.
+
+You will be given an icon and a list of metaphors that it represents.
+
+You will need to assign an emoji that best represents the icon.
+
+Analyze this icon image and suggest the emoji that most closely matches it visually.
+
+Consider:
+- The main visual elements and shapes
+- The overall style and appearance
+- What concept or object the icon represents
+- Color schemes and visual patterns
+- The icon name and metaphorical concepts if provided
+
+Respond with a JSON object containing:
+- "emoji": the single best matching emoji character
+- "similarity": similarity score from 0-1 - how similar the icon is to the emoji
+- "subEmoji": some icons have a secondary icon in the corner of the layout that modifies the primary icon's meaning. Please skip this if it is not present.
+- "alternativeEmojis": other emojis that are similar to the icon (this can be empty)
+
+Example response format:
+\`\`\`json
+${JSON.stringify(exampleResponse, null, 2)}
+\`\`\`
+`
