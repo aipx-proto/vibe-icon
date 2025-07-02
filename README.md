@@ -41,3 +41,18 @@
 3. `npm run dev`
 
 http://localhost:5173/vibe-icon/dev.html for development of vibe-icon web component
+
+## Publish
+
+The library can be directly consumed from GitHub: `import "https://esm.sh/gh/aipx-proto/vibe-icon/lib/index.ts"`. We should phase out npm and use GitHub directly to reduce complexity.
+
+If npm is preferred, make sure to build, version, and publish the library:
+
+```sh
+npm run setup
+npm run build
+npm version patch # or minor, major
+npm publish
+```
+
+
