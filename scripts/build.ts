@@ -5,9 +5,9 @@ import { resolve } from "path";
 import { filter, from, lastValueFrom, mergeMap, toArray } from "rxjs";
 import { promisify } from "util";
 import type { IconIndex, IconOption, MetadataMap } from "../typings/icon-index";
+import { buildLog, logEntry } from "./build-log";
 import { getMostSensibleIconSize } from "./get-sensible-size";
 import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "./normalize-name";
-import { buildLog, logEntry } from "./build-log";
 import { progressSpinner, updateProgress } from "./progress-bar";
 
 const execAsync = promisify(exec);
@@ -21,48 +21,47 @@ main();
 
 async function main() {
   console.log("Starting icon build process...");
-  logEntry('main', 'info', 'Build process started');
-  
+  logEntry("main", "info", "Build process started");
+
   console.log("Fetching repository assets...");
-  const commitId = await fetchRepoAssets();
-  // const commitId = "1234567890"; // to test locally
+  const { commitId } = await fetchRepoAssets();
   buildLog.commit = commitId;
-  logEntry('fetch', 'info', `Repository assets fetched successfully. Commit: ${commitId}`);
-  
+  logEntry("fetch", "info", `Repository assets fetched successfully. Commit: ${commitId}`);
+
   console.log("Building icon index...");
   const { iconIndex, metadata, iconDirMap } = await buildIconIndex(commitId);
   buildLog.summary.totalIcons = Object.keys(iconIndex.icons).length;
   buildLog.summary.processedIcons = Object.keys(iconIndex.icons).length;
-  
+
   console.log("Compiling icon SVGs...");
   const sizeStats = await compileIconSvgs(iconIndex, metadata, iconDirMap);
   buildLog.sizeStats = sizeStats;
-  
+
   console.log("Creating index files...");
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
     createCsvIndex(iconIndex),
   ]);
-  
+
   console.log("Saving metadata files...");
   await saveMetadata(metadata);
-  
+
   buildLog.endTime = new Date().toISOString();
-  
+
   // Add final summary
   const duration = new Date(buildLog.endTime).getTime() - new Date(buildLog.startTime).getTime();
-  logEntry('main', 'info', 'Build process completed successfully', {
+  logEntry("main", "info", "Build process completed successfully", {
     duration: `${Math.round(duration / 1000)}s`,
     totalIcons: buildLog.summary.totalIcons,
     totalErrors: buildLog.summary.totalErrors,
-    errorBreakdown: buildLog.summary.stageErrors
+    errorBreakdown: buildLog.summary.stageErrors,
   });
-  
+
   // Save build log
   await writeFile(resolve("public", "build-log.json"), JSON.stringify(buildLog, null, 2));
   console.log("Build log saved to ./public/build-log.json");
-  
+
   console.log("Build process completed successfully!");
   if (buildLog.summary.totalErrors > 0) {
     console.log(`${buildLog.summary.totalErrors} warnings/errors occurred. Check build-log.json for details.`);
@@ -71,7 +70,7 @@ async function main() {
   console.log(`Size stats: ${JSON.stringify(sizeStats, null, 2)}`);
 }
 
-async function fetchRepoAssets(): Promise<string> {
+async function fetchRepoAssets(): Promise<{ commitId: string; commitTime: number }> {
   // download the entire folder content from https://github.com/microsoft/fluentui-system-icons/tree/main/assets
   // save them to outDir/fluentui-system-icons/assets
 
@@ -88,8 +87,8 @@ async function fetchRepoAssets(): Promise<string> {
     `cd ${outDir} && git sparse-checkout init --cone`,
     `cd ${outDir} && git sparse-checkout set assets`,
     `cd ${outDir} && git rev-parse HEAD`,
-  ]
-  
+  ];
+
   let stdout = "";
   for (const command of commands) {
     const spinner = progressSpinner(command);
@@ -100,12 +99,16 @@ async function fetchRepoAssets(): Promise<string> {
 
   const commitId = stdout.trim();
 
+  // Get commit timestamp
+  const { stdout: timestampStdout } = await execAsync(`cd ${outDir} && git show -s --format=%ct ${commitId}`);
+  const commitTime = parseInt(timestampStdout.trim()) * 1000; // Convert to milliseconds for JS datetime compat
+
   console.log(`Repository assets fetched successfully. Commit: ${commitId}`);
 
   // remove the .git directory to clean up
   await rm(resolve(outDir, ".git"), { recursive: true });
 
-  return commitId;
+  return { commitId, commitTime };
 }
 
 async function buildIconIndex(commitId: string): Promise<{
@@ -125,10 +128,9 @@ async function buildIconIndex(commitId: string): Promise<{
 
   const icons$ = from(assetFolders).pipe(
     mergeMap(async (folder) => {
-
       // throw out the rtl, ltr, and temp icons - the are duplicates and don't parse the same as the regular icons
       if (folder.includes(" RTL") || folder.includes(" LTR") || folder.includes(" Temp ")) {
-        logEntry('processing', 'warn', `Skipping folder ${folder}: contains RTL, LTR, or Temp`);
+        logEntry("processing", "warn", `Skipping folder ${folder}: contains RTL, LTR, or Temp`);
         return null;
       }
 
@@ -154,13 +156,13 @@ async function buildIconIndex(commitId: string): Promise<{
 
         // If no valid SVG files found, skip this folder
         if (actualOptions.length === 0) {
-          logEntry('processing', 'warn', `Skipping folder ${folder}: no valid SVG files found`);
+          logEntry("processing", "warn", `Skipping folder ${folder}: no valid SVG files found`);
           errors++;
           updateProgress(++progress, assetFolders.length, "Processing icons", errors);
           return null;
         }
       } catch (error) {
-        logEntry('processing', 'warn', `Skipping folder ${folder}: cannot read SVG directory`, { error: String(error) });
+        logEntry("processing", "warn", `Skipping folder ${folder}: cannot read SVG directory`, { error: String(error) });
         errors++;
         updateProgress(++progress, assetFolders.length, "Processing icons", errors);
         return null;
@@ -178,7 +180,7 @@ async function buildIconIndex(commitId: string): Promise<{
         metaphor = metadata.metaphor || [];
       } catch {
         // metadata.json doesn't exist or is invalid - we'll create it
-        logEntry('processing', 'info', `Creating metadata for folder ${folder}: no valid metadata.json found`);
+        logEntry("processing", "info", `Creating metadata for folder ${folder}: no valid metadata.json found`);
       }
 
       // Create/update metadata with actual SVG options
@@ -192,7 +194,7 @@ async function buildIconIndex(commitId: string): Promise<{
       try {
         await writeFile(metadataPath, JSON.stringify(updatedMetadata, null, 2), "utf-8");
       } catch (error) {
-        logEntry('processing', 'warn', `Failed to write metadata for ${folder}`, { error: String(error) });
+        logEntry("processing", "warn", `Failed to write metadata for ${folder}`, { error: String(error) });
         errors++;
       }
 
@@ -294,7 +296,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
       let combinedSvg = '<svg xmlns="http://www.w3.org/2000/svg">\n';
 
       if (!iconDirMap.has(displayName)) {
-        logEntry('compiling', 'error', `Icon directory not found for ${displayName}`);
+        logEntry("compiling", "error", `Icon directory not found for ${displayName}`);
         errors++;
         updateProgress(++progress, totalIcons, "Compiling SVGs", errors);
         return;
@@ -320,7 +322,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             combinedSvg += `  </symbol>\n`;
           }
         } catch (error) {
-          logEntry('compiling', 'warn', `Failed to read ${svgFileName}`, { error: String(error), displayName });
+          logEntry("compiling", "warn", `Failed to read ${svgFileName}`, { error: String(error), displayName });
           errors++;
         }
       }
@@ -332,7 +334,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
       try {
         await writeFile(outputPath, combinedSvg, "utf-8");
       } catch (error) {
-        logEntry('compiling', 'warn', `Failed to write combined SVG for ${displayName}`, { error: String(error) });
+        logEntry("compiling", "warn", `Failed to write combined SVG for ${displayName}`, { error: String(error) });
         errors++;
       }
 
@@ -359,7 +361,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             stats.allSizes[size]++;
             stats.totalSVGs++;
           } catch (error) {
-            logEntry('compiling', 'warn', `Failed to process ${svgFileName}`, { error: String(error), displayName, size, style });
+            logEntry("compiling", "warn", `Failed to process ${svgFileName}`, { error: String(error), displayName, size, style });
             errors++;
           }
         }
@@ -382,24 +384,20 @@ async function createCsvIndex(iconIndex: IconIndex) {
 
   for (const [displayName, [metaphors, _]] of Object.entries(iconIndex.icons)) {
     // Escape the display name if it contains commas or quotes
-    const escapedName =
-      displayName.includes(",") || displayName.includes('"') ? `"${displayName.replace(/"/g, '""')}"` : displayName;
+    const escapedName = displayName.includes(",") || displayName.includes('"') ? `"${displayName.replace(/"/g, '""')}"` : displayName;
 
     // Join metaphors with comma and escape if necessary
     // Replace multi space or new lines with a single space
     const metaphorString = metaphors.join(",").replace(/\s+/g, " ").trim();
 
-    const escapedMetaphors =
-      metaphorString.includes(",") || metaphorString.includes('"')
-        ? `"${metaphorString.replace(/"/g, '""')}"`
-        : metaphorString;
+    const escapedMetaphors = metaphorString.includes(",") || metaphorString.includes('"') ? `"${metaphorString.replace(/"/g, '""')}"` : metaphorString;
 
     csvContent += `${escapedName},${escapedMetaphors}\n`;
   }
 
   await writeFile(resolve("public", "index.csv"), csvContent);
   console.log("CSV index created successfully");
-  logEntry('csv', 'info', `CSV index created with ${Object.keys(iconIndex.icons).length} icons`);
+  logEntry("csv", "info", `CSV index created with ${Object.keys(iconIndex.icons).length} icons`);
 }
 
 async function saveMetadata(metadata: MetadataMap) {
@@ -417,7 +415,7 @@ async function saveMetadata(metadata: MetadataMap) {
       try {
         await writeFile(filePath, JSON.stringify({ name, metaphor, options }, null, 2), "utf-8");
       } catch (error) {
-        logEntry('metadata', 'warn', `Failed to save metadata for ${name}`, { error: String(error) });
+        logEntry("metadata", "warn", `Failed to save metadata for ${name}`, { error: String(error) });
         errors++;
       }
       updateProgress(++progress, totalMetadata, "Saving metadata", errors);
