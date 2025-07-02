@@ -226,23 +226,13 @@ async function createEmojiToIconMapping() {
       }
     }
     
-    // Create single-emoji-only mappings for final output
-    const singleEmojiMappings: EmojiMapping = {};
-    const singleEmojiEntries = Object.entries(emojiToIcon)
-      .filter(([emoji]) => emoji.length === 1)  // Only single-character emojis
-      .sort(([emojiA], [emojiB]) => emojiA.localeCompare(emojiB));  // Sort by emoji key
-    
-    for (const [emoji, iconName] of singleEmojiEntries) {
-      singleEmojiMappings[emoji] = iconName;
-    }
-    
     // Write output files
     logInfo("Writing output files...");
     const outputDir = "scripts/icon-to-emoji-llm";
     
     const emojiToIconPath = resolve(outputDir, "emoji-to-icon.json");
+    const emojiToIconByEmojiPath = resolve(outputDir, "emoji-to-icon-by-emoji.json");
     const emojiTiesPath = resolve(outputDir, "emoji-ties.json");
-    const singleEmojiPath = resolve(outputDir, "single-emoji-to-icon.json");
     
     // Sort emoji mappings alphabetically by icon name (value)
     const sortedEmojiToIcon: EmojiMapping = {};
@@ -253,6 +243,23 @@ async function createEmojiToIconMapping() {
     
     for (const [emoji, iconName] of sortedEmojiEntries) {
       sortedEmojiToIcon[emoji] = iconName;
+    }
+    
+    // Sort emoji mappings alphabetically by emoji key
+    const sortedEmojiToIconByEmoji: EmojiMapping = {};
+    const sortedEmojiKeys = Object.keys(emojiToIcon).sort((a, b) => {
+      // Sort alphabetically by emoji key (using Unicode comparison)
+      const emojiRegex = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
+      const aLength = a.match(emojiRegex)?.length || 0;  
+      const bLength = b.match(emojiRegex)?.length || 0;
+      if (aLength !== bLength) {
+        return aLength - bLength;
+      }
+      return a.localeCompare(b);
+    });
+    
+    for (const emoji of sortedEmojiKeys) {
+      sortedEmojiToIconByEmoji[emoji] = emojiToIcon[emoji];
     }
     
     // Sort emoji ties by length first, then alphabetically
@@ -280,6 +287,16 @@ async function createEmojiToIconMapping() {
       mappings: sortedEmojiToIcon
     };
     
+    const emojiToIconByEmojiData = {
+      generated: new Date().toISOString(),
+      totalMappings: Object.keys(emojiToIcon).length,
+      primaryMappings: primaryMappings,
+      alternativeMappings: alternativeMappings,
+      manualOverrides: manualOverrides,
+      note: "Sorted alphabetically by emoji key. Manual overrides from emoji-ties-manually-broken.json are applied if the file exists.",
+      mappings: sortedEmojiToIconByEmoji
+    };
+    
     const emojiTiesData = {
       generated: new Date().toISOString(),
       totalTies: Object.keys(emojiTies).length,
@@ -287,20 +304,13 @@ async function createEmojiToIconMapping() {
       ties: sortedEmojiTies
     };
     
-    const singleEmojiData = {
-      generated: new Date().toISOString(),
-      totalMappings: Object.keys(singleEmojiMappings).length,
-      note: "Contains only single-character emoji mappings (no emoji combinations). Sorted alphabetically by emoji key. Manual overrides from emoji-ties-manually-broken.json are applied if the file exists.",
-      mappings: singleEmojiMappings
-    };
-    
     await writeFile(emojiToIconPath, JSON.stringify(emojiToIconData, null, 2), "utf-8");
+    await writeFile(emojiToIconByEmojiPath, JSON.stringify(emojiToIconByEmojiData, null, 2), "utf-8");
     await writeFile(emojiTiesPath, JSON.stringify(emojiTiesData, null, 2), "utf-8");
-    await writeFile(singleEmojiPath, JSON.stringify(singleEmojiData, null, 2), "utf-8");
     
     logInfo(`✅ emoji-to-icon.json created with ${Object.keys(emojiToIcon).length} mappings`);
+    logInfo(`✅ emoji-to-icon-by-emoji.json created with ${Object.keys(sortedEmojiToIconByEmoji).length} mappings`);
     logInfo(`✅ emoji-ties.json created with ${Object.keys(emojiTies).length} tie records (primary conflicts only)`);
-    logInfo(`✅ single-emoji-to-icon.json created with ${Object.keys(singleEmojiMappings).length} mappings`);
     
     // Summary
     logInfo("=== SUMMARY ===");
@@ -314,7 +324,10 @@ async function createEmojiToIconMapping() {
     logInfo(`  - Alternative emojis discarded: ${alternativeDiscarded}`);
     logInfo(`Manual overrides applied: ${manualOverrides}`);
     logInfo(`Final emoji-to-icon mappings: ${Object.keys(emojiToIcon).length}`);
-    logInfo(`Single emoji mappings: ${Object.keys(singleEmojiMappings).length}`);
+    logInfo(`Output files created: 3`);
+    logInfo(`  - emoji-to-icon.json: sorted by icon name`);
+    logInfo(`  - emoji-to-icon-by-emoji.json: sorted by emoji key`);
+    logInfo(`  - emoji-ties.json: sorted by emoji length then alphabetically`);
     logInfo(`Emoji ties recorded: ${Object.keys(emojiTies).length} (primary conflicts only)`);
     logInfo("=== END SUMMARY ===");
     

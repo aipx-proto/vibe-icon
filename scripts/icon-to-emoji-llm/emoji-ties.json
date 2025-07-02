@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-02T22:56:14.582Z",
+  "generated": "2025-07-02T23:22:51.694Z",
   "totalTies": 444,
   "note": "Only contains primary emoji conflicts (primary vs primary). Alternative emoji conflicts are not included. Sorted by emoji length (shorter first), then alphabetically within each length group. To manually override tie-breaking, copy this file to 'emoji-ties-manually-broken.json' and reorder the arrays - the first item in each array will be used as the winner.",
   "ties": {
