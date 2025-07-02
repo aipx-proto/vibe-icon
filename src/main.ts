@@ -48,7 +48,7 @@ fromEvent(aiSearchButton, "click")
             query: searchInput.value.trim(),
           },
         },
-        [channel.port2]
+        [channel.port2],
       );
 
       channel.port1.start();
@@ -59,7 +59,7 @@ fromEvent(aiSearchButton, "click")
             resolve(event.data); // Resolve with the whole data object
             channel.port1.close();
           },
-          { once: true }
+          { once: true },
         );
       });
     }),
@@ -87,7 +87,7 @@ fromEvent(aiSearchButton, "click")
           }
         }
       }
-    })
+    }),
   )
   .subscribe();
 
@@ -118,7 +118,7 @@ selectedIcon$
         // Clear details panel when no icon is selected
         render(html``, detailsContainer);
       }
-    })
+    }),
   )
   .subscribe();
 
@@ -172,7 +172,7 @@ fromEvent(searchInput, "input")
         {
           searchQuery: searchInput.value.trim(),
         },
-        [channel.port2]
+        [channel.port2],
       );
 
       channel.port1.start();
@@ -183,7 +183,7 @@ fromEvent(searchInput, "input")
             resolve(event.data); // Resolve with the whole data object
             channel.port1.close();
           },
-          { once: true }
+          { once: true },
         );
       });
     }),
@@ -193,7 +193,8 @@ fromEvent(searchInput, "input")
 
       if (error) {
         searchState = "error";
-        searchErrorMessage = typeof error === "string" ? error : error.message || "Keyword search failed. Please try again.";
+        searchErrorMessage =
+          typeof error === "string" ? error : error.message || "Keyword search failed. Please try again.";
         currentResults = [];
         renderResults(currentResults, 0);
       } else {
@@ -210,6 +211,6 @@ fromEvent(searchInput, "input")
           }
         }
       }
-    })
+    }),
   )
   .subscribe();

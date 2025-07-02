@@ -41,7 +41,10 @@ self.onmessage = async (event: MessageEvent) => {
 const indexAsync = decompressIndex();
 
 async function askAI(settings: any, query: string): Promise<SearchResult[]> {
-  const [openai, iconSheet] = await Promise.all([import("openai"), fetch(`${import.meta.env.BASE_URL}/index.csv`).then((res) => res.text())]);
+  const [openai, iconSheet] = await Promise.all([
+    import("openai"),
+    fetch(`${import.meta.env.BASE_URL}/index.csv`).then((res) => res.text()),
+  ]);
 
   const client = new openai.AzureOpenAI({
     endpoint: settings.endpoint,
@@ -100,7 +103,9 @@ async function searchIcons(query: string) {
   const lowerquery = query.toLowerCase();
   const results: SearchResult[] = index.icons
     .filter((icon) => {
-      return isEmpty ? true : icon.lowerName.includes(lowerquery) || icon.metaphors.some((metaphor) => metaphor.includes(lowerquery));
+      return isEmpty
+        ? true
+        : icon.lowerName.includes(lowerquery) || icon.metaphors.some((metaphor) => metaphor.includes(lowerquery));
     })
     .map((icon) => ({
       ...icon,
@@ -192,7 +197,9 @@ function getMatchScore(icon: InMemoryIcon, query: string): number {
 
 async function decompressIndex() {
   const basename = import.meta.env.BASE_URL;
-  const iconsIndex = await fetch(`${basename}/index.min.json`).then((response) => response.json() as Promise<IconIndex>);
+  const iconsIndex = await fetch(`${basename}/index.min.json`).then(
+    (response) => response.json() as Promise<IconIndex>,
+  );
 
   const commit = iconsIndex.commit;
   const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options, sizes]]) => {

@@ -162,7 +162,9 @@ async function buildIconIndex(commitId: string): Promise<{
           return null;
         }
       } catch (error) {
-        logEntry("processing", "warn", `Skipping folder ${folder}: cannot read SVG directory`, { error: String(error) });
+        logEntry("processing", "warn", `Skipping folder ${folder}: cannot read SVG directory`, {
+          error: String(error),
+        });
         errors++;
         updateProgress(++progress, assetFolders.length, "Processing icons", errors);
         return null;
@@ -220,7 +222,7 @@ async function buildIconIndex(commitId: string): Promise<{
       return { name: displayName, data: [metaphor, targetOptions, allSizes] as [string[], IconOption[], number[]] };
     }, 8),
     filter((icon) => icon !== null && icon.data[1].length > 0), // Filter out null results
-    toArray()
+    toArray(),
   );
 
   const iconEntries = await lastValueFrom(icons$);
@@ -233,10 +235,12 @@ async function buildIconIndex(commitId: string): Promise<{
           .filter((entry) => entry !== null)
           .map(({ name, data }) => {
             return [name, data];
-          })
+          }),
       ),
     },
-    metadata: Object.fromEntries(Array.from(metadataMap.entries()).map(([name, { metaphor, options }]) => [name, { metaphor, options }])),
+    metadata: Object.fromEntries(
+      Array.from(metadataMap.entries()).map(([name, { metaphor, options }]) => [name, { metaphor, options }]),
+    ),
     iconDirMap,
   };
 }
@@ -270,7 +274,13 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
 
   let progress = 0;
   let errors = 0;
-  let stats: { allSizes: Record<number, number>; targetSize: Record<number, number>; styles: Record<string, number>; totalIcons: number; totalSVGs: number } = {
+  let stats: {
+    allSizes: Record<number, number>;
+    targetSize: Record<number, number>;
+    styles: Record<string, number>;
+    totalIcons: number;
+    totalSVGs: number;
+  } = {
     allSizes: {},
     targetSize: {},
     styles: {},
@@ -361,7 +371,12 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             stats.allSizes[size]++;
             stats.totalSVGs++;
           } catch (error) {
-            logEntry("compiling", "warn", `Failed to process ${svgFileName}`, { error: String(error), displayName, size, style });
+            logEntry("compiling", "warn", `Failed to process ${svgFileName}`, {
+              error: String(error),
+              displayName,
+              size,
+              style,
+            });
             errors++;
           }
         }
@@ -371,7 +386,7 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
       stats.targetSize[targetSize] ??= 0;
       stats.targetSize[targetSize]++;
       stats.totalIcons++;
-    }, 8)
+    }, 8),
   );
 
   await lastValueFrom(icons$);
@@ -384,13 +399,17 @@ async function createCsvIndex(iconIndex: IconIndex) {
 
   for (const [displayName, [metaphors, _]] of Object.entries(iconIndex.icons)) {
     // Escape the display name if it contains commas or quotes
-    const escapedName = displayName.includes(",") || displayName.includes('"') ? `"${displayName.replace(/"/g, '""')}"` : displayName;
+    const escapedName =
+      displayName.includes(",") || displayName.includes('"') ? `"${displayName.replace(/"/g, '""')}"` : displayName;
 
     // Join metaphors with comma and escape if necessary
     // Replace multi space or new lines with a single space
     const metaphorString = metaphors.join(",").replace(/\s+/g, " ").trim();
 
-    const escapedMetaphors = metaphorString.includes(",") || metaphorString.includes('"') ? `"${metaphorString.replace(/"/g, '""')}"` : metaphorString;
+    const escapedMetaphors =
+      metaphorString.includes(",") || metaphorString.includes('"')
+        ? `"${metaphorString.replace(/"/g, '""')}"`
+        : metaphorString;
 
     csvContent += `${escapedName},${escapedMetaphors}\n`;
   }
@@ -419,7 +438,7 @@ async function saveMetadata(metadata: MetadataMap) {
         errors++;
       }
       updateProgress(++progress, totalMetadata, "Saving metadata", errors);
-    }, 8)
+    }, 8),
   );
 
   await lastValueFrom(metadata$);

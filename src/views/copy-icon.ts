@@ -4,7 +4,7 @@ export async function copyIconToClipboard(
   svgContent: string,
   targetElement: HTMLElement,
   successMessage: string = "✅ Copied",
-  errorMessage: string = "❌ Error"
+  errorMessage: string = "❌ Error",
 ) {
   // Remove any existing overlay first
   const existingOverlay = targetElement.querySelector(".copy-overlay");

@@ -57,14 +57,19 @@ export function initKeyboardNavigation({
           if (document.activeElement === searchInput) return;
           event.preventDefault();
           if (detailsContainer.contains(document.activeElement)) {
-            const selectedIconElement = resultsContainer.querySelector('.icon[data-selected="true"]') as HTMLButtonElement;
+            const selectedIconElement = resultsContainer.querySelector(
+              '.icon[data-selected="true"]',
+            ) as HTMLButtonElement;
             if (selectedIconElement) {
               selectedIconElement.focus();
               selectedIconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
             }
             return;
           }
-          if (document.activeElement?.classList.contains("icon") && document.activeElement?.getAttribute("data-selected") === "true") {
+          if (
+            document.activeElement?.classList.contains("icon") &&
+            document.activeElement?.getAttribute("data-selected") === "true"
+          ) {
             searchInput.focus();
             searchInput.select();
             return;
@@ -74,7 +79,9 @@ export function initKeyboardNavigation({
         if (event.key === "Enter" && document.activeElement?.classList.contains("icon")) {
           event.preventDefault();
           requestAnimationFrame(() => {
-            const firstHtmlButton = detailsContainer.querySelector(".icon-info menu button:first-child") as HTMLButtonElement;
+            const firstHtmlButton = detailsContainer.querySelector(
+              ".icon-info menu button:first-child",
+            ) as HTMLButtonElement;
             firstHtmlButton?.focus();
           });
           return;
@@ -105,7 +112,9 @@ export function initKeyboardNavigation({
         if (visibleResults.length === 0) return;
 
         const currentSelectedIconValue = selectedIcon$.value;
-        const currentIndex = currentSelectedIconValue ? visibleResults.findIndex((icon) => icon.name === currentSelectedIconValue.name) : -1;
+        const currentIndex = currentSelectedIconValue
+          ? visibleResults.findIndex((icon) => icon.name === currentSelectedIconValue.name)
+          : -1;
         let newIndex = currentIndex;
 
         const iconGrid = resultsContainer.querySelector(".icon-grid");
@@ -114,7 +123,10 @@ export function initKeyboardNavigation({
         if (!firstIconElement) return;
 
         const iconStyle = window.getComputedStyle(firstIconElement as HTMLElement);
-        const iconWidth = (firstIconElement as HTMLElement).offsetWidth + parseFloat(iconStyle.marginLeft) + parseFloat(iconStyle.marginRight);
+        const iconWidth =
+          (firstIconElement as HTMLElement).offsetWidth +
+          parseFloat(iconStyle.marginLeft) +
+          parseFloat(iconStyle.marginRight);
         const gridWidth = (iconGrid as HTMLElement).offsetWidth;
         const columns = Math.max(1, Math.floor(gridWidth / iconWidth));
 
@@ -140,7 +152,9 @@ export function initKeyboardNavigation({
                   const nextIconToSelect = currentResults[currentIndex + columns]; // Use original currentResults
                   if (nextIconToSelect) {
                     selectedIcon$.next(nextIconToSelect);
-                    const iconElement = resultsContainer.querySelector(`[data-filename="${nextIconToSelect.filename}"]`) as HTMLElement;
+                    const iconElement = resultsContainer.querySelector(
+                      `[data-filename="${nextIconToSelect.filename}"]`,
+                    ) as HTMLElement;
                     iconElement?.focus();
                     iconElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
                   }
@@ -167,7 +181,9 @@ export function initKeyboardNavigation({
                   const nextIconToSelect = currentResults[currentIndex + 1]; // Use original currentResults
                   if (nextIconToSelect) {
                     selectedIcon$.next(nextIconToSelect);
-                    const iconElement = resultsContainer.querySelector(`[data-filename="${nextIconToSelect.filename}"]`) as HTMLElement;
+                    const iconElement = resultsContainer.querySelector(
+                      `[data-filename="${nextIconToSelect.filename}"]`,
+                    ) as HTMLElement;
                     iconElement?.focus();
                     iconElement?.scrollIntoView({ behavior: "smooth", block: "nearest" });
                   }
@@ -181,14 +197,20 @@ export function initKeyboardNavigation({
             return;
         }
 
-        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < Math.min(currentResults.length, getDisplayLimit())) {
+        if (
+          newIndex !== currentIndex &&
+          newIndex >= 0 &&
+          newIndex < Math.min(currentResults.length, getDisplayLimit())
+        ) {
           // Ensure newIndex is within bounds of potentially updated visibleResults after render
           const newVisibleResults = currentResults.slice(0, getDisplayLimit());
           if (newIndex < newVisibleResults.length) {
             const newIcon = newVisibleResults[newIndex];
             selectedIcon$.next(newIcon);
             requestAnimationFrame(() => {
-              const iconElement = resultsContainer.querySelector(`[data-filename="${newIcon.filename}"]`) as HTMLElement;
+              const iconElement = resultsContainer.querySelector(
+                `[data-filename="${newIcon.filename}"]`,
+              ) as HTMLElement;
               if (iconElement) {
                 iconElement.focus();
                 iconElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -196,7 +218,7 @@ export function initKeyboardNavigation({
             });
           }
         }
-      })
+      }),
     )
     .subscribe();
 }

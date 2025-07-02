@@ -96,18 +96,26 @@ const metadata$ = metadataRequestUrl$.pipe(
     from(
       fetch(url)
         .then((res) => res.json())
-        .catch(() => ({ name: "", options: [] })) // Fallback in case of error
-    )
-  )
+        .catch(() => ({ name: "", options: [] })), // Fallback in case of error
+    ),
+  ),
 );
 
 // fetch latest metadata
-detailsData$.pipe(tap(({ icon }) => metadataRequestUrl$.next(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`))).subscribe();
+detailsData$
+  .pipe(
+    tap(({ icon }) =>
+      metadataRequestUrl$.next(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`),
+    ),
+  )
+  .subscribe();
 
 detailsData$
   .pipe(
     combineLatestWith(preferredSize$, metadata$),
-    switchMap(([{ icon, detailsContainer }, size, metadata]) => renderDetailsStream(metadata, icon, detailsContainer, size))
+    switchMap(([{ icon, detailsContainer }, size, metadata]) =>
+      renderDetailsStream(metadata, icon, detailsContainer, size),
+    ),
   )
   .subscribe();
 
@@ -118,14 +126,21 @@ export async function renderDetails(icon: SearchResult, detailsContainer: HTMLEl
   });
 }
 
-export function renderDetailsStream(metadata: MetadataEntry, icon: SearchResult, detailsContainer: HTMLElement, size: string) {
+export function renderDetailsStream(
+  metadata: MetadataEntry,
+  icon: SearchResult,
+  detailsContainer: HTMLElement,
+  size: string,
+) {
   const getRemoveSVGs = async () => {
     const uniqueSizes = icon.sizes;
 
     /* use subject value, but if not compatible, fallback to auto */
     const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
-    const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
-    const stylesForSize = metadata.options.filter((option) => option.size === preferredNumericSize).map((option) => option.style);
+    const preferredNumericSize = preferredSize === "auto" ? (icon.options.at(0)?.size ?? 24) : parseInt(preferredSize);
+    const stylesForSize = metadata.options
+      .filter((option) => option.size === preferredNumericSize)
+      .map((option) => option.style);
 
     const remoteSVGs = await Promise.all(
       stylesForSize.map(async (style) => {
@@ -142,20 +157,28 @@ export function renderDetailsStream(metadata: MetadataEntry, icon: SearchResult,
           preferredNumericSize,
           parsedSVG: parseSourceSVG(icon.name, preferredNumericSize, svg),
         };
-      })
+      }),
     );
 
     return remoteSVGs;
   };
 
-  return from(getRemoveSVGs()).pipe(switchMap(async (remoteSVGs) => renderDetailsInternal(icon.sizes, remoteSVGs, icon, detailsContainer, size)));
+  return from(getRemoveSVGs()).pipe(
+    switchMap(async (remoteSVGs) => renderDetailsInternal(icon.sizes, remoteSVGs, icon, detailsContainer, size)),
+  );
 }
 
-export async function renderDetailsInternal(sizes: number[], remoteSVGs: RemoteSVG[], icon: SearchResult, detailsContainer: HTMLElement, size: string) {
+export async function renderDetailsInternal(
+  sizes: number[],
+  remoteSVGs: RemoteSVG[],
+  icon: SearchResult,
+  detailsContainer: HTMLElement,
+  size: string,
+) {
   const uniqueSizes = sizes;
   /* use subject value, but if not compatible, fallback to auto */
   const preferredSize = size === "auto" ? "auto" : uniqueSizes.includes(parseInt(size)) ? size : "auto";
-  const preferredNumericSize = preferredSize === "auto" ? icon.options.at(0)?.size ?? 24 : parseInt(preferredSize);
+  const preferredNumericSize = preferredSize === "auto" ? (icon.options.at(0)?.size ?? 24) : parseInt(preferredSize);
 
   const prioritizeRegularStyle = (a: { style: string }) => (a.style === "regular" ? -1 : 1);
   const sortedOptions = icon.options.toSorted(prioritizeRegularStyle);
@@ -196,12 +219,19 @@ ${remoteIcon.parsedSVG.svgInnerHTML
               }
             }}
           >
-            <button data-value="auto" class="${preferredSize === "auto" ? "mri-active" : ""}">Auto (${icon.options.at(0)?.size})</button>
+            <button data-value="auto" class="${preferredSize === "auto" ? "mri-active" : ""}">
+              Auto (${icon.options.at(0)?.size})
+            </button>
             ${repeat(
               uniqueSizes,
               (i) => i,
               (sizeOptions) =>
-                html`<button data-value="${sizeOptions}" class="${sizeOptions.toString() === preferredSize ? "mri-active" : ""}">${sizeOptions}</button>`
+                html`<button
+                  data-value="${sizeOptions}"
+                  class="${sizeOptions.toString() === preferredSize ? "mri-active" : ""}"
+                >
+                  ${sizeOptions}
+                </button>`,
             )}
           </div>
         </section>
@@ -231,9 +261,15 @@ ${remoteIcon.parsedSVG.svgInnerHTML
                 <div class="icon-info">
                   <code-snippet .lang=${"html"} .code=${htmlCode}></code-snippet>
                   <menu>
-                    <button @click=${(e: Event) => handleHtmlCopy(htmlCode, e.target as HTMLButtonElement)}>HTML</button>
+                    <button @click=${(e: Event) => handleHtmlCopy(htmlCode, e.target as HTMLButtonElement)}>
+                      HTML
+                    </button>
                     <button @click=${(e: Event) => handleSvgCopy(svgUrl, e.target as HTMLButtonElement)}>SVG</button>
-                    <button @click=${(e: Event) => handleDownload(svgUrl, downloadFileName, e.target as HTMLButtonElement)}>Download</button>
+                    <button
+                      @click=${(e: Event) => handleDownload(svgUrl, downloadFileName, e.target as HTMLButtonElement)}
+                    >
+                      Download
+                    </button>
                   </menu>
                 </div>
               </div>
@@ -256,7 +292,7 @@ ${remoteIcon.parsedSVG.svgInnerHTML
                   `
 <!-- ${option.style} style -->
 <vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>
-                `.trim()
+                `.trim(),
                 )
                 .join("\n\n")}
 
@@ -301,20 +337,22 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
               .map(
                 (option) => `<svg width="${preferredNumericSize}" height="${preferredNumericSize}">
   <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${option.style}" />
-</svg>`
+</svg>`,
               )
               .join("\n\n")}
           ></code-snippet>
         </section>
         <p>
           This is not a Microsoft official project. It is generated from the open source project
-          <a href="https://github.com/microsoft/fluentui-system-icons" target="_blank">Fluent UI System Icons</a>. This site is built with the awesome
-          <a href="https://github.com/aipx-proto/mirai-css/" target="_blank">Mirai CSS</a>, a library for teleporting the apps of the future to here and now.
-          Source code and documentation available on <a href="https://github.com/aipx-proto/vibe-icon" target="_blank">GitHub</a>.
+          <a href="https://github.com/microsoft/fluentui-system-icons" target="_blank">Fluent UI System Icons</a>. This
+          site is built with the awesome
+          <a href="https://github.com/aipx-proto/mirai-css/" target="_blank">Mirai CSS</a>, a library for teleporting
+          the apps of the future to here and now. Source code and documentation available on
+          <a href="https://github.com/aipx-proto/vibe-icon" target="_blank">GitHub</a>.
         </p>
       </div>
     `,
-    detailsContainer
+    detailsContainer,
   );
 }
 export interface RemoteSVG {
@@ -339,7 +377,8 @@ function parseSourceSVG(iconName: string, preferredNumericSize: number, code: st
     path.setAttribute("fill", "currentColor");
   });
 
-  const viewbox = svgDom.querySelector("svg")?.getAttribute("viewBox") ?? `0 0 ${preferredNumericSize} ${preferredNumericSize}`;
+  const viewbox =
+    svgDom.querySelector("svg")?.getAttribute("viewBox") ?? `0 0 ${preferredNumericSize} ${preferredNumericSize}`;
 
   const displaySVG = `
 <svg xmlns="http://www.w3.org/2000/svg" data-icon="${iconName}" width="${preferredNumericSize}" height="${preferredNumericSize}" viewBox="${viewbox}">

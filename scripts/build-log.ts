@@ -2,7 +2,7 @@
 interface BuildLogEntry {
   timestamp: string;
   stage: string;
-  level: 'info' | 'warn' | 'error';
+  level: "info" | "warn" | "error";
   message: string;
   details?: any;
 }
@@ -34,25 +34,25 @@ export const buildLog: BuildLog = {
     stageErrors: {
       processing: 0,
       compiling: 0,
-      metadata: 0
-    }
+      metadata: 0,
+    },
   },
-  entries: []
+  entries: [],
 };
 
-export function logEntry(stage: string, level: 'info' | 'warn' | 'error', message: string, details?: any) {
+export function logEntry(stage: string, level: "info" | "warn" | "error", message: string, details?: any) {
   buildLog.entries.push({
     timestamp: new Date().toISOString(),
     stage,
     level,
     message,
-    details
+    details,
   });
-  
-  if (level === 'error' || level === 'warn') {
+
+  if (level === "error" || level === "warn") {
     buildLog.summary.totalErrors++;
-    if (stage === 'processing') buildLog.summary.stageErrors.processing++;
-    else if (stage === 'compiling') buildLog.summary.stageErrors.compiling++;
-    else if (stage === 'metadata') buildLog.summary.stageErrors.metadata++;
+    if (stage === "processing") buildLog.summary.stageErrors.processing++;
+    else if (stage === "compiling") buildLog.summary.stageErrors.compiling++;
+    else if (stage === "metadata") buildLog.summary.stageErrors.metadata++;
   }
 }

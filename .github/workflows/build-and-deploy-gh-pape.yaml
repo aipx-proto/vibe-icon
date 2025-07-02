@@ -42,7 +42,7 @@ jobs:
           npm install
           npm run setup
           npm run build
-          npm run test --if-present
+          npm run test
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

@@ -9,6 +9,8 @@
     "build:site": "vite build --config vite-site.config.ts",
     "build:lib": "vite build --config vite.config.ts",
     "build:types": "tsc lib/index.ts --showConfig --module esnext --declaration --emitDeclarationOnly --outDir dist ",
+    "format": "prettier --write \"{src,scripts,lib}/**/*.{ts,css,md}\"",
+    "test": "prettier --check \"{src,scripts,lib}/**/*.{ts,css,md}\"",
     "preview": "vite preview"
   },
   "types": "dist/index.d.ts",
@@ -26,6 +28,7 @@
   "module": "./dist/index.js",
   "devDependencies": {
     "@types/node": "^24.0.1",
+    "prettier": "^3.6.2",
     "tsx": "^4.20.3",
     "typescript": "~5.8.3",
     "vite": "^6.3.5"

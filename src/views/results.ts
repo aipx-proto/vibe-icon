@@ -28,7 +28,10 @@ export function renderResults(results: SearchResult[], limit: number, context: R
 
   // Handle different states
   if (context.searchState === "error") {
-    render(html` <div class="result-status">⚠️ ${context.searchErrorMessage || "An unexpected error occurred."}</div> `, context.resultsContainer);
+    render(
+      html` <div class="result-status">⚠️ ${context.searchErrorMessage || "An unexpected error occurred."}</div> `,
+      context.resultsContainer,
+    );
     return;
   }
 
@@ -40,11 +43,18 @@ export function renderResults(results: SearchResult[], limit: number, context: R
   if (context.searchState === "completed" && results.length === 0) {
     if (context.isAISearch) {
       render(
-        html` <div class="result-status">No results from AI search. Please elaborate what the icon is used for and try again</div> `,
-        context.resultsContainer
+        html`
+          <div class="result-status">
+            No results from AI search. Please elaborate what the icon is used for and try again
+          </div>
+        `,
+        context.resultsContainer,
       );
     } else if (context.searchInput.value.trim() !== "") {
-      render(html` <div class="result-status">No exact match. Press <kbd>ENTER</kbd> to try AI search</div> `, context.resultsContainer);
+      render(
+        html` <div class="result-status">No exact match. Press <kbd>ENTER</kbd> to try AI search</div> `,
+        context.resultsContainer,
+      );
     } else {
       // Empty search input, don't show any message
       render(html``, context.resultsContainer);
@@ -95,7 +105,7 @@ export function renderResults(results: SearchResult[], limit: number, context: R
                 </div>
               </button>
             `;
-          }
+          },
         )}
       </div>
       ${hasMore
@@ -113,7 +123,7 @@ export function renderResults(results: SearchResult[], limit: number, context: R
           `
         : null}
     `,
-    context.resultsContainer
+    context.resultsContainer,
   );
 
   // Observe new icons after render

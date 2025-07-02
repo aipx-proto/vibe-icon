@@ -39,7 +39,7 @@ export function createIconObserver(): IntersectionObserver {
     {
       rootMargin: "50px", // Start loading 50px before entering viewport
       threshold: 0.01,
-    }
+    },
   );
 
   return observer;
