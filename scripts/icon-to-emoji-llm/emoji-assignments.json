@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-02T20:30:41.748Z",
+  "generated": "2025-07-02T20:58:15.516Z",
   "total": 2733,
   "assignments": [
     {
@@ -3546,127 +3546,127 @@
       "filename": "calendar",
       "name": "Calendar",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗓️",
+      "emoji": "📅",
       "subEmoji": "",
-      "alternativeEmojis": ["📅", "📆"],
-      "similarity": 0.63
+      "alternativeEmojis": ["🗓️"],
+      "similarity": 0.95
     },
     {
       "filename": "calendar-3-day",
       "name": "Calendar 3 Day",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗃️",
-      "subEmoji": "",
-      "alternativeEmojis": ["🗂️", "🗄️"],
-      "similarity": 0.69
+      "emoji": "📅",
+      "subEmoji": "▦",
+      "alternativeEmojis": ["🗂️"],
+      "similarity": 0.77
     },
     {
       "filename": "calendar-add",
       "name": "Calendar Add",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗃️",
+      "emoji": "📅",
       "subEmoji": "➕",
       "alternativeEmojis": ["🗂️", "🆕"],
-      "similarity": 0.73
+      "similarity": 0.82
     },
     {
       "filename": "calendar-agenda",
       "name": "Calendar Agenda",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗒️",
-      "subEmoji": "",
-      "alternativeEmojis": ["📋", "📄"],
-      "similarity": 0.78
+      "emoji": "📅",
+      "subEmoji": "≡",
+      "alternativeEmojis": ["📝"],
+      "similarity": 0.79
     },
     {
       "filename": "calendar-arrow-counterclockwise",
       "name": "Calendar Arrow Counterclockwise",
       "metaphor": ["time", "date", "planning", "arrow counterclockwise"],
       "emoji": "📅",
-      "subEmoji": "⬇️",
-      "alternativeEmojis": ["🗓️", "📆"],
-      "similarity": 0.7
+      "subEmoji": "",
+      "alternativeEmojis": ["🗓️"],
+      "similarity": 0.92
     },
     {
       "filename": "calendar-arrow-down",
       "name": "Calendar Arrow Down",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📥",
-      "subEmoji": "",
-      "alternativeEmojis": ["⬇️", "💾"],
-      "similarity": 0.68
+      "emoji": "📅",
+      "subEmoji": "⬇️",
+      "alternativeEmojis": ["🗂️", "📥"],
+      "similarity": 0.9
     },
     {
       "filename": "calendar-arrow-repeat-all",
       "name": "Calendar Arrow Repeat All",
       "metaphor": ["time", "date", "planning", "arrow clockwise", "meeting", "recurring"],
-      "emoji": "🔄",
-      "subEmoji": "",
-      "alternativeEmojis": ["🔃", "♻️"],
-      "similarity": 0.8
+      "emoji": "📅",
+      "subEmoji": "🔄",
+      "alternativeEmojis": ["🔃", "🔁"],
+      "similarity": 0.91
     },
     {
       "filename": "calendar-arrow-right",
       "name": "Calendar Arrow Right",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📤",
-      "subEmoji": "",
-      "alternativeEmojis": ["➡️", "📧"],
-      "similarity": 0.72
+      "emoji": "📅",
+      "subEmoji": "➡️",
+      "alternativeEmojis": ["➡️"],
+      "similarity": 0.9
     },
     {
       "filename": "calendar-assistant",
       "name": "Calendar Assistant",
       "metaphor": ["time", "date", "planning", "ai"],
-      "emoji": "🗃️",
+      "emoji": "📅",
       "subEmoji": "⚡",
-      "alternativeEmojis": ["🗂️", "💡"],
-      "similarity": 0.69
+      "alternativeEmojis": ["🔋"],
+      "similarity": 0.8
     },
     {
       "filename": "calendar-cancel",
       "name": "Calendar Cancel",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗃️",
+      "emoji": "📅",
       "subEmoji": "❌",
-      "alternativeEmojis": ["🗑️", "⛔"],
-      "similarity": 0.69
+      "alternativeEmojis": ["🗑️"],
+      "similarity": 0.82
     },
     {
       "filename": "calendar-chat",
       "name": "Calendar Chat",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗃️",
+      "emoji": "📅",
       "subEmoji": "💬",
-      "alternativeEmojis": ["💬", "💭"],
-      "similarity": 0.69
+      "alternativeEmojis": ["💭"],
+      "similarity": 0.78
     },
     {
       "filename": "calendar-checkmark",
       "name": "Calendar Checkmark",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗃️",
+      "emoji": "📅",
       "subEmoji": "✔️",
       "alternativeEmojis": ["✅"],
-      "similarity": 0.7
+      "similarity": 0.83
     },
     {
       "filename": "calendar-clock",
       "name": "Calendar Clock",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗃️",
-      "subEmoji": "🕒",
-      "alternativeEmojis": ["⌛", "⏳"],
-      "similarity": 0.69
+      "emoji": "📅",
+      "subEmoji": "⏰",
+      "alternativeEmojis": ["🕒"],
+      "similarity": 0.8
     },
     {
       "filename": "calendar-data-bar",
       "name": "Calendar Data Bar",
       "metaphor": ["time", "date", "planning", "data", "chart", "graph"],
-      "emoji": "🗃️",
+      "emoji": "📅",
       "subEmoji": "📊",
       "alternativeEmojis": ["📈", "📉"],
-      "similarity": 0.69
+      "similarity": 0.78
     },
     {
       "filename": "calendar-date",
@@ -3675,97 +3675,97 @@
       "emoji": "📅",
       "subEmoji": "",
       "alternativeEmojis": ["🗓️"],
-      "similarity": 0.99
+      "similarity": 0.95
     },
     {
       "filename": "calendar-day",
       "name": "Calendar Day",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "",
-      "alternativeEmojis": ["🗄️", "🗃️"],
-      "similarity": 0.65
+      "alternativeEmojis": ["🗓️"],
+      "similarity": 0.9
     },
     {
       "filename": "calendar-edit",
       "name": "Calendar Edit",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗓️",
-      "subEmoji": "✏️",
-      "alternativeEmojis": ["📝", "🗃️"],
-      "similarity": 0.61
+      "emoji": "📅",
+      "subEmoji": "📝",
+      "alternativeEmojis": ["🗓️", "✏️"],
+      "similarity": 0.91
     },
     {
       "filename": "calendar-empty",
       "name": "Calendar Empty",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "⬜",
+      "emoji": "📅",
       "subEmoji": "",
-      "alternativeEmojis": ["◻️"],
-      "similarity": 0.55
+      "alternativeEmojis": ["🗓️", "🗃️"],
+      "similarity": 0.9
     },
     {
       "filename": "calendar-error",
       "name": "Calendar Error",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "❗",
-      "alternativeEmojis": ["📢", "⚠️"],
-      "similarity": 0.6
+      "alternativeEmojis": ["🛑"],
+      "similarity": 0.87
     },
     {
       "filename": "calendar-eye",
       "name": "Calendar Eye",
       "metaphor": [],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "👁️",
-      "alternativeEmojis": ["🔍"],
-      "similarity": 0.61
+      "alternativeEmojis": ["🗓️", "🧐"],
+      "similarity": 0.85
     },
     {
       "filename": "calendar-info",
       "name": "Calendar Info",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "❗",
       "alternativeEmojis": ["⚠️"],
-      "similarity": 0.6
+      "similarity": 0.87
     },
     {
       "filename": "calendar-link",
       "name": "Calendar Link",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "🔗",
-      "alternativeEmojis": ["🔒"],
-      "similarity": 0.62
+      "alternativeEmojis": ["⛓️", "🔒"],
+      "similarity": 0.84
     },
     {
       "filename": "calendar-lock",
       "name": "Calendar Lock",
       "metaphor": ["time", "date", "planning", "lock"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "🔒",
       "alternativeEmojis": ["🔐"],
-      "similarity": 0.66
+      "similarity": 0.87
     },
     {
       "filename": "calendar-mail",
       "name": "Calendar Mail",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "✉️",
-      "alternativeEmojis": ["📨"],
-      "similarity": 0.67
+      "alternativeEmojis": ["📧"],
+      "similarity": 0.84
     },
     {
       "filename": "calendar-mention",
       "name": "Calendar Mention",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🗂️",
+      "emoji": "📅",
       "subEmoji": "📧",
-      "alternativeEmojis": ["🆕", "✉️"],
-      "similarity": 0.64
+      "alternativeEmojis": ["📬", "📭", "📨"],
+      "similarity": 0.85
     },
     {
       "filename": "calendar-month",
@@ -3773,26 +3773,26 @@
       "metaphor": ["time", "date", "planning", "dataset"],
       "emoji": "🎲",
       "subEmoji": "",
-      "alternativeEmojis": ["⚀", "⚅"],
-      "similarity": 0.82
+      "alternativeEmojis": ["⚃", "⚅", "➕"],
+      "similarity": 0.83
     },
     {
       "filename": "calendar-multiple",
       "name": "Calendar Multiple",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📑",
+      "emoji": "📅",
       "subEmoji": "",
-      "alternativeEmojis": ["🗂️", "🗃️"],
-      "similarity": 0.7
+      "alternativeEmojis": ["🗓️", "📆"],
+      "similarity": 0.92
     },
     {
       "filename": "calendar-note",
       "name": "Calendar Note",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📑",
-      "subEmoji": "📋",
-      "alternativeEmojis": ["🗂️"],
-      "similarity": 0.67
+      "emoji": "📅",
+      "subEmoji": "📝",
+      "alternativeEmojis": ["📄", "🗒️"],
+      "similarity": 0.88
     },
     {
       "filename": "calendar-pattern",
@@ -3800,62 +3800,62 @@
       "metaphor": ["time", "date", "planning"],
       "emoji": "🎬",
       "subEmoji": "",
-      "alternativeEmojis": ["🎥", "📽️"],
-      "similarity": 0.87
+      "alternativeEmojis": ["📅", "🎥"],
+      "similarity": 0.8
     },
     {
       "filename": "calendar-person",
       "name": "Calendar Person",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📑",
-      "subEmoji": "👤",
-      "alternativeEmojis": ["👥"],
-      "similarity": 0.67
+      "emoji": "📅",
+      "subEmoji": "🧑",
+      "alternativeEmojis": ["👤", "👥"],
+      "similarity": 0.82
     },
     {
       "filename": "calendar-phone",
       "name": "Calendar Phone",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📑",
+      "emoji": "📅",
       "subEmoji": "📱",
-      "alternativeEmojis": ["🖥️", "💻"],
-      "similarity": 0.65
+      "alternativeEmojis": ["☎️"],
+      "similarity": 0.82
     },
     {
       "filename": "calendar-play",
       "name": "Calendar Play",
       "metaphor": ["time", "date", "planning", "play"],
-      "emoji": "📺",
+      "emoji": "📅",
       "subEmoji": "▶️",
-      "alternativeEmojis": ["🎦"],
-      "similarity": 0.79
+      "alternativeEmojis": ["🎦", "🎬"],
+      "similarity": 0.85
     },
     {
       "filename": "calendar-question-mark",
       "name": "Calendar Question Mark",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📑",
+      "emoji": "📅",
       "subEmoji": "❓",
       "alternativeEmojis": ["❔"],
-      "similarity": 0.63
+      "similarity": 0.8
     },
     {
       "filename": "calendar-record",
       "name": "Calendar Record",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "📑",
+      "emoji": "📅",
       "subEmoji": "⭕",
-      "alternativeEmojis": ["🔘"],
-      "similarity": 0.63
+      "alternativeEmojis": ["⚪", "🔵"],
+      "similarity": 0.83
     },
     {
       "filename": "calendar-reply",
       "name": "Calendar Reply",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "↩️",
-      "subEmoji": "",
-      "alternativeEmojis": ["🔙"],
-      "similarity": 0.69
+      "emoji": "📅",
+      "subEmoji": "↩️",
+      "alternativeEmojis": ["🔄", "↪️"],
+      "similarity": 0.81
     },
     {
       "filename": "calendar-search",
@@ -3863,17 +3863,17 @@
       "metaphor": ["time", "date", "planning"],
       "emoji": "🔍",
       "subEmoji": "",
-      "alternativeEmojis": ["🗂️", "🗃️"],
-      "similarity": 0.9
+      "alternativeEmojis": ["🔎"],
+      "similarity": 0.92
     },
     {
       "filename": "calendar-settings",
       "name": "Calendar Settings",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🛠️",
+      "emoji": "⚙️",
       "subEmoji": "",
-      "alternativeEmojis": ["⚙️", "🔧"],
-      "similarity": 0.82
+      "alternativeEmojis": ["🔧", "🛠️"],
+      "similarity": 0.91
     },
     {
       "filename": "calendar-shield",
@@ -3881,8 +3881,8 @@
       "metaphor": ["time", "date", "planning", "security", "protection"],
       "emoji": "🛡️",
       "subEmoji": "",
-      "alternativeEmojis": ["🔒", "🗂️"],
-      "similarity": 0.84
+      "alternativeEmojis": ["🔐", "🔒"],
+      "similarity": 0.91
     },
     {
       "filename": "calendar-sparkle",
@@ -3890,8 +3890,8 @@
       "metaphor": ["time", "date", "planning"],
       "emoji": "✨",
       "subEmoji": "",
-      "alternativeEmojis": ["🆕", "🌟"],
-      "similarity": 0.75
+      "alternativeEmojis": ["🌟", "⭐"],
+      "similarity": 0.88
     },
     {
       "filename": "calendar-star",
@@ -3899,8 +3899,8 @@
       "metaphor": ["time", "date", "planning"],
       "emoji": "⭐",
       "subEmoji": "",
-      "alternativeEmojis": ["🌟", "✨", "🆕"],
-      "similarity": 0.81
+      "alternativeEmojis": ["🌟"],
+      "similarity": 0.87
     },
     {
       "filename": "calendar-sync",
@@ -3909,25 +3909,25 @@
       "emoji": "🔄",
       "subEmoji": "",
       "alternativeEmojis": ["🔁"],
-      "similarity": 0.79
+      "similarity": 0.86
     },
     {
       "filename": "calendar-template",
       "name": "Calendar Template",
       "metaphor": ["template", "building blocks", "guidance", "calendar", "event", "date", "time"],
-      "emoji": "🗂️",
+      "emoji": "📄",
       "subEmoji": "",
-      "alternativeEmojis": ["🗃️"],
+      "alternativeEmojis": ["🗂️", "🗃️"],
       "similarity": 0.83
     },
     {
       "filename": "calendar-today",
       "name": "Calendar Today",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "⬆️",
+      "emoji": "📤",
       "subEmoji": "",
-      "alternativeEmojis": ["⤴️", "↗️"],
-      "similarity": 0.74
+      "alternativeEmojis": ["⬆️", "↗️"],
+      "similarity": 0.85
     },
     {
       "filename": "calendar-toolbox",
@@ -3935,8 +3935,8 @@
       "metaphor": ["time", "date", "planning"],
       "emoji": "🔒",
       "subEmoji": "",
-      "alternativeEmojis": ["🛡️", "🔏"],
-      "similarity": 0.81
+      "alternativeEmojis": ["🔐", "🛡️"],
+      "similarity": 0.85
     },
     {
       "filename": "calendar-video",
@@ -3944,35 +3944,35 @@
       "metaphor": ["time", "date", "planning"],
       "emoji": "🎥",
       "subEmoji": "",
-      "alternativeEmojis": ["📹", "📽️"],
-      "similarity": 0.85
+      "alternativeEmojis": ["📹"],
+      "similarity": 0.82
     },
     {
       "filename": "calendar-week-numbers",
       "name": "Calendar Week Numbers",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "☰",
-      "subEmoji": "",
-      "alternativeEmojis": ["📑", "🗂️"],
-      "similarity": 0.57
+      "emoji": "📅",
+      "subEmoji": "⋮",
+      "alternativeEmojis": ["🗂️"],
+      "similarity": 0.7
     },
     {
       "filename": "calendar-week-start",
       "name": "Calendar Week Start",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "🟦",
-      "subEmoji": "⎸",
-      "alternativeEmojis": ["◼️", "〰️"],
-      "similarity": 0.42
+      "emoji": "📅",
+      "subEmoji": "┃",
+      "alternativeEmojis": ["🗃️"],
+      "similarity": 0.67
     },
     {
       "filename": "calendar-work-week",
       "name": "Calendar Work Week",
       "metaphor": ["time", "date", "planning"],
-      "emoji": "⬛",
-      "subEmoji": "⬛",
-      "alternativeEmojis": ["🔳"],
-      "similarity": 0.43
+      "emoji": "📅",
+      "subEmoji": "▭",
+      "alternativeEmojis": ["🗄️"],
+      "similarity": 0.65
     },
     {
       "filename": "call",
