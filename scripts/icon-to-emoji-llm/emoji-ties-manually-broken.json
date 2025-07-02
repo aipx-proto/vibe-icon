@@ -1,7 +1,7 @@
 {
-  "generated": "2025-07-02T22:56:14.582Z",
+  "generated": "2025-07-02T22:15:12.956Z",
   "totalTies": 444,
-  "note": "Only contains primary emoji conflicts (primary vs primary). Alternative emoji conflicts are not included. Sorted by emoji length (shorter first), then alphabetically within each length group. To manually override tie-breaking, copy this file to 'emoji-ties-manually-broken.json' and reorder the arrays - the first item in each array will be used as the winner.",
+  "note": "Only contains primary emoji conflicts (primary vs primary). Alternative emoji conflicts are not included. Sorted by emoji length (shorter first), then alphabetically within each length group.",
   "ties": {
     "¶": [
       "text-paragraph-direction-left",
@@ -67,15 +67,15 @@
       "align-start-vertical"
     ],
     "⏩": [
-      "fast-forward",
       "chevron-double-right",
+      "fast-forward",
       "next",
       "play-multiple",
       "play-settings"
     ],
     "⏪": [
-      "rewind",
       "chevron-double-left",
+      "rewind",
       "replay"
     ],
     "⏫": [
@@ -87,8 +87,8 @@
       "text-direction-rotate-90-left"
     ],
     "⏬": [
-      "arrow-circle-down-double",
       "chevron-double-down",
+      "arrow-circle-down-double",
       "arrow-split",
       "double-swipe-down",
       "text-direction-vertical",
@@ -102,9 +102,9 @@
       "dual-screen-clock"
     ],
     "⏳": [
+      "hourglass",
       "hourglass-half",
-      "hourglass-one-quarter",
-      "hourglass"
+      "hourglass-one-quarter"
     ],
     "│": [
       "divider-short",
@@ -122,13 +122,13 @@
       "layout-row-two-split-top"
     ],
     "♿": [
+      "accessibility",
       "accessibility-checkmark",
       "layout-column-one-third-right",
       "accessibility-more",
       "accessibility-question-mark",
       "layout-column-three-focus-left",
       "layout-column-three-focus-right",
-      "accessibility",
       "accessibility-error",
       "layout-column-one-third-right-hint",
       "layout-column-three-focus-center"
@@ -160,8 +160,8 @@
       "circle-highlight"
     ],
     "⛅": [
-      "weather-partly-cloudy-day",
-      "weather-cloudy"
+      "weather-cloudy",
+      "weather-partly-cloudy-day"
     ],
     "⛶": [
       "arrow-expand",
@@ -172,9 +172,9 @@
       "autocorrect"
     ],
     "✅": [
+      "checkmark",
       "presence-available",
       "checkmark-circle",
-      "checkmark",
       "task-list-add",
       "checkmark-starburst",
       "braces-checkmark",
@@ -201,8 +201,8 @@
       "flow-sparkle"
     ],
     "❌": [
-      "presence-offline",
       "dismiss",
+      "presence-offline",
       "dismiss-circle",
       "dismiss-square-multiple",
       "dismiss-square",
@@ -237,9 +237,9 @@
       "math-symbols"
     ],
     "➖": [
+      "subtract",
       "line-horizontal-2-dashes-solid",
       "presence-dnd",
-      "subtract",
       "slide-text-title",
       "subtract-circle-arrow-back",
       "line-horizontal-1-dash-dot-dash",
@@ -295,8 +295,8 @@
       "star-line-horizontal-3"
     ],
     "⭕": [
-      "radio-button",
       "circle",
+      "radio-button",
       "circle-hint",
       "more-circle",
       "circle-sparkle",
@@ -323,6 +323,7 @@
       "component-2-double-tap-swipe-down"
     ],
     "☰": [
+      "navigation",
       "text-column-one",
       "text-column-one-semi-narrow",
       "text-column-one-wide",
@@ -435,9 +436,9 @@
       "arrow-step-over"
     ],
     "⌨️": [
+      "keyboard",
       "keyboard-123",
       "keyboard-layout-split",
-      "keyboard",
       "keyboard-dock",
       "keyboard-layout-float",
       "keyboard-layout-one-handed-left",
@@ -451,6 +452,7 @@
       "control-button"
     ],
     "⏭️": [
+      "next",
       "previous-frame",
       "next-frame"
     ],
@@ -513,7 +515,7 @@
       "line-horizontal-1-dashes"
     ],
     "⏹️": [
-      "record-stop",
+      "stop",
       "checkbox-indeterminate",
       "subtract-circle",
       "subtract-square",
@@ -525,8 +527,8 @@
       "button"
     ],
     "▶️": [
+      "chevron-right",
       "ios-chevron-right",
-      "caret-right",
       "play",
       "triangle-right",
       "video-clip",
@@ -537,8 +539,8 @@
       "navigation-play"
     ],
     "◀️": [
+      "chevron-left",
       "ios-arrow",
-      "caret-left",
       "triangle-left"
     ],
     "◻️": [
@@ -716,6 +718,7 @@
       "text-superscript"
     ],
     "❤️": [
+      "heart",
       "heart-circle",
       "heart-circle-hint",
       "heart-off"
@@ -748,8 +751,8 @@
       "gather"
     ],
     "⤴️": [
-      "arrow-curve-up-left",
       "arrow-curve-up-right",
+      "arrow-curve-up-left",
       "dock",
       "arrow-turn-down-up",
       "arrow-turn-left-up",
@@ -758,8 +761,8 @@
       "arrow-autofit-up"
     ],
     "⤵️": [
-      "arrow-curve-down-left",
       "arrow-curve-down-right",
+      "arrow-curve-down-left",
       "arrow-turn-left-right",
       "arrow-turn-right",
       "arrow-turn-right-left",
@@ -779,9 +782,9 @@
       "padding-left"
     ],
     "⬆️": [
+      "arrow-up",
       "arrow-sort",
       "arrow-sort-up",
-      "arrow-up",
       "keyboard-shift",
       "chevron-circle-up",
       "arrow-export-up",
@@ -1070,8 +1073,8 @@
       "emoji-hand"
     ],
     "👍": [
-      "thumb-like-dislike",
       "thumb-like",
+      "thumb-like-dislike",
       "scan-thumb-up"
     ],
     "👏": [
@@ -1092,12 +1095,12 @@
       "window-play"
     ],
     "👤": [
+      "person",
       "person-circle",
       "person-square",
       "person-available",
       "person-edit",
       "person-error",
-      "person",
       "person-head-hint",
       "person-heart",
       "person-home",
@@ -1177,8 +1180,8 @@
       "filter-sync"
     ],
     "💬": [
-      "chat-multiple",
       "chat",
+      "chat-multiple",
       "comment-multiple",
       "chat-empty",
       "comment",
@@ -1320,6 +1323,7 @@
       "folder-swap"
     ],
     "📄": [
+      "document",
       "receipt",
       "document-one-page",
       "document-one-page-multiple",
@@ -1336,7 +1340,6 @@
       "document-checkmark",
       "document-border-print",
       "document-text",
-      "document",
       "document-100",
       "document-contract",
       "document-multiple",
@@ -1478,10 +1481,10 @@
       "calendar-work-week"
     ],
     "📈": [
+      "data-trending",
       "arrow-trending-lines",
       "arrow-trending",
       "data-area",
-      "data-trending",
       "arrow-trending-checkmark",
       "arrow-trending-settings",
       "arrow-trending-sparkle",
@@ -1508,8 +1511,8 @@
       "align-center-vertical"
     ],
     "📋": [
-      "clipboard-3-day",
       "clipboard",
+      "clipboard-3-day",
       "clipboard-task",
       "clipboard-text",
       "clipboard-task-list",
@@ -1613,12 +1616,12 @@
     ],
     "📖": [
       "book-open",
+      "book",
       "immersive-reader",
       "book-open-globe",
       "book-open-lightbulb",
       "class",
       "book-open-microphone",
-      "book",
       "learning-app",
       "book-toolbox"
     ],
@@ -1658,13 +1661,13 @@
       "scan-text"
     ],
     "📞": [
+      "call",
       "call-add",
       "call-checkmark",
       "slide-text-call",
       "call-connecting",
       "call-dismiss",
       "call-outbound",
-      "call",
       "call-rectangle-landscape",
       "call-square",
       "call-transfer",
@@ -1679,15 +1682,15 @@
       "sound-source"
     ],
     "📣": [
-      "megaphone-circle",
       "megaphone",
+      "megaphone-circle",
       "megaphone-loud"
     ],
     "📤": [
       "mail-inbox-arrow-up",
+      "share",
       "tray-item-remove",
       "mail-inbox-arrow-right",
-      "share",
       "share-multiple",
       "panel-bottom-expand",
       "panel-top-contract",
@@ -1701,8 +1704,8 @@
       "send-copy"
     ],
     "📥": [
-      "mail-inbox",
       "mail-inbox-arrow-down",
+      "mail-inbox",
       "mail-inbox-add",
       "tray-item-add",
       "panel-bottom-contract",
@@ -1881,9 +1884,9 @@
       "video-sync"
     ],
     "🔀": [
+      "arrow-shuffle",
       "arrow-routing",
       "arrow-routing-rectangle-multiple",
-      "arrow-shuffle",
       "merge",
       "arrow-paragraph",
       "stream-input-output",
@@ -1942,9 +1945,9 @@
       "card-ui-portrait-flip"
     ],
     "🔇": [
+      "speaker-off",
       "live-off",
       "speaker-mute",
-      "speaker-off",
       "megaphone-off",
       "translate-off"
     ],
@@ -1976,8 +1979,8 @@
       "slide-transition"
     ],
     "🔌": [
-      "battery-6",
       "connector",
+      "battery-6",
       "plug-connected",
       "plug-connected-add",
       "plug-disconnected",
@@ -2080,8 +2083,8 @@
       "flowchart"
     ],
     "🔠": [
-      "text-baseline",
       "text-case-title",
+      "text-baseline",
       "text-header-1",
       "text-header-1-lines",
       "text-header-1-lines-caret",
@@ -2203,10 +2206,12 @@
       "scan-object"
     ],
     "🔼": [
+      "chevron-up",
       "chevron-up-down",
       "double-tap-swipe-up"
     ],
     "🔽": [
+      "chevron-down",
       "triangle-down",
       "double-tap-swipe-down",
       "arrow-outline-up-right"
@@ -2299,16 +2304,17 @@
       "seat-add"
     ],
     "🦻": [
+      "communication",
       "communication-person",
-      "communication-shield",
-      "communication"
+      "communication-shield"
     ],
     "🧊": [
+      "cube",
+      "box-multiple",
       "box-multiple-arrow-left",
       "box-multiple-arrow-right",
       "box-multiple-search",
-      "box-multiple-checkmark",
-      "box-multiple"
+      "box-multiple-checkmark"
     ],
     "🧑": [
       "person-add",
@@ -2475,9 +2481,9 @@
       "layout-row-two-focus-top-settings"
     ],
     "🙂": [
+      "emoji-smile-slight",
       "emoji-add",
       "emoji",
-      "emoji-smile-slight",
       "emoji-hint",
       "sticker-add",
       "sticker"
