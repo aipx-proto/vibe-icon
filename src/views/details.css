@@ -95,3 +95,13 @@
 .coding-agent-prompt {
   margin-top: 8px;
 }
+
+.subtle-text {
+  color: var(--mri-color-text-3);
+  a {
+    color: inherit;
+    &:hover {
+      color: var(--mri-color-text-1);
+    }
+  }
+}

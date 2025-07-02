@@ -24,9 +24,12 @@ async function main() {
   logEntry("main", "info", "Build process started");
 
   console.log("Fetching repository assets...");
-  const { commitId } = await fetchRepoAssets();
+  const { commitId, commitTime } = await fetchRepoAssets();
   buildLog.commit = commitId;
-  logEntry("fetch", "info", `Repository assets fetched successfully. Commit: ${commitId}`);
+
+  const pkgVersion = await getPackageVersion();
+
+  logEntry("fetch", "info", `Repository assets fetched successfully. Commit: ${commitId}, time: ${commitTime}`);
 
   console.log("Building icon index...");
   const { iconIndex, metadata, iconDirMap } = await buildIconIndex(commitId);
@@ -41,11 +44,15 @@ async function main() {
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
+    writeFile(
+      resolve("public", "package.json"),
+      JSON.stringify({ commit: commitId, time: commitTime, version: pkgVersion }),
+    ),
     createCsvIndex(iconIndex),
   ]);
 
   console.log("Saving metadata files...");
-  await saveMetadata(metadata);
+  await saveIconMetadata(metadata);
 
   buildLog.endTime = new Date().toISOString();
 
@@ -70,6 +77,17 @@ async function main() {
   console.log(`Size stats: ${JSON.stringify(sizeStats, null, 2)}`);
 }
 
+async function getPackageVersion(): Promise<string> {
+  try {
+    const packageJsonPath = resolve(outDir, "packages/svg-icons/package.json");
+    const packageJson = JSON.parse(await readFile(packageJsonPath, "utf-8"));
+    return packageJson.version || "?.?.?";
+  } catch (error) {
+    logEntry("version", "warn", "Failed to read package.json version", { error: String(error) });
+    return "?.?.?";
+  }
+}
+
 async function fetchRepoAssets(): Promise<{ commitId: string; commitTime: number }> {
   // download the entire folder content from https://github.com/microsoft/fluentui-system-icons/tree/main/assets
   // save them to outDir/fluentui-system-icons/assets
@@ -85,7 +103,7 @@ async function fetchRepoAssets(): Promise<{ commitId: string; commitTime: number
   const commands = [
     `git clone --filter=blob:none --sparse https://github.com/microsoft/fluentui-system-icons.git ${outDir}`,
     `cd ${outDir} && git sparse-checkout init --cone`,
-    `cd ${outDir} && git sparse-checkout set assets`,
+    `cd ${outDir} && git sparse-checkout set assets packages/svg-icons`,
     `cd ${outDir} && git rev-parse HEAD`,
   ];
 
@@ -419,7 +437,7 @@ async function createCsvIndex(iconIndex: IconIndex) {
   logEntry("csv", "info", `CSV index created with ${Object.keys(iconIndex.icons).length} icons`);
 }
 
-async function saveMetadata(metadata: MetadataMap) {
+async function saveIconMetadata(metadata: MetadataMap) {
   // render each meatadata entry to <public>/<icon-name>.metadata.json
   const publicDir = resolve("public");
   await mkdirSync(publicDir, { recursive: true });

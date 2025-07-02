@@ -17,6 +17,10 @@ async function optimizeSVG(input: string): Promise<string> {
   return optimize(input).data;
 }
 
+const packageAsync: Promise<{ commit: string; time: number; version: string }> = fetch(
+  `${import.meta.env.BASE_URL}/package.json?cacheBuster=${Date.now()}`, // Adding cache buster to avoid caching issues,
+).then((response) => response.json());
+
 // Helper functions for copy and download
 async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
@@ -182,6 +186,8 @@ export async function renderDetailsInternal(
 
   const prioritizeRegularStyle = (a: { style: string }) => (a.style === "regular" ? -1 : 1);
   const sortedOptions = icon.options.toSorted(prioritizeRegularStyle);
+
+  const packageInfo = await packageAsync;
 
   const advancedInstallIconOptionsStrings = remoteSVGs.toSorted(prioritizeRegularStyle).map((remoteIcon) => {
     return `  <symbol id="${iconIdPrefix}${displayNameToVibeIconSVGFilename(remoteIcon.name)}-${remoteIcon.preferredNumericSize}-${
@@ -350,6 +356,19 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
           the apps of the future to here and now. Source code and documentation available on
           <a href="https://github.com/aipx-proto/vibe-icon" target="_blank">GitHub</a>.
         </p>
+
+        <div class="subtle-text">
+          ${new Date(packageInfo.time).toLocaleDateString()} ·
+          <a
+            href="https://github.com/microsoft/fluentui-system-icons/releases/tag/${packageInfo.version}"
+            target="_blank"
+            >v${packageInfo.version}</a
+          >
+          ·
+          <a href="https://github.com/microsoft/fluentui-system-icons/commit/${packageInfo.commit}" target="_blank"
+            >${packageInfo.commit.slice(0, 7)}</a
+          >
+        </div>
       </div>
     `,
     detailsContainer,
