@@ -2,7 +2,7 @@ import { html, render } from "lit-html";
 import { repeat } from "lit-html/directives/repeat.js";
 import { combineLatestWith, distinctUntilChanged, from, Subject, switchMap, tap } from "rxjs";
 import packageJson from "../../package.json";
-import { displayNameToSourceAssetSVGFilename, displayNameToVibeIconSVGFilename } from "../../scripts/normalize-name";
+import { displayNameToVibeIconSVGFilename } from "../../scripts/normalize-name";
 import type { MetadataEntry, SearchResult } from "../../typings/icon-index";
 import { renderTemplate } from "../render-template"; // Added import
 import codingAgentPrompt from "./coding-agent-prompt.md?raw";
@@ -11,6 +11,11 @@ import "./details.css";
 import { preferredSize$ } from "./size";
 
 const iconIdPrefix = "icon-";
+
+async function optimizeSVG(input: string): Promise<string> {
+  const { optimize } = await import("svgo/browser");
+  return optimize(input).data;
+}
 
 // Helper functions for copy and download
 async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
@@ -33,7 +38,9 @@ async function handleHtmlCopy(htmlCode: string, button: HTMLButtonElement) {
 async function handleSvgCopy(svgUrl: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
   try {
-    const svgContent = await fetch(svgUrl).then((response) => response.text());
+    const svgContent = await fetch(svgUrl)
+      .then((response) => response.text())
+      .then(optimizeSVG);
     await navigator.clipboard.writeText(svgContent);
     // Consider adding a user notification
     console.log("SVG copied to clipboard");
@@ -48,14 +55,18 @@ async function handleSvgCopy(svgUrl: string, button: HTMLButtonElement) {
 }
 
 async function handlePreviewCopy(svgUrl: string, previewElement: HTMLElement) {
-  const svgContent = await fetch(svgUrl).then((response) => response.text());
+  const svgContent = await fetch(svgUrl)
+    .then((response) => response.text())
+    .then(optimizeSVG);
   await copyIconToClipboard(svgContent, previewElement);
 }
 
 async function handleDownload(svgUrl: string, fileName: string, button: HTMLButtonElement) {
   const originalText = button.textContent;
   try {
-    const svgContent = await fetch(svgUrl).then((response) => response.text());
+    const svgContent = await fetch(svgUrl)
+      .then((response) => response.text())
+      .then(optimizeSVG);
     const blob = new Blob([svgContent], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -118,9 +129,10 @@ export function renderDetailsStream(metadata: MetadataEntry, icon: SearchResult,
 
     const remoteSVGs = await Promise.all(
       stylesForSize.map(async (style) => {
-        const url = `https://esm.sh/@fluentui/svg-icons/icons/${displayNameToSourceAssetSVGFilename(metadata.name)}_${preferredNumericSize}_${style}.svg?raw`;
+        const url = `${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${style}.svg`;
         const svg = await fetch(url)
           .then((res) => res.text())
+          .then(optimizeSVG)
           .catch(() => `<!-- Error fetching SVG for style ${style} -->`);
 
         return {
