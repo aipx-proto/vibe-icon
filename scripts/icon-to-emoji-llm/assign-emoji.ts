@@ -241,7 +241,7 @@ async function assignEmojiToIcons(iconGroup: NamedIconGroup): Promise<EmojiAssig
           }
         ],
         max_tokens: 2000, // Increased for multiple icons
-        temperature: 0.9,
+        temperature: 0.2,
       },
       {
         timeout: 30000, // 30 seconds timeout for groups
