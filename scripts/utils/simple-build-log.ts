@@ -17,7 +17,7 @@ export function logError(message: string, error?: any) {
   const errorDetails = error ? ` - ${error.message || error}` : "";
   const logEntry = `[${timestamp}] ERROR: ${message}${errorDetails}`;
   logMessages.push(logEntry);
-  console.error(message, error); // Keep console output for immediate feedback
+  console.error(" ! ", message, error); // Keep console output for immediate feedback
 }
 
 export async function saveLogToFile(name: string) {

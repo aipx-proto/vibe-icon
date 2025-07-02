@@ -12,3 +12,14 @@ export interface PngMetadata extends Omit<MetadataEntry, "options"> {
 }
 
 export interface EmojiAssignment extends PngMetadata, EmojiAssignmentResponse {}
+
+export interface NamedIconGroup {
+  name: string;
+  files: string[];
+}
+
+export interface GroupAssignmentResult {
+  groupName: string;
+  generated: string;
+  assignments: EmojiAssignment[];
+}

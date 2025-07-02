@@ -4,6 +4,7 @@ dist-icons
 dist-site
 public/**/*
 pngs/
+emoji-groups/
 .env.aoai
 
 # negate

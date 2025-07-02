@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile } from "fs/promises";
+import { readdir, readFile, writeFile, mkdir } from "fs/promises";
 import { resolve, extname, basename } from "path";
 import { existsSync, readFileSync } from "fs";
 import { config } from "dotenv";
@@ -8,7 +8,7 @@ import { updateProgress } from "../utils/progress-bar";
 import { logError, saveLogToFile } from "../utils/simple-build-log";
 import type { MetadataEntry } from "../../typings/icon-index";
 import { createFewShotExamples, createUserMessage } from "./create-examples";
-import type { EmojiAssignmentResponse, EmojiAssignment } from "./types";
+import type { EmojiAssignmentResponse, EmojiAssignment, NamedIconGroup, GroupAssignmentResult } from "./types";
 import { groupIconSets } from "./group-icon-sets";
 
 const systemPromptMd = readFileSync(resolve("scripts", "icon-to-emoji-llm", "systemPrompt.md"), "utf-8");
@@ -19,6 +19,7 @@ config({ path: resolve(envFile) });
 
 const pngDir = resolve("pngs");
 const publicDir = resolve("public");
+const emojiGroupsDir = resolve("scripts", "icon-to-emoji-llm", "emoji-groups");
 const outputFile = resolve("scripts", "icon-to-emoji-llm", "emoji-assignments.json");
 
 const fewShotExamples = await createFewShotExamples(pngDir);
@@ -59,6 +60,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Create emoji-groups directory if it doesn't exist
+  await mkdir(emojiGroupsDir, { recursive: true });
+
   console.log("Scanning for PNG files...");
   const allPngFiles = await getPngFiles();
 
@@ -70,26 +74,38 @@ async function main() {
   // Group icons by the first word of their filename
   const allIconGroups = groupIconSets(allPngFiles);
 
-  // TEMP: Limit to first N groups for testing
-  const iconGroups = allIconGroups; // .slice(0, 1);
-  const totalIcons = iconGroups.flat().length;
+  // Filter out groups that have already been processed
+  const { pendingGroups, existingGroups } = await filterProcessedGroups(allIconGroups);
+
+  const totalIcons = allIconGroups.reduce((sum, group) => sum + group.files.length, 0);
+  const pendingIcons = pendingGroups.reduce((sum, group) => sum + group.files.length, 0);
+  const existingIcons = existingGroups.reduce((sum, group) => sum + group.assignments.length, 0);
 
   console.log(`Found ${allPngFiles.length} PNG files total, grouped into ${allIconGroups.length} groups`);
+  console.log(`${existingGroups.length} groups already processed (${existingIcons} icons)`);
+  console.log(`${pendingGroups.length} groups pending (${pendingIcons} icons)`);
 
-  let progress = 0;
+  if (pendingGroups.length === 0) {
+    console.log("All groups have been processed! Aggregating results...");
+    await aggregateResults(allIconGroups);
+    return;
+  }
+
+  let progress = existingIcons; // Start with already processed icons
   let errors = 0;
-  const assignments: EmojiAssignment[] = [];
+  const newAssignments: EmojiAssignment[] = [];
 
-  const analysis$ = from(iconGroups).pipe(
+  const analysis$ = from(pendingGroups).pipe(
     mergeMap(async (iconGroup) => {
       try {
         const groupAssignments = await assignEmojiToIcons(iconGroup);
-        assignments.push(...groupAssignments);
-        progress += iconGroup.length;
+        await saveGroupResult(iconGroup.name, groupAssignments);
+        newAssignments.push(...groupAssignments);
+        progress += iconGroup.files.length;
       } catch (error) {
-        logError(`Failed to assign emojis for group ${iconGroup[0]}`, error);
-        errors += iconGroup.length;
-        progress += iconGroup.length;
+        logError(`Failed to assign emojis for group ${iconGroup.name}`, error);
+        errors += iconGroup.files.length;
+        progress += iconGroup.files.length;
       }
       updateProgress(progress, totalIcons, "Analyzing icon groups for emoji assignment", errors);
     }, 2) // Process 2 groups concurrently to avoid rate limits
@@ -97,11 +113,12 @@ async function main() {
 
   await lastValueFrom(analysis$);
 
-  // Save assignments to JSON file
-  await saveAssignments(assignments);
+  // Aggregate all results (existing + new)
+  await aggregateResults(allIconGroups);
 
   console.log(`\nEmoji assignment completed!`);
-  console.log(`Successfully assigned emojis to ${assignments.length} icons.`);
+  console.log(`Successfully processed ${newAssignments.length} new icons.`);
+  console.log(`Total icons processed: ${progress - errors} / ${totalIcons}`);
   if (errors > 0) {
     console.log(`${errors} files failed to process.`);
   }
@@ -115,12 +132,82 @@ async function main() {
   console.log(`Total time elapsed: ${elapsedSeconds} seconds`);
 }
 
-async function assignEmojiToIcons(iconGroup: string[]): Promise<EmojiAssignment[]> {
+async function filterProcessedGroups(iconGroups: NamedIconGroup[]): Promise<{
+  pendingGroups: NamedIconGroup[];
+  existingGroups: GroupAssignmentResult[];
+}> {
+  const pendingGroups: NamedIconGroup[] = [];
+  const existingGroups: GroupAssignmentResult[] = [];
+
+  for (const group of iconGroups) {
+    const groupFilePath = resolve(emojiGroupsDir, `${group.name}.json`);
+
+    if (existsSync(groupFilePath)) {
+      try {
+        const content = await readFile(groupFilePath, "utf-8");
+        const result = JSON.parse(content) as GroupAssignmentResult;
+        existingGroups.push(result);
+        console.log(` > Skipping already processed group: ${group.name} (${result.assignments.length} icons)`);
+      } catch (error) {
+        logError(` > Failed to read existing group file ${group.name}.json, will reprocess`, error);
+        pendingGroups.push(group);
+      }
+    } else {
+      pendingGroups.push(group);
+    }
+  }
+
+  return { pendingGroups, existingGroups };
+}
+
+async function saveGroupResult(groupName: string, assignments: EmojiAssignment[]): Promise<void> {
+  const result: GroupAssignmentResult = {
+    groupName,
+    generated: new Date().toISOString(),
+    assignments: assignments.sort((a, b) => a.filename?.localeCompare(b.filename) || 0),
+  };
+
+  const groupFilePath = resolve(emojiGroupsDir, `${groupName}.json`);
+  await writeFile(groupFilePath, JSON.stringify(result, null, 2), "utf-8");
+  console.log(` > Saved group result: ${groupName} (${assignments.length} icons)`);
+}
+
+async function aggregateResults(allIconGroups: NamedIconGroup[]): Promise<void> {
+  const allAssignments: EmojiAssignment[] = [];
+
+  for (const group of allIconGroups) {
+    const groupFilePath = resolve(emojiGroupsDir, `${group.name}.json`);
+
+    if (existsSync(groupFilePath)) {
+      try {
+        const content = await readFile(groupFilePath, "utf-8");
+        const result = JSON.parse(content) as GroupAssignmentResult;
+        allAssignments.push(...result.assignments);
+      } catch (error) {
+        logError(`Failed to read group file ${group.name}.json during aggregation`, error);
+      }
+    }
+  }
+
+  // Sort by filename
+  const sortedAssignments = allAssignments.sort((a, b) => a.filename?.localeCompare(b.filename) || 0);
+
+  const output = {
+    generated: new Date().toISOString(),
+    total: allAssignments.length,
+    assignments: sortedAssignments,
+  };
+
+  await writeFile(outputFile, JSON.stringify(output, null, 2), "utf-8");
+  console.log(`Aggregated ${allAssignments.length} assignments to ${outputFile}`);
+}
+
+async function assignEmojiToIcons(iconGroup: NamedIconGroup): Promise<EmojiAssignment[]> {
   // Create user messages for each icon in the group
   const userMessages = [];
   const iconMetadata: { filename: string; name: string; metaphor: string[] }[] = [];
 
-  for (const pngFilePath of iconGroup) {
+  for (const pngFilePath of iconGroup.files) {
     const filename = basename(pngFilePath, ".png");
     const { name, metaphor } = await readIconMetadata(filename);
 
@@ -175,10 +262,7 @@ async function assignEmojiToIcons(iconGroup: string[]): Promise<EmojiAssignment[
       subEmoji: assignment.subEmoji || "",
     }));
   } catch (error) {
-    logError(
-      `Failed to get AI response for group that includes: ${iconGroup.map((f) => basename(f, ".png")).join(", ")}`,
-      error
-    );
+    logError(`Failed to get AI response for group ${iconGroup.name}`, error);
     // Return fallback assignments for all icons in the group
     return iconMetadata.map((meta) => ({
       ...meta,
@@ -218,19 +302,6 @@ async function readIconMetadata(name: string): Promise<{ name: string; metaphor:
       metaphor: [],
     };
   }
-}
-
-async function saveAssignments(assignments: EmojiAssignment[]): Promise<void> {
-  // Sort by filename only
-  const sortedAssignments = assignments.sort((a, b) => a.filename?.localeCompare(b.filename) || 0);
-
-  const output = {
-    generated: new Date().toISOString(),
-    total: assignments.length,
-    assignments: sortedAssignments,
-  };
-
-  await writeFile(outputFile, JSON.stringify(output, null, 2), "utf-8");
 }
 
 const exampleResponse: EmojiAssignmentResponse = {
