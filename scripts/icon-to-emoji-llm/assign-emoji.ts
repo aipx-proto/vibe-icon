@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile, mkdir } from "fs/promises";
+import { readdir, readFile, writeFile, mkdir, unlink } from "fs/promises";
 import { resolve, extname, basename } from "path";
 import { existsSync, readFileSync } from "fs";
 import { config } from "dotenv";
@@ -99,6 +99,9 @@ async function main() {
     mergeMap(async (iconGroup) => {
       try {
         const groupAssignments = await assignEmojiToIcons(iconGroup);
+        if (!groupAssignments) {
+          throw new Error(`Failed to assign emojis for group ${iconGroup.name}`);
+        }
         await saveGroupResult(iconGroup.name, groupAssignments);
         newAssignments.push(...groupAssignments);
         progress += iconGroup.files.length;
@@ -145,6 +148,11 @@ async function filterProcessedGroups(iconGroups: NamedIconGroup[]): Promise<{
     if (existsSync(groupFilePath)) {
       try {
         const content = await readFile(groupFilePath, "utf-8");
+        if (content.includes("n/a")) {
+          // || group.name.includes("-extras")) {
+          unlink(groupFilePath);
+          throw new Error(`Group file ${group.name}.json contains n/a assignments`);
+        }
         const result = JSON.parse(content) as GroupAssignmentResult;
         existingGroups.push(result);
         console.log(` > Skipping already processed group: ${group.name} (${result.assignments.length} icons)`);
@@ -202,7 +210,7 @@ async function aggregateResults(allIconGroups: NamedIconGroup[]): Promise<void> 
   console.log(`Aggregated ${allAssignments.length} assignments to ${outputFile}`);
 }
 
-async function assignEmojiToIcons(iconGroup: NamedIconGroup): Promise<EmojiAssignment[]> {
+async function assignEmojiToIcons(iconGroup: NamedIconGroup): Promise<EmojiAssignment[] | null> {
   // Create user messages for each icon in the group
   const userMessages = [];
   const iconMetadata: { filename: string; name: string; metaphor: string[] }[] = [];
@@ -227,6 +235,10 @@ async function assignEmojiToIcons(iconGroup: NamedIconGroup): Promise<EmojiAssig
           },
           ...fewShotExamples,
           ...userMessages,
+          {
+            role: "user",
+            content: `Please assign emojis to all ${iconGroup.files.length} icons. Don't skip any icons.`
+          }
         ],
         max_tokens: 2000, // Increased for multiple icons
         temperature: 0.9,
@@ -263,14 +275,14 @@ async function assignEmojiToIcons(iconGroup: NamedIconGroup): Promise<EmojiAssig
     }));
   } catch (error) {
     logError(`Failed to get AI response for group ${iconGroup.name}`, error);
-    // Return fallback assignments for all icons in the group
-    return iconMetadata.map((meta) => ({
-      ...meta,
-      emoji: "n/a",
-      subEmoji: "",
-      alternativeEmojis: [],
-      similarity: 0,
-    }));
+    if (error instanceof Error && error.message.includes("rate limit")) {
+      const retrySeconds = parseInt(error.message.match(/(\d+) seconds/)?.[1] || "30");
+      console.log(` > Rate limit exceeded for group ${iconGroup.name}, will retry after ${retrySeconds} seconds`);
+      await new Promise((resolve) => setTimeout(resolve, retrySeconds * 1000));
+      return assignEmojiToIcons(iconGroup);
+    } else {
+      return null;
+    }
   }
 }
 

@@ -41,7 +41,7 @@ function generateGroupName(files: string[], baseWord: string, index?: number): s
   return groupName;
 }
 
-export function groupIconSets(pngFiles: string[], maxGroupSize: number = 20, minSubgroupSize: number = 4): NamedIconGroup[] {
+export function groupIconSets(pngFiles: string[], maxGroupSize: number = 15, minSubgroupSize: number = 4, maxExtrasGroupSize: number = 10): NamedIconGroup[] {
   // Step 1: Group by first word
   const firstWordGroups = new Map<string, string[]>();
   for (const pngFile of pngFiles) {
@@ -87,9 +87,21 @@ export function groupIconSets(pngFiles: string[], maxGroupSize: number = 20, min
           subgroupIndex++;
         }
       }
+      
+      // Split extras into multiple groups if needed
       if (extrasGroup.length > 0) {
-        const groupName = generateGroupName(extrasGroup, firstWord, subgroupIndex);
-        finalGroups.push({ name: `${firstWord}-extras`, files: extrasGroup });
+        if (extrasGroup.length <= maxExtrasGroupSize) {
+          // Single extras group
+          finalGroups.push({ name: `${firstWord}-extras-1`, files: extrasGroup });
+        } else {
+          // Split into multiple extras groups
+          let extrasIndex = 1;
+          for (let i = 0; i < extrasGroup.length; i += maxExtrasGroupSize) {
+            const chunk = extrasGroup.slice(i, i + maxExtrasGroupSize);
+            finalGroups.push({ name: `${firstWord}-extras-${extrasIndex}`, files: chunk });
+            extrasIndex++;
+          }
+        }
       }
     } else {
       const groupName = generateGroupName(group, firstWord);
