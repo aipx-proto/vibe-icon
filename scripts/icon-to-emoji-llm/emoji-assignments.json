@@ -1,5 +1,5 @@
 {
-  "generated": "2025-07-02T20:58:15.516Z",
+  "generated": "2025-07-02T21:27:38.940Z",
   "total": 2733,
   "assignments": [
     {
@@ -5654,7 +5654,7 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "➕",
-      "alternativeEmojis": ["🌥️", "💾"],
+      "alternativeEmojis": ["🌥️", "📥"],
       "similarity": 0.92
     },
     {
@@ -5662,9 +5662,9 @@
       "name": "Cloud Archive",
       "metaphor": ["storage", "upload", "download", "save", "sync", "box"],
       "emoji": "☁️",
-      "subEmoji": "📥",
-      "alternativeEmojis": ["🗃️"],
-      "similarity": 0.8
+      "subEmoji": "📦",
+      "alternativeEmojis": ["📥", "📦"],
+      "similarity": 0.88
     },
     {
       "filename": "cloud-arrow-down",
@@ -5672,8 +5672,8 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "⬇️",
-      "alternativeEmojis": ["☁️", "📥"],
-      "similarity": 0.95
+      "alternativeEmojis": ["📥", "⬇️"],
+      "similarity": 0.93
     },
     {
       "filename": "cloud-arrow-right",
@@ -5681,8 +5681,8 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "➡️",
-      "alternativeEmojis": ["📤", "⬅️"],
-      "similarity": 0.92
+      "alternativeEmojis": ["📤", "➡️"],
+      "similarity": 0.89
     },
     {
       "filename": "cloud-arrow-up",
@@ -5690,26 +5690,26 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "⬆️",
-      "alternativeEmojis": ["☁️", "📤"],
-      "similarity": 0.95
+      "alternativeEmojis": ["📤", "⬆️"],
+      "similarity": 0.93
     },
     {
       "filename": "cloud-beaker",
       "name": "Cloud Beaker",
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
-      "subEmoji": "⚗️",
-      "alternativeEmojis": ["🧪", "🧫"],
-      "similarity": 0.8
+      "subEmoji": "🧪",
+      "alternativeEmojis": ["⚗️", "🔬"],
+      "similarity": 0.85
     },
     {
       "filename": "cloud-bidirectional",
       "name": "Cloud Bidirectional",
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
-      "subEmoji": "↕️",
-      "alternativeEmojis": ["🔄"],
-      "similarity": 0.85
+      "subEmoji": "⬆️⬇️",
+      "alternativeEmojis": ["🔃", "🔄"],
+      "similarity": 0.81
     },
     {
       "filename": "cloud-checkmark",
@@ -5717,17 +5717,17 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "✔️",
-      "alternativeEmojis": ["✅", "☁️"],
-      "similarity": 0.92
+      "alternativeEmojis": ["✅", "☑️"],
+      "similarity": 0.91
     },
     {
       "filename": "cloud-cube",
       "name": "Cloud Cube",
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
-      "subEmoji": "📦",
-      "alternativeEmojis": ["🧊"],
-      "similarity": 0.85
+      "subEmoji": "🧊",
+      "alternativeEmojis": ["📦", "🗃️"],
+      "similarity": 0.84
     },
     {
       "filename": "cloud-database",
@@ -5735,7 +5735,7 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "🗄️",
-      "alternativeEmojis": ["💽"],
+      "alternativeEmojis": ["🗃️", "🗂️"],
       "similarity": 0.84
     },
     {
@@ -5744,8 +5744,8 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "🖥️",
-      "alternativeEmojis": ["🖥️", "💻"],
-      "similarity": 0.83
+      "alternativeEmojis": ["🌥️"],
+      "similarity": 0.8
     },
     {
       "filename": "cloud-dismiss",
@@ -5753,8 +5753,8 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "❌",
-      "alternativeEmojis": ["🛑", "❎"],
-      "similarity": 0.85
+      "alternativeEmojis": ["🌧️", "⛔"],
+      "similarity": 0.82
     },
     {
       "filename": "cloud-edit",
@@ -5763,7 +5763,7 @@
       "emoji": "☁️",
       "subEmoji": "✏️",
       "alternativeEmojis": ["📝"],
-      "similarity": 0.85
+      "similarity": 0.8
     },
     {
       "filename": "cloud-error",
@@ -5772,7 +5772,7 @@
       "emoji": "☁️",
       "subEmoji": "❗",
       "alternativeEmojis": ["⚠️"],
-      "similarity": 0.84
+      "similarity": 0.82
     },
     {
       "filename": "cloud-flow",
@@ -5780,8 +5780,8 @@
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
       "subEmoji": "🔗",
-      "alternativeEmojis": ["⚙️"],
-      "similarity": 0.8
+      "alternativeEmojis": ["🔄"],
+      "similarity": 0.78
     },
     {
       "filename": "cloud-link",
@@ -5799,15 +5799,15 @@
       "emoji": "🚫",
       "subEmoji": "☁️",
       "alternativeEmojis": ["❌", "☁️"],
-      "similarity": 0.9
+      "similarity": 0.85
     },
     {
       "filename": "cloud-swap",
       "name": "Cloud Swap",
       "metaphor": ["storage", "upload", "download", "save", "sync"],
       "emoji": "☁️",
-      "subEmoji": "➡️",
-      "alternativeEmojis": ["⇄"],
+      "subEmoji": "↔️",
+      "alternativeEmojis": ["🔁"],
       "similarity": 0.8
     },
     {
@@ -5817,7 +5817,7 @@
       "emoji": "☁️",
       "subEmoji": "🔄",
       "alternativeEmojis": ["🔁"],
-      "similarity": 0.83
+      "similarity": 0.8
     },
     {
       "filename": "cloud-words",
@@ -5825,8 +5825,8 @@
       "metaphor": ["edit", "word cloud"],
       "emoji": "☁️",
       "subEmoji": "",
-      "alternativeEmojis": ["⛅"],
-      "similarity": 0.99
+      "alternativeEmojis": ["🌥️"],
+      "similarity": 0.95
     },
     {
       "filename": "clover",
