@@ -16,17 +16,6 @@ export interface IconOption {
   style: string;
 }
 
-export interface InMemoryIndex {
-  commit: string;
-  icons: {
-    name: string;
-    lowerName: string;
-    metaphors: string[];
-    options: string[];
-    sizes: number[];
-  }[];
-}
-
 export interface InMemoryIcon {
   name: string;
   lowerName: string;

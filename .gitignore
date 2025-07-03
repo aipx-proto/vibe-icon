@@ -2,9 +2,14 @@ node_modules
 dist
 dist-icons
 dist-site
-public/**/*
+
+# Icon build output
+public/icons/**/*
+public/index.csv
+public/index.json
+public/index.min.json
+public/package.json
+public/build-log.json
+
 pngs/
 .env.aoai
-
-# negate
-!public/.gitkeep

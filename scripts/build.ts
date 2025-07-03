@@ -41,6 +41,7 @@ async function main() {
   buildLog.sizeStats = sizeStats;
 
   console.log("Creating index files...");
+  
   await Promise.all([
     writeFile(resolve("public", "index.json"), JSON.stringify(iconIndex, null, 2)),
     writeFile(resolve("public", "index.min.json"), JSON.stringify(iconIndex)),
@@ -271,24 +272,26 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
   // - /dist-icons/assets/Add Circle/SVG/ic_fluent_add_circle_20_filled.svg
   // - /dist-icons/assets/Add Circle/SVG/ic_fluent_add_circle_20_regular.svg
   // Sensible icon size output:
-  // - /public/add_circle.svg#filled
-  // - /public/add_circle.svg#regular
+  // - /public/icons/add-circle/add-circle.svg#filled
+  // - /public/icons/add-circle/add-circle.svg#regular
   // Full output:
-  // - /public/add_circle_20_filled.svg
-  // - /public/add_circle_20_regular.svg
-  // - /public/add_circle_24_filled.svg
-  // - /public/add_circle_24_regular.svg
+  // - /public/icons/add-circle/add-circle-20-filled.svg
+  // - /public/icons/add-circle/add-circle-20-regular.svg
+  // - /public/icons/add-circle/add-circle-24-filled.svg
+  // - /public/icons/add-circle/add-circle-24-regular.svg
 
   // console.log(JSON.stringify(iconIndex, null, 2));
 
   const publicDir = resolve("public");
+  const iconsDir = resolve(publicDir, "icons");
 
-  // Ensure public directory exists
+  // Ensure icons directory exists
   // Create empty public directory if it doesn't exist
   try {
-    await rm(publicDir, { recursive: true });
+    await rm(iconsDir, { recursive: true });
   } catch {}
-  mkdirSync(publicDir, { recursive: true });
+  // mkdirSync(publicDir, { recursive: true });
+  mkdirSync(iconsDir, { recursive: true });
 
   let progress = 0;
   let errors = 0;
@@ -357,9 +360,11 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
 
       combinedSvg += "</svg>";
 
-      // Write the combined SVG file
-      const outputPath = resolve(publicDir, `${iconName}.svg`);
+      // Create icon-specific directory and write the combined SVG file
+      const iconFolder = resolve(iconsDir, iconName);
       try {
+        mkdirSync(iconFolder, { recursive: true });
+        const outputPath = resolve(iconFolder, `${iconName}.svg`);
         await writeFile(outputPath, combinedSvg, "utf-8");
       } catch (error) {
         logEntry("compiling", "warn", `Failed to write combined SVG for ${displayName}`, { error: String(error) });
@@ -374,7 +379,8 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
           const svgFileName = `ic_fluent_${codeNameUnderscore}_${size}_${style}.svg`;
           const svgPath = resolve(iconDirMap.get(displayName)!, "SVG", svgFileName);
           const outputFileName = `${iconName}-${size}-${style}.svg`;
-          const outputFilePath = resolve(publicDir, outputFileName);
+          const iconFolder = resolve(iconsDir, iconName);
+          const outputFilePath = resolve(iconFolder, outputFileName);
 
           try {
             let content = await readFile(svgPath, "utf-8");
@@ -382,6 +388,8 @@ async function compileIconSvgs(iconIndex: IconIndex, metadata: MetadataMap, icon
             // Replace fill colors with currentColor for web usage
             content = content.replaceAll(/fill="#\d+"/g, 'fill="currentColor"');
 
+            // Ensure icon folder exists
+            mkdirSync(iconFolder, { recursive: true });
             await writeFile(outputFilePath, content, "utf-8");
             stats.styles[style] ??= 0;
             stats.styles[style]++;
@@ -438,9 +446,11 @@ async function createCsvIndex(iconIndex: IconIndex) {
 }
 
 async function saveIconMetadata(metadata: MetadataMap) {
-  // render each meatadata entry to <public>/<icon-name>.metadata.json
+  // render each meatadata entry to <public>/icons/<icon-name>/<icon-name>.metadata.json
   const publicDir = resolve("public");
-  await mkdirSync(publicDir, { recursive: true });
+  const iconsDir = resolve(publicDir, "icons");
+  // await mkdirSync(publicDir, { recursive: true });
+  await mkdirSync(iconsDir, { recursive: true });
   const totalMetadata = Object.entries(metadata).length;
   let progress = 0;
   let errors = 0;
@@ -448,8 +458,10 @@ async function saveIconMetadata(metadata: MetadataMap) {
   const metadata$ = from(Object.entries(metadata)).pipe(
     mergeMap(async ([name, { metaphor, options }]) => {
       const fileName = displayNameToVibeIconSVGFilename(name);
-      const filePath = resolve(publicDir, `${fileName}.metadata.json`);
+      const iconFolder = resolve(iconsDir, fileName);
+      const filePath = resolve(iconFolder, `${fileName}.metadata.json`);
       try {
+        mkdirSync(iconFolder, { recursive: true });
         await writeFile(filePath, JSON.stringify({ name, metaphor, options }, null, 2), "utf-8");
       } catch (error) {
         logEntry("metadata", "warn", `Failed to save metadata for ${name}`, { error: String(error) });
