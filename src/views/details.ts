@@ -287,7 +287,7 @@ ${remoteIcon.parsedSVG.svgInnerHTML
           <p>Add library script to index.html</p>
           <code-snippet
             .lang=${"html"}
-            .code=${`<script src="https://esm.sh/${packageJson.name}@latest" type="module"></script>`}
+            .code=${`<script src="https://esm.sh/${packageJson.name}" type="module"></script>`}
           ></code-snippet>
           <p>Add icon to HTML</p>
           <code-snippet
