@@ -76,7 +76,7 @@ export function renderResults(results: SearchResult[], limit: number, context: R
             return html`
               <button
                 class="icon"
-                data-filename="${icon.filename}"
+                data-filename="${icon.filename}" 
                 data-style="${icon.options.map((opt) => opt.style).join(",")}"
                 data-selected="${isSelected}"
                 tabindex="${tabIndex}"
@@ -89,7 +89,7 @@ export function renderResults(results: SearchResult[], limit: number, context: R
                     if (buttonElement.querySelector(".copy-overlay")) {
                       return; // Prevent re-triggering if overlay is already shown
                     }
-                    const html = `<vibe-icon name="${icon.filename.split(".svg")[0]}"></vibe-icon>`;
+                    const html = `<vibe-icon name="${icon.filename}"></vibe-icon>`;
                     await copyIconToClipboard(html, buttonElement, "✅ HTML copied");
                   } else {
                     context.selectedIcon$.next(icon);

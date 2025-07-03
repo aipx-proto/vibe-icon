@@ -18,7 +18,7 @@ async function optimizeSVG(input: string): Promise<string> {
 }
 
 const packageAsync: Promise<{ commit: string; time: number; version: string }> = fetch(
-  `${import.meta.env.BASE_URL}/package.json?cacheBuster=${Date.now()}`, // Adding cache buster to avoid caching issues,
+  `${import.meta.env.BASE_URL}/package.json?cacheBuster=${Date.now()}`, // here // Adding cache buster to avoid caching issues,
 ).then((response) => response.json());
 
 // Helper functions for copy and download
@@ -109,7 +109,7 @@ const metadata$ = metadataRequestUrl$.pipe(
 detailsData$
   .pipe(
     tap(({ icon }) =>
-      metadataRequestUrl$.next(`${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}.metadata.json`),
+      metadataRequestUrl$.next(`${import.meta.env.BASE_URL}/icons/${icon.filename}/${icon.filename}.metadata.json`), // here
     ),
   )
   .subscribe();
@@ -148,7 +148,7 @@ export function renderDetailsStream(
 
     const remoteSVGs = await Promise.all(
       stylesForSize.map(async (style) => {
-        const url = `${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${style}.svg`;
+        const url = `${import.meta.env.BASE_URL}/icons/${icon.filename}/${icon.filename}-${preferredNumericSize}-${style}.svg`; // here
         const svg = await fetch(url)
           .then((res) => res.text())
           .then(optimizeSVG)
@@ -244,12 +244,12 @@ ${remoteIcon.parsedSVG.svgInnerHTML
 
         <section class="icon-option-list">
           ${icon.options.map((option) => {
-            const svgUrl = `${import.meta.env.BASE_URL}/${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${option.style}.svg`;
+            const svgUrl = `${import.meta.env.BASE_URL}/icons/${icon.filename}/${icon.filename}-${preferredNumericSize}-${option.style}.svg`;
 
-            const htmlCode = `<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}${
+            const htmlCode = `<vibe-icon name="${icon.filename}"${option.style !== "regular" ? ` ${option.style}` : ""}${
               preferredSize === "auto" ? "" : ` size="${preferredSize}"`
             }></vibe-icon>`;
-            const downloadFileName = `${icon.filename.split(".svg")[0]}-${option.style}.svg`;
+            const downloadFileName = `${icon.filename}-${option.style}.svg`; // here ????
             return html`
               <div class="icon-option">
                 <h2>${option.style}</h2>
@@ -261,7 +261,7 @@ ${remoteIcon.parsedSVG.svgInnerHTML
                   aria-label="Copy SVG code"
                 >
                   <svg width="48" height="48">
-                    <use href="${import.meta.env.BASE_URL}/${icon.filename}#${option.style}" />
+                    <use href="${import.meta.env.BASE_URL}/icons/${icon.filename}/${icon.filename}.svg#${option.style}" />
                   </svg>
                 </button>
                 <div class="icon-info">
@@ -297,13 +297,13 @@ ${remoteIcon.parsedSVG.svgInnerHTML
                 .map((option) =>
                   `
 <!-- ${option.style} style -->
-<vibe-icon name="${icon.filename.split(".svg")[0]}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>
+<vibe-icon name="${icon.filename}"${option.style !== "regular" ? ` ${option.style}` : ""}></vibe-icon>
                 `.trim(),
                 )
                 .join("\n\n")}
 
 <!-- custom sizes: ${uniqueSizes.join(", ")} -->
-<vibe-icon name="${icon.filename.split(".svg")[0]}" size="${icon.options.at(0)?.size}"></vibe-icon>
+<vibe-icon name="${icon.filename}" size="${icon.options.at(0)?.size}"></vibe-icon>
             `.trim()}
           ></code-snippet>
           <details>
@@ -312,7 +312,7 @@ ${remoteIcon.parsedSVG.svgInnerHTML
               <code-snippet
                 .lang=${"markdown"}
                 .code=${renderTemplate(codingAgentPrompt, {
-                  iconName: icon.filename.split(".svg")[0],
+                  iconName: icon.filename,
                   packageName: packageJson.name,
                   packageVersion: packageJson.version,
                   searchToolUrl: window.location.origin + import.meta.env.BASE_URL,
@@ -342,7 +342,7 @@ ${advancedInstallIconOptionsStrings.join("\n\n")}
             .code=${sortedOptions
               .map(
                 (option) => `<svg width="${preferredNumericSize}" height="${preferredNumericSize}">
-  <use href="#${iconIdPrefix}${icon.filename.split(".svg")[0]}-${preferredNumericSize}-${option.style}" />
+  <use href="#${iconIdPrefix}${icon.filename}-${preferredNumericSize}-${option.style}" />
 </svg>`,
               )
               .join("\n\n")}

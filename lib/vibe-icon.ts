@@ -88,12 +88,12 @@ export class VibeIcon extends HTMLElement {
   }
 
   private getSourceCodePath(name: string, size: string, style: string): string {
-    const svgFilename = displayNameToVibeIconSVGFilename(name);
+    const filename = displayNameToVibeIconSVGFilename(name);
     const explicitSize = this.getAttribute("size");
     if (explicitSize) {
-      return `${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/${svgFilename}-${size}-${style}.svg`;
+      return `${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/icons/${filename}/${filename}-${size}-${style}.svg`;
     } else {
-      return `${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/${svgFilename}.svg`;
+      return `${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/icons/${filename}/${filename}.svg`;
     }
   }
 
@@ -146,7 +146,7 @@ export class VibeIcon extends HTMLElement {
 
   static getEmojiMap(): Promise<Map<string, string>> {
     if (VibeIcon.emojiMap == null) {
-      VibeIcon.emojiMap = fetch(`${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/static/emoji-map.json`)
+      VibeIcon.emojiMap = fetch(`${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/emoji-map.json`)
         .then(async (response) => new Map(Object.entries((await response.json()) as Record<string, string>)))
         .catch(() => {
           console.error(`Failed to fetch emoji map`);

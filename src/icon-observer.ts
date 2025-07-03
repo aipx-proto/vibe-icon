@@ -2,6 +2,7 @@
  * Icon Observer - Handles lazy loading of SVG icons using IntersectionObserver
  */
 
+
 // Track loaded icons to avoid re-observing
 const loadedIcons = new WeakSet<Element>();
 
@@ -24,9 +25,9 @@ export function createIconObserver(): IntersectionObserver {
               .slice(0, 2) // Show up to 2 styles
               .map((style, index) => {
                 return `<svg width="48" height="48" class="icon-svg" data-style-index="${index}"}">
-                <use href="${import.meta.env.BASE_URL}/${filename}#${style}" />
+                <use href="${import.meta.env.BASE_URL}/icons/${filename}/${filename}.svg#${style}" /> 
               </svg>`;
-              })
+              }) // here
               .join("");
 
             svgContainer.dataset.loaded = "true";

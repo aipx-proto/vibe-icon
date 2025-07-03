@@ -43,7 +43,7 @@ const indexAsync = decompressIndex();
 async function askAI(settings: any, query: string): Promise<SearchResult[]> {
   const [openai, iconSheet] = await Promise.all([
     import("openai"),
-    fetch(`${import.meta.env.BASE_URL}/index.csv`).then((res) => res.text()),
+    fetch(`${import.meta.env.BASE_URL}/index.csv`).then((res) => res.text()), // here
   ]);
 
   const client = new openai.AzureOpenAI({
@@ -197,7 +197,7 @@ function getMatchScore(icon: InMemoryIcon, query: string): number {
 
 async function decompressIndex() {
   const basename = import.meta.env.BASE_URL;
-  const iconsIndex = await fetch(`${basename}/index.min.json`).then(
+  const iconsIndex = await fetch(`${basename}/index.min.json`).then( // here
     (response) => response.json() as Promise<IconIndex>,
   );
 
@@ -205,7 +205,7 @@ async function decompressIndex() {
   const icons = Object.entries(iconsIndex.icons).map(([name, [metaphors, options, sizes]]) => {
     return {
       name,
-      filename: name.replace(/ /g, "-").toLowerCase() + ".svg",
+      filename: name.replace(/ /g, "-").toLowerCase(),
       lowerName: name.toLowerCase(),
       metaphors,
       options,
