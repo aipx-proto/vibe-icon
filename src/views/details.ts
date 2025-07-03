@@ -325,7 +325,7 @@ ${remoteIcon.parsedSVG.svgInnerHTML
         </section>
         <section class="icon-doc-section">
           <h2>Advanced install</h2>
-          <p>Add SVG symbols to index.html</p>
+          <p>Add SVG symbols to index.html without dependencies.</p>
           <code-snippet
             .lang=${"html"}
             .code=${`
