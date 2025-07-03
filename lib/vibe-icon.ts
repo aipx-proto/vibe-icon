@@ -45,6 +45,13 @@ export class VibeIcon extends HTMLElement {
 
     name = await this.checkEmoji(name);
 
+    // Handle emoji display
+    if (name.startsWith("emoji:")) {
+      const emoji = name.substring(6); // Remove "emoji:" prefix
+      this.shadowRoot!.innerHTML = this.getEmojiSvgString(emoji, { name, size });
+      return;
+    }
+
     const style = this.hasAttribute("filled") ? "filled" : "regular";
     const hasExplicitSize = this.hasAttribute("size");
     const cacheKey = hasExplicitSize ? `${name}_${size}_${style}` : name;
@@ -101,28 +108,6 @@ export class VibeIcon extends HTMLElement {
     this.shadowRoot!.innerHTML = this.getIconSvgString({ size: this.getAttribute("size") ?? undefined });
   }
 
-  private getIconSvgString({
-    name = "placeholder",
-    size = "20",
-    style = "regular",
-    viewBox = "0 0 20 20",
-    innerHTML = VibeIcon.placeholderIconPath,
-  }: {
-    name?: string;
-    size?: string;
-    style?: string;
-    viewBox?: string;
-    innerHTML?: string;
-  }): string {
-    return `
-<style>:host { display: contents; }</style>
-<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" data-icon="${name}" data-style="${style}" viewBox="${viewBox}">
-  ${innerHTML}
-</svg>`.trim();
-  }
-
-  private static placeholderIconPath = `<circle cx="10" cy="10" r="8" fill="currentColor" opacity="0.15"/>`;
-
   private async checkEmoji(name: string): Promise<string> {
     const emojiRegex = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
     const emojiMatch = name.match(emojiRegex);
@@ -136,8 +121,11 @@ export class VibeIcon extends HTMLElement {
         if (iconName) {
           return iconName;
         }
+        if (emojiMatch) {
+          return `emoji:${emojiMatch[0]}`;
+        }
       }
-      return "";
+      return `emoji:${name}`;
     }
     return name;
   }
@@ -155,4 +143,38 @@ export class VibeIcon extends HTMLElement {
     }
     return VibeIcon.emojiMap;
   }
+
+  private getIconSvgString({
+    name = "placeholder",
+    size = "20",
+    style = "regular",
+    viewBox = "0 0 20 20",
+    innerHTML = VibeIcon.placeholderIconPath,
+  }: IconSvgStringOptions): string {
+    return `
+<style>:host { display: contents; }</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" data-icon="${name}" data-style="${style}" viewBox="${viewBox}">
+  ${innerHTML}
+</svg>`.trim();
+  }
+
+  private static placeholderIconPath = `<circle cx="10" cy="10" r="8" fill="currentColor" opacity="0.15"/>`.trim();
+
+  private getEmojiSvgString(emoji: string, options: IconSvgStringOptions): string {
+    const innerHTML = `
+<defs><mask id="emoji-mask">
+  <rect width="20" height="20" fill="black"/>
+  <text x="10" y="12" font-size="14" text-anchor="middle" dominant-baseline="middle" fill="white">${emoji}</text>
+</mask></defs>
+<rect width="20" height="20" fill="currentColor" mask="url(#emoji-mask)"/>`.trim();
+    return this.getIconSvgString({ name: emoji, ...options, innerHTML });
+  }
 }
+
+type IconSvgStringOptions = {
+  name?: string;
+  size?: string;
+  style?: string;
+  viewBox?: string;
+  innerHTML?: string;
+};
