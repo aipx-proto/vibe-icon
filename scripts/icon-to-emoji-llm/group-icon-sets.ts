@@ -3,30 +3,23 @@ import { basename, resolve } from "path";
 import type { NamedIconGroup } from "./types";
 
 function generateGroupName(files: string[], baseWord: string, index?: number): string {
-  // Get the first word from the first file
-  const firstFile = basename(files[0], ".png");
-  const parts = firstFile.split(/[-_]/);
-  
   // Start with the base word (first word)
   let groupName = baseWord;
-  
+
   // If this is a subgroup (index provided), add distinguishing information
   if (index !== undefined) {
     // Try to find a common second word or pattern
-    const secondWords = files
-      .map(f => basename(f, ".png").split(/[-_]/)[1])
-      .filter(w => w && w !== "__none__");
-    
+    const secondWords = files.map((f) => basename(f, ".png").split(/[-_]/)[1]).filter((w) => w && w !== "__none__");
+
     if (secondWords.length > 0) {
       // Get most common second word
       const wordCounts = secondWords.reduce((acc, word) => {
         acc[word] = (acc[word] || 0) + 1;
         return acc;
       }, {} as Record<string, number>);
-      
-      const mostCommon = Object.entries(wordCounts)
-        .sort(([, a], [, b]) => b - a)[0][0];
-      
+
+      const mostCommon = Object.entries(wordCounts).sort(([, a], [, b]) => b - a)[0][0];
+
       if (mostCommon === "__direction__") {
         groupName += "-directions";
       } else {
@@ -37,11 +30,16 @@ function generateGroupName(files: string[], baseWord: string, index?: number): s
       groupName += `-${index + 1}`;
     }
   }
-  
+
   return groupName;
 }
 
-export function groupIconSets(pngFiles: string[], maxGroupSize: number = 15, minSubgroupSize: number = 4, maxExtrasGroupSize: number = 10): NamedIconGroup[] {
+export function groupIconSets(
+  pngFiles: string[],
+  maxGroupSize: number = 15,
+  minSubgroupSize: number = 3,
+  maxExtrasGroupSize: number = 10
+): NamedIconGroup[] {
   // Step 1: Group by first word
   const firstWordGroups = new Map<string, string[]>();
   for (const pngFile of pngFiles) {
@@ -77,7 +75,7 @@ export function groupIconSets(pngFiles: string[], maxGroupSize: number = 15, min
       // Step 3: Collect small subgroups into extrasGroup
       const extrasGroup: string[] = [];
       let subgroupIndex = 0;
-      
+
       for (const subgroup of secondWordGroups.values()) {
         if (subgroup.length < minSubgroupSize) {
           extrasGroup.push(...subgroup);
@@ -87,7 +85,7 @@ export function groupIconSets(pngFiles: string[], maxGroupSize: number = 15, min
           subgroupIndex++;
         }
       }
-      
+
       // Split extras into multiple groups if needed
       if (extrasGroup.length > 0) {
         if (extrasGroup.length <= maxExtrasGroupSize) {
@@ -108,11 +106,11 @@ export function groupIconSets(pngFiles: string[], maxGroupSize: number = 15, min
       finalGroups.push({ name: groupName, files: group });
     }
   }
-  
+
   // Save finalGroups to a JSON file, including both names and filenames
-  const finalGroupsForSaving = finalGroups.map(group => ({
+  const finalGroupsForSaving = finalGroups.map((group) => ({
     name: group.name,
-    files: group.files.map(pngFile => basename(pngFile, ".png"))
+    files: group.files.map((pngFile) => basename(pngFile, ".png")),
   }));
 
   writeFile(
@@ -120,6 +118,6 @@ export function groupIconSets(pngFiles: string[], maxGroupSize: number = 15, min
     JSON.stringify(finalGroupsForSaving, null, 2),
     "utf-8"
   );
-  
+
   return finalGroups;
 }

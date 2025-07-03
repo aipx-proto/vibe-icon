@@ -200,12 +200,52 @@
     ]
   },
   {
+    "name": "arrow-clockwise",
+    "files": [
+      "arrow-clockwise-dashes-settings",
+      "arrow-clockwise-dashes",
+      "arrow-clockwise"
+    ]
+  },
+  {
+    "name": "arrow-counterclockwise",
+    "files": [
+      "arrow-counterclockwise-dashes",
+      "arrow-counterclockwise-info",
+      "arrow-counterclockwise"
+    ]
+  },
+  {
     "name": "arrow-curve",
     "files": [
       "arrow-curve-down-left",
       "arrow-curve-down-right",
       "arrow-curve-up-left",
       "arrow-curve-up-right"
+    ]
+  },
+  {
+    "name": "arrow-enter",
+    "files": [
+      "arrow-enter-left",
+      "arrow-enter-up",
+      "arrow-enter"
+    ]
+  },
+  {
+    "name": "arrow-flow",
+    "files": [
+      "arrow-flow-diagonal-up-right",
+      "arrow-flow-up-right-rectangle-multiple",
+      "arrow-flow-up-right"
+    ]
+  },
+  {
+    "name": "arrow-forward",
+    "files": [
+      "arrow-forward-down-lightning",
+      "arrow-forward-down-person",
+      "arrow-forward"
     ]
   },
   {
@@ -218,6 +258,22 @@
     ]
   },
   {
+    "name": "arrow-repeat",
+    "files": [
+      "arrow-repeat-1",
+      "arrow-repeat-all-off",
+      "arrow-repeat-all"
+    ]
+  },
+  {
+    "name": "arrow-reply",
+    "files": [
+      "arrow-reply-all",
+      "arrow-reply-down",
+      "arrow-reply"
+    ]
+  },
+  {
     "name": "arrow-sort",
     "files": [
       "arrow-sort-down-lines",
@@ -225,6 +281,14 @@
       "arrow-sort-up-lines",
       "arrow-sort-up",
       "arrow-sort"
+    ]
+  },
+  {
+    "name": "arrow-square",
+    "files": [
+      "arrow-square-down",
+      "arrow-square-up-right",
+      "arrow-square"
     ]
   },
   {
@@ -281,84 +345,61 @@
     ]
   },
   {
+    "name": "arrow-wrap",
+    "files": [
+      "arrow-wrap-off",
+      "arrow-wrap-up-to-down",
+      "arrow-wrap"
+    ]
+  },
+  {
     "name": "arrow-extras-1",
     "files": [
       "arrow-between-down",
       "arrow-between-up",
       "arrow-bounce",
-      "arrow-clockwise-dashes-settings",
-      "arrow-clockwise-dashes",
-      "arrow-clockwise",
       "arrow-collapse-all",
-      "arrow-counterclockwise-dashes",
-      "arrow-counterclockwise-info",
-      "arrow-counterclockwise"
+      "arrow-download-off",
+      "arrow-download",
+      "arrow-eject",
+      "arrow-exit",
+      "arrow-expand-all",
+      "arrow-expand"
     ]
   },
   {
     "name": "arrow-extras-2",
     "files": [
-      "arrow-download-off",
-      "arrow-download",
-      "arrow-eject",
-      "arrow-enter-left",
-      "arrow-enter-up",
-      "arrow-enter",
-      "arrow-exit",
-      "arrow-expand-all",
-      "arrow-expand",
-      "arrow-export-up"
+      "arrow-export-up",
+      "arrow-export",
+      "arrow-fit-in",
+      "arrow-fit",
+      "arrow-import",
+      "arrow-join",
+      "arrow-maximize-vertical",
+      "arrow-maximize",
+      "arrow-minimize-vertical",
+      "arrow-minimize"
     ]
   },
   {
     "name": "arrow-extras-3",
     "files": [
-      "arrow-export",
-      "arrow-fit-in",
-      "arrow-fit",
-      "arrow-flow-diagonal-up-right",
-      "arrow-flow-up-right-rectangle-multiple",
-      "arrow-flow-up-right",
-      "arrow-forward-down-lightning",
-      "arrow-forward-down-person",
-      "arrow-forward",
-      "arrow-import"
+      "arrow-move-inward",
+      "arrow-move",
+      "arrow-next",
+      "arrow-outline-down-left",
+      "arrow-outline-up-right",
+      "arrow-paragraph",
+      "arrow-previous",
+      "arrow-redo",
+      "arrow-reset",
+      "arrow-rotate-clockwise"
     ]
   },
   {
     "name": "arrow-extras-4",
     "files": [
-      "arrow-join",
-      "arrow-maximize-vertical",
-      "arrow-maximize",
-      "arrow-minimize-vertical",
-      "arrow-minimize",
-      "arrow-move-inward",
-      "arrow-move",
-      "arrow-next",
-      "arrow-outline-down-left",
-      "arrow-outline-up-right"
-    ]
-  },
-  {
-    "name": "arrow-extras-5",
-    "files": [
-      "arrow-paragraph",
-      "arrow-previous",
-      "arrow-redo",
-      "arrow-repeat-1",
-      "arrow-repeat-all-off",
-      "arrow-repeat-all",
-      "arrow-reply-all",
-      "arrow-reply-down",
-      "arrow-reply",
-      "arrow-reset"
-    ]
-  },
-  {
-    "name": "arrow-extras-6",
-    "files": [
-      "arrow-rotate-clockwise",
       "arrow-rotate-counterclockwise",
       "arrow-routing-rectangle-multiple",
       "arrow-routing",
@@ -366,20 +407,9 @@
       "arrow-shuffle",
       "arrow-split",
       "arrow-sprint",
-      "arrow-square-down",
-      "arrow-square-up-right"
-    ]
-  },
-  {
-    "name": "arrow-extras-7",
-    "files": [
-      "arrow-square",
       "arrow-swap",
       "arrow-undo",
-      "arrow-upload",
-      "arrow-wrap-off",
-      "arrow-wrap-up-to-down",
-      "arrow-wrap"
+      "arrow-upload"
     ]
   },
   {
@@ -738,6 +768,14 @@
     ]
   },
   {
+    "name": "building-bank",
+    "files": [
+      "building-bank-link",
+      "building-bank-toolbox",
+      "building-bank"
+    ]
+  },
+  {
     "name": "building-retail",
     "files": [
       "building-retail-money",
@@ -750,24 +788,21 @@
   {
     "name": "building-extras-1",
     "files": [
-      "building-bank-link",
-      "building-bank-toolbox",
-      "building-bank",
       "building-checkmark",
       "building-cloud",
       "building-desktop",
       "building-factory",
       "building-government-search",
       "building-government",
-      "building-home"
+      "building-home",
+      "building-lighthouse",
+      "building-mosque",
+      "building-multiple"
     ]
   },
   {
     "name": "building-extras-2",
     "files": [
-      "building-lighthouse",
-      "building-mosque",
-      "building-multiple",
       "building-people",
       "building-shop",
       "building-skyscraper",
@@ -1008,6 +1043,14 @@
     ]
   },
   {
+    "name": "chat-arrow",
+    "files": [
+      "chat-arrow-back-down",
+      "chat-arrow-back",
+      "chat-arrow-double-back"
+    ]
+  },
+  {
     "name": "chat-multiple",
     "files": [
       "chat-multiple-checkmark",
@@ -1020,23 +1063,20 @@
     "name": "chat-extras-1",
     "files": [
       "chat-add",
-      "chat-arrow-back-down",
-      "chat-arrow-back",
-      "chat-arrow-double-back",
       "chat-bubbles-question",
       "chat-cursor",
       "chat-dismiss",
       "chat-empty",
       "chat-help",
-      "chat-history"
+      "chat-history",
+      "chat-lock",
+      "chat-mail",
+      "chat-off"
     ]
   },
   {
     "name": "chat-extras-2",
     "files": [
-      "chat-lock",
-      "chat-mail",
-      "chat-off",
       "chat-settings",
       "chat-sparkle",
       "chat-video",
@@ -1113,6 +1153,14 @@
     ]
   },
   {
+    "name": "circle-multiple",
+    "files": [
+      "circle-multiple-concentric",
+      "circle-multiple-hint-checkmark",
+      "circle-multiple-subtract-checkmark"
+    ]
+  },
+  {
     "name": "circle-extras-1",
     "files": [
       "circle-edit",
@@ -1121,18 +1169,15 @@
       "circle-highlight",
       "circle-image",
       "circle-line",
-      "circle-multiple-concentric",
-      "circle-multiple-hint-checkmark",
-      "circle-multiple-subtract-checkmark",
-      "circle-off"
+      "circle-off",
+      "circle-shadow",
+      "circle-small",
+      "circle-sparkle"
     ]
   },
   {
     "name": "circle-extras-2",
     "files": [
-      "circle-shadow",
-      "circle-small",
-      "circle-sparkle",
       "circle"
     ]
   },
@@ -1158,6 +1203,14 @@
     "name": "clear",
     "files": [
       "clear-formatting"
+    ]
+  },
+  {
+    "name": "clipboard-task",
+    "files": [
+      "clipboard-task-add",
+      "clipboard-task-list",
+      "clipboard-task"
     ]
   },
   {
@@ -1198,16 +1251,8 @@
       "clipboard-pulse",
       "clipboard-search",
       "clipboard-settings",
-      "clipboard-task-add",
-      "clipboard-task-list",
-      "clipboard-task",
       "clipboard-text-edit",
-      "clipboard-text"
-    ]
-  },
-  {
-    "name": "clipboard-extras-4",
-    "files": [
+      "clipboard-text",
       "clipboard"
     ]
   },
@@ -1239,38 +1284,38 @@
     ]
   },
   {
+    "name": "cloud-arrow",
+    "files": [
+      "cloud-arrow-down",
+      "cloud-arrow-right",
+      "cloud-arrow-up"
+    ]
+  },
+  {
     "name": "cloud-extras-1",
     "files": [
       "cloud-add",
       "cloud-archive",
-      "cloud-arrow-down",
-      "cloud-arrow-right",
-      "cloud-arrow-up",
       "cloud-beaker",
       "cloud-bidirectional",
       "cloud-checkmark",
       "cloud-cube",
-      "cloud-database"
+      "cloud-database",
+      "cloud-desktop",
+      "cloud-dismiss",
+      "cloud-edit"
     ]
   },
   {
     "name": "cloud-extras-2",
     "files": [
-      "cloud-desktop",
-      "cloud-dismiss",
-      "cloud-edit",
       "cloud-error",
       "cloud-flow",
       "cloud-link",
       "cloud-off",
       "cloud-swap",
       "cloud-sync",
-      "cloud-words"
-    ]
-  },
-  {
-    "name": "cloud-extras-3",
-    "files": [
+      "cloud-words",
       "cloud"
     ]
   },
@@ -1278,6 +1323,14 @@
     "name": "clover",
     "files": [
       "clover"
+    ]
+  },
+  {
+    "name": "code-text",
+    "files": [
+      "code-text-edit",
+      "code-text-off",
+      "code-text"
     ]
   },
   {
@@ -1301,18 +1354,10 @@
       "code-py",
       "code-rb-rectangle",
       "code-rb",
-      "code-text-edit",
-      "code-text-off",
-      "code-text",
       "code-ts-rectangle",
       "code-ts",
       "code-vb-rectangle",
-      "code-vb"
-    ]
-  },
-  {
-    "name": "code-extras-3",
-    "files": [
+      "code-vb",
       "code"
     ]
   },
@@ -1678,26 +1723,31 @@
     ]
   },
   {
-    "name": "desktop-extras-1",
+    "name": "desktop-arrow",
     "files": [
       "desktop-arrow-down-off",
       "desktop-arrow-down",
-      "desktop-arrow-right",
+      "desktop-arrow-right"
+    ]
+  },
+  {
+    "name": "desktop-extras-1",
+    "files": [
       "desktop-checkmark",
       "desktop-cursor",
       "desktop-edit",
       "desktop-flow",
       "desktop-keyboard",
       "desktop-mac",
-      "desktop-off"
+      "desktop-off",
+      "desktop-pulse",
+      "desktop-signal",
+      "desktop-speaker-off"
     ]
   },
   {
     "name": "desktop-extras-2",
     "files": [
-      "desktop-pulse",
-      "desktop-signal",
-      "desktop-speaker-off",
       "desktop-speaker",
       "desktop-sync",
       "desktop-toolbox",
@@ -1811,6 +1861,14 @@
     ]
   },
   {
+    "name": "document-data",
+    "files": [
+      "document-data-link",
+      "document-data-lock",
+      "document-data"
+    ]
+  },
+  {
     "name": "document-header",
     "files": [
       "document-header-arrow-down",
@@ -1864,6 +1922,14 @@
     ]
   },
   {
+    "name": "document-queue",
+    "files": [
+      "document-queue-add",
+      "document-queue-multiple",
+      "document-queue"
+    ]
+  },
+  {
     "name": "document-table",
     "files": [
       "document-table-arrow-right",
@@ -1905,84 +1971,78 @@
       "document-cs",
       "document-css",
       "document-cube",
-      "document-data-link",
-      "document-data-lock",
-      "document-data",
       "document-database",
       "document-dismiss",
       "document-edit",
-      "document-endnote"
+      "document-endnote",
+      "document-error",
+      "document-fit",
+      "document-flowchart"
     ]
   },
   {
     "name": "document-extras-3",
     "files": [
-      "document-error",
-      "document-fit",
-      "document-flowchart",
       "document-folder",
       "document-footer-dismiss",
       "document-footer",
       "document-fs",
       "document-globe",
       "document-heart-pulse",
-      "document-heart"
+      "document-heart",
+      "document-image",
+      "document-java",
+      "document-javascript"
     ]
   },
   {
     "name": "document-extras-4",
     "files": [
-      "document-image",
-      "document-java",
-      "document-javascript",
       "document-js",
       "document-key",
       "document-lightning",
       "document-link",
       "document-lock",
       "document-margins",
-      "document-mention"
+      "document-mention",
+      "document-number-1",
+      "document-pdf",
+      "document-percent"
     ]
   },
   {
     "name": "document-extras-5",
     "files": [
-      "document-number-1",
-      "document-pdf",
-      "document-percent",
       "document-person",
       "document-pill",
       "document-print",
       "document-prohibited",
       "document-py",
       "document-question-mark",
-      "document-queue-add"
+      "document-rb",
+      "document-ribbon",
+      "document-sass",
+      "document-save"
     ]
   },
   {
     "name": "document-extras-6",
     "files": [
-      "document-queue-multiple",
-      "document-queue",
-      "document-rb",
-      "document-ribbon",
-      "document-sass",
-      "document-save",
       "document-search",
       "document-settings",
       "document-signature",
-      "document-sparkle"
-    ]
-  },
-  {
-    "name": "document-extras-7",
-    "files": [
+      "document-sparkle",
       "document-split-hint-off",
       "document-split-hint",
       "document-sync",
       "document-target",
       "document-toolbox",
-      "document-ts",
+      "document-ts"
+    ]
+  },
+  {
+    "name": "document-extras-7",
+    "files": [
       "document-vb",
       "document-width",
       "document-yml",
@@ -2342,38 +2402,43 @@
     ]
   },
   {
+    "name": "folder-arrow",
+    "files": [
+      "folder-arrow-left",
+      "folder-arrow-right",
+      "folder-arrow-up"
+    ]
+  },
+  {
+    "name": "folder-open",
+    "files": [
+      "folder-open-down",
+      "folder-open-vertical",
+      "folder-open"
+    ]
+  },
+  {
     "name": "folder-extras-1",
     "files": [
       "folder-add",
-      "folder-arrow-left",
-      "folder-arrow-right",
-      "folder-arrow-up",
       "folder-briefcase",
       "folder-document",
       "folder-globe",
       "folder-lightning",
       "folder-link",
-      "folder-list"
+      "folder-list",
+      "folder-mail",
+      "folder-multiple",
+      "folder-people"
     ]
   },
   {
     "name": "folder-extras-2",
     "files": [
-      "folder-mail",
-      "folder-multiple",
-      "folder-open-down",
-      "folder-open-vertical",
-      "folder-open",
-      "folder-people",
       "folder-person",
       "folder-prohibited",
       "folder-search",
-      "folder-swap"
-    ]
-  },
-  {
-    "name": "folder-extras-3",
-    "files": [
+      "folder-swap",
       "folder-sync",
       "folder-zip",
       "folder"
@@ -2731,38 +2796,38 @@
     ]
   },
   {
+    "name": "image-arrow",
+    "files": [
+      "image-arrow-back",
+      "image-arrow-counterclockwise",
+      "image-arrow-forward"
+    ]
+  },
+  {
     "name": "image-extras-1",
     "files": [
       "image-add",
       "image-alt-text",
-      "image-arrow-back",
-      "image-arrow-counterclockwise",
-      "image-arrow-forward",
       "image-border",
       "image-circle",
       "image-copy",
       "image-edit",
-      "image-globe"
+      "image-globe",
+      "image-multiple-off",
+      "image-multiple",
+      "image-off"
     ]
   },
   {
     "name": "image-extras-2",
     "files": [
-      "image-multiple-off",
-      "image-multiple",
-      "image-off",
       "image-prohibited",
       "image-reflection",
       "image-search",
       "image-shadow",
       "image-sparkle",
       "image-split",
-      "image-stack"
-    ]
-  },
-  {
-    "name": "image-extras-3",
-    "files": [
+      "image-stack",
       "image-table",
       "image"
     ]
@@ -3159,6 +3224,14 @@
     ]
   },
   {
+    "name": "mail-read",
+    "files": [
+      "mail-read-briefcase",
+      "mail-read-multiple",
+      "mail-read"
+    ]
+  },
+  {
     "name": "mail-extras-1",
     "files": [
       "mail-add",
@@ -3192,20 +3265,12 @@
     "name": "mail-extras-3",
     "files": [
       "mail-prohibited",
-      "mail-read-briefcase",
-      "mail-read-multiple",
-      "mail-read",
       "mail-rewind",
       "mail-settings",
       "mail-shield",
       "mail-template",
       "mail-unread",
-      "mail-warning"
-    ]
-  },
-  {
-    "name": "mail-extras-4",
-    "files": [
+      "mail-warning",
       "mail"
     ]
   },
@@ -3554,6 +3619,14 @@
     ]
   },
   {
+    "name": "panel-bottom",
+    "files": [
+      "panel-bottom-contract",
+      "panel-bottom-expand",
+      "panel-bottom"
+    ]
+  },
+  {
     "name": "panel-left",
     "files": [
       "panel-left-add",
@@ -3577,15 +3650,17 @@
     ]
   },
   {
-    "name": "panel-extras-1",
+    "name": "panel-top",
     "files": [
-      "panel-bottom-contract",
-      "panel-bottom-expand",
-      "panel-bottom",
-      "panel-separate-window",
       "panel-top-contract",
       "panel-top-expand",
       "panel-top-gallery"
+    ]
+  },
+  {
+    "name": "panel-extras-1",
+    "files": [
+      "panel-separate-window"
     ]
   },
   {
@@ -3691,6 +3766,22 @@
     ]
   },
   {
+    "name": "person-arrow",
+    "files": [
+      "person-arrow-back",
+      "person-arrow-left",
+      "person-arrow-right"
+    ]
+  },
+  {
+    "name": "person-square",
+    "files": [
+      "person-square-add",
+      "person-square-checkmark",
+      "person-square"
+    ]
+  },
+  {
     "name": "person-extras-1",
     "files": [
       "person-5",
@@ -3700,89 +3791,78 @@
       "person-add",
       "person-alert-off",
       "person-alert",
-      "person-arrow-back",
-      "person-arrow-left",
-      "person-arrow-right"
+      "person-available",
+      "person-board-add",
+      "person-board"
     ]
   },
   {
     "name": "person-extras-2",
     "files": [
-      "person-available",
-      "person-board-add",
-      "person-board",
       "person-briefcase",
       "person-call",
       "person-chat",
       "person-circle",
       "person-clock",
       "person-delete",
-      "person-desktop"
+      "person-desktop",
+      "person-edit",
+      "person-error",
+      "person-feedback"
     ]
   },
   {
     "name": "person-extras-3",
     "files": [
-      "person-edit",
-      "person-error",
-      "person-feedback",
       "person-head-hint",
       "person-heart",
       "person-home",
       "person-info",
       "person-key",
       "person-lightbulb",
-      "person-lightning"
+      "person-lightning",
+      "person-link",
+      "person-lock",
+      "person-mail"
     ]
   },
   {
     "name": "person-extras-4",
     "files": [
-      "person-link",
-      "person-lock",
-      "person-mail",
       "person-money",
       "person-note",
       "person-passkey",
       "person-phone",
       "person-pill",
       "person-prohibited",
-      "person-question-mark"
+      "person-question-mark",
+      "person-ribbon",
+      "person-running",
+      "person-search"
     ]
   },
   {
     "name": "person-extras-5",
     "files": [
-      "person-ribbon",
-      "person-running",
-      "person-search",
       "person-settings",
       "person-shield",
       "person-sound-spatial",
-      "person-square-add",
-      "person-square-checkmark",
-      "person-square",
-      "person-standing"
-    ]
-  },
-  {
-    "name": "person-extras-6",
-    "files": [
+      "person-standing",
       "person-star",
       "person-starburst",
       "person-subtract",
       "person-support",
       "person-swap",
-      "person-sync",
-      "person-tag",
-      "person-tentative",
-      "person-voice",
-      "person-walking"
+      "person-sync"
     ]
   },
   {
-    "name": "person-extras-7",
+    "name": "person-extras-6",
     "files": [
+      "person-tag",
+      "person-tentative",
+      "person-voice",
+      "person-walking",
       "person-warning",
       "person-wrench",
       "person"
@@ -4612,6 +4692,14 @@
     ]
   },
   {
+    "name": "slide-multiple",
+    "files": [
+      "slide-multiple-arrow-right",
+      "slide-multiple-search",
+      "slide-multiple"
+    ]
+  },
+  {
     "name": "slide-text",
     "files": [
       "slide-text-call",
@@ -4639,15 +4727,12 @@
       "slide-layout",
       "slide-link",
       "slide-microphone",
-      "slide-multiple-arrow-right"
+      "slide-play"
     ]
   },
   {
     "name": "slide-extras-2",
     "files": [
-      "slide-multiple-search",
-      "slide-multiple",
-      "slide-play",
       "slide-record",
       "slide-search",
       "slide-settings",
@@ -4786,26 +4871,31 @@
     ]
   },
   {
+    "name": "star-arrow",
+    "files": [
+      "star-arrow-back",
+      "star-arrow-right-end",
+      "star-arrow-right-start"
+    ]
+  },
+  {
     "name": "star-extras-1",
     "files": [
       "star-add",
-      "star-arrow-back",
-      "star-arrow-right-end",
-      "star-arrow-right-start",
       "star-checkmark",
       "star-dismiss",
       "star-edit",
       "star-emphasis",
       "star-half",
-      "star-line-horizontal-3"
+      "star-line-horizontal-3",
+      "star-off",
+      "star-one-quarter",
+      "star-prohibited"
     ]
   },
   {
     "name": "star-extras-2",
     "files": [
-      "star-off",
-      "star-one-quarter",
-      "star-prohibited",
       "star-settings",
       "star-three-quarter",
       "star"
@@ -5005,6 +5095,14 @@
     ]
   },
   {
+    "name": "table-freeze",
+    "files": [
+      "table-freeze-column-and-row",
+      "table-freeze-column",
+      "table-freeze-row"
+    ]
+  },
+  {
     "name": "table-move",
     "files": [
       "table-move-above",
@@ -5065,33 +5163,30 @@
       "table-delete-row",
       "table-dismiss",
       "table-edit",
-      "table-freeze-column-and-row",
-      "table-freeze-column",
-      "table-freeze-row",
-      "table-image"
+      "table-image",
+      "table-insert-column",
+      "table-insert-row",
+      "table-lightning"
     ]
   },
   {
     "name": "table-extras-3",
     "files": [
-      "table-insert-column",
-      "table-insert-row",
-      "table-lightning",
       "table-link",
       "table-lock",
       "table-multiple",
       "table-resize-column",
       "table-resize-row",
       "table-search",
-      "table-settings"
+      "table-settings",
+      "table-sparkle",
+      "table-split",
+      "table-switch"
     ]
   },
   {
     "name": "table-extras-4",
     "files": [
-      "table-sparkle",
-      "table-split",
-      "table-switch",
       "table"
     ]
   },
@@ -5257,6 +5352,14 @@
     ]
   },
   {
+    "name": "text-case",
+    "files": [
+      "text-case-lowercase",
+      "text-case-title",
+      "text-case-uppercase"
+    ]
+  },
+  {
     "name": "text-column",
     "files": [
       "text-column-one-narrow",
@@ -5282,6 +5385,22 @@
       "text-direction-rotate-90-left",
       "text-direction-rotate-90-right",
       "text-direction-vertical"
+    ]
+  },
+  {
+    "name": "text-edit",
+    "files": [
+      "text-edit-style-character-a",
+      "text-edit-style-character-ga",
+      "text-edit-style"
+    ]
+  },
+  {
+    "name": "text-font",
+    "files": [
+      "text-font-info",
+      "text-font-size",
+      "text-font"
     ]
   },
   {
@@ -5327,6 +5446,14 @@
     ]
   },
   {
+    "name": "text-number",
+    "files": [
+      "text-number-format",
+      "text-number-list-rotate-270",
+      "text-number-list-rotate-90"
+    ]
+  },
+  {
     "name": "text-paragraph",
     "files": [
       "text-paragraph-direction-left",
@@ -5359,6 +5486,14 @@
     ]
   },
   {
+    "name": "text-underline",
+    "files": [
+      "text-underline-character-u",
+      "text-underline-double",
+      "text-underline"
+    ]
+  },
+  {
     "name": "text-extras-1",
     "files": [
       "text-abc-underline-double",
@@ -5367,80 +5502,60 @@
       "text-baseline",
       "text-bold",
       "text-box-settings",
-      "text-case-lowercase",
-      "text-case-title",
-      "text-case-uppercase",
-      "text-change-case"
+      "text-change-case",
+      "text-clear-formatting",
+      "text-collapse",
+      "text-color-accent"
     ]
   },
   {
     "name": "text-extras-2",
     "files": [
-      "text-clear-formatting",
-      "text-collapse",
-      "text-color-accent",
       "text-color",
       "text-continuous",
       "text-density",
       "text-description",
-      "text-edit-style-character-a",
-      "text-edit-style-character-ga",
-      "text-edit-style"
-    ]
-  },
-  {
-    "name": "text-extras-3",
-    "files": [
       "text-effects-sparkle",
       "text-effects",
       "text-expand",
       "text-field",
       "text-first-line",
-      "text-font-info",
-      "text-font-size",
-      "text-font",
-      "text-footnote",
-      "text-hanging"
+      "text-footnote"
     ]
   },
   {
-    "name": "text-extras-4",
+    "name": "text-extras-3",
     "files": [
+      "text-hanging",
       "text-italic",
       "text-line-spacing",
       "text-list-roman-numeral-lowercase",
       "text-list-roman-numeral-uppercase",
       "text-more",
-      "text-number-format",
-      "text-number-list-rotate-270",
-      "text-number-list-rotate-90",
       "text-percent",
-      "text-period-asterisk"
+      "text-period-asterisk",
+      "text-quote",
+      "text-sort-ascending"
     ]
   },
   {
-    "name": "text-extras-5",
+    "name": "text-extras-4",
     "files": [
-      "text-quote",
-      "text-sort-ascending",
       "text-sort-descending",
       "text-strikethrough",
       "text-subscript",
       "text-superscript",
       "text-t-tag",
       "text-t",
-      "text-underline-character-u",
-      "text-underline-double"
-    ]
-  },
-  {
-    "name": "text-extras-6",
-    "files": [
-      "text-underline",
       "text-whole-word",
       "text-word-count",
       "text-wrap-off",
-      "text-wrap",
+      "text-wrap"
+    ]
+  },
+  {
+    "name": "text-extras-5",
+    "files": [
       "text"
     ]
   },
@@ -5803,6 +5918,22 @@
     ]
   },
   {
+    "name": "weather-snow",
+    "files": [
+      "weather-snow-shower-day",
+      "weather-snow-shower-night",
+      "weather-snow"
+    ]
+  },
+  {
+    "name": "weather-sunny",
+    "files": [
+      "weather-sunny-high",
+      "weather-sunny-low",
+      "weather-sunny"
+    ]
+  },
+  {
     "name": "weather-extras-1",
     "files": [
       "weather-blowing-snow",
@@ -5822,19 +5953,8 @@
     "files": [
       "weather-partly-cloudy-day",
       "weather-partly-cloudy-night",
-      "weather-snow-shower-day",
-      "weather-snow-shower-night",
-      "weather-snow",
       "weather-snowflake",
       "weather-squalls",
-      "weather-sunny-high",
-      "weather-sunny-low",
-      "weather-sunny"
-    ]
-  },
-  {
-    "name": "weather-extras-3",
-    "files": [
       "weather-thunderstorm"
     ]
   },
@@ -5865,38 +5985,48 @@
     ]
   },
   {
-    "name": "window-extras-1",
+    "name": "window-ad",
     "files": [
       "window-ad-off",
       "window-ad-person",
-      "window-ad",
-      "window-apps",
-      "window-arrow-up",
-      "window-brush",
-      "window-bullet-list-add",
-      "window-bullet-list",
-      "window-column-one-fourth-left-focus-left",
-      "window-column-one-fourth-left-focus-top"
+      "window-ad"
     ]
   },
   {
-    "name": "window-extras-2",
+    "name": "window-column",
     "files": [
-      "window-column-one-fourth-left",
-      "window-console",
-      "window-database",
-      "window-dev-edit",
-      "window-dev-tools",
-      "window-edit",
-      "window-fingerprint",
+      "window-column-one-fourth-left-focus-left",
+      "window-column-one-fourth-left-focus-top",
+      "window-column-one-fourth-left"
+    ]
+  },
+  {
+    "name": "window-header",
+    "files": [
       "window-header-horizontal-off",
       "window-header-horizontal",
       "window-header-vertical"
     ]
   },
   {
-    "name": "window-extras-3",
+    "name": "window-extras-1",
     "files": [
+      "window-apps",
+      "window-arrow-up",
+      "window-brush",
+      "window-bullet-list-add",
+      "window-bullet-list",
+      "window-console",
+      "window-database",
+      "window-dev-edit",
+      "window-dev-tools",
+      "window-edit"
+    ]
+  },
+  {
+    "name": "window-extras-2",
+    "files": [
+      "window-fingerprint",
       "window-inprivate-account",
       "window-inprivate",
       "window-location-target",
@@ -5905,13 +6035,13 @@
       "window-new",
       "window-play",
       "window-settings",
-      "window-shield",
-      "window-text"
+      "window-shield"
     ]
   },
   {
-    "name": "window-extras-4",
+    "name": "window-extras-3",
     "files": [
+      "window-text",
       "window-wrench",
       "window"
     ]
