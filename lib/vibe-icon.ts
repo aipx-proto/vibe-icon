@@ -36,12 +36,14 @@ export class VibeIcon extends HTMLElement {
   }
 
   async render() {
-    const name = this.getAttribute("name") ?? undefined;
+    let name = this.getAttribute("name") ?? undefined;
     const size = this.getAttribute("size") ?? "20";
     if (!name) {
       this.showPlaceholder();
       return;
     }
+
+    name = await this.checkEmoji(name);
 
     const style = this.hasAttribute("filled") ? "filled" : "regular";
     const hasExplicitSize = this.hasAttribute("size");
@@ -89,9 +91,9 @@ export class VibeIcon extends HTMLElement {
     const svgFilename = displayNameToVibeIconSVGFilename(name);
     const explicitSize = this.getAttribute("size");
     if (explicitSize) {
-      return `${import.meta.env.VITE_VIBE_BUTTON_ENDPOINT}/${svgFilename}-${size}-${style}.svg`;
+      return `${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/${svgFilename}-${size}-${style}.svg`;
     } else {
-      return `${import.meta.env.VITE_VIBE_BUTTON_ENDPOINT}/${svgFilename}.svg`;
+      return `${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/${svgFilename}.svg`;
     }
   }
 
@@ -120,4 +122,37 @@ export class VibeIcon extends HTMLElement {
   }
 
   private static placeholderIconPath = `<circle cx="10" cy="10" r="8" fill="currentColor" opacity="0.15"/>`;
+
+  private async checkEmoji(name: string): Promise<string> {
+    const emojiRegex = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu;
+    const emojiMatch = name.match(emojiRegex);
+    const maybeUnicode = name.length === 1 || name.length === 2;
+    if (emojiMatch || maybeUnicode) {
+      const emojiMap = await VibeIcon.getEmojiMap();
+      if (emojiMap) {
+        const emojis = emojiMatch?.join("") ?? name;
+        const iconName = emojiMap.get(emojis);
+        console.log({ emojis, iconName, emojiMap, maybeUnicode });
+        if (iconName) {
+          return iconName;
+        }
+      }
+      return "";
+    }
+    return name;
+  }
+
+  static emojiMap: Promise<Map<string, string>> | null = null;
+
+  static getEmojiMap(): Promise<Map<string, string>> {
+    if (VibeIcon.emojiMap == null) {
+      VibeIcon.emojiMap = fetch(`${import.meta.env.VITE_VIBE_ICON_ENDPOINT}/static/emoji-map.json`)
+        .then(async (response) => new Map(Object.entries((await response.json()) as Record<string, string>)))
+        .catch(() => {
+          console.error(`Failed to fetch emoji map`);
+          return new Map();
+        });
+    }
+    return VibeIcon.emojiMap;
+  }
 }

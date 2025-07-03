@@ -2,9 +2,10 @@ node_modules
 dist
 dist-icons
 dist-site
-public/**/*
+public/*
 pngs/
 .env.aoai
 
 # negate
 !public/.gitkeep
+!public/static/.gitkeep
