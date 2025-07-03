@@ -10,8 +10,6 @@ public/index.json
 public/index.min.json
 public/package.json
 public/build-log.json
-# negate
-!public/icons/.gitkeep
 
 pngs/
 .env.aoai
